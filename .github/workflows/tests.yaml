@@ -69,5 +69,5 @@ jobs:
         if: steps.cache-npm.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Run unit and integration tests for node
-        run: npm run test:node -- --detectOpenHandles
+      - name: Run unit and integration tests
+        run: npm run test -- --detectOpenHandles
