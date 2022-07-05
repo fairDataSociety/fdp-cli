@@ -20,11 +20,6 @@ export const version: IOption<boolean> = {
   },
 }
 
-export const rootCommandClasses = [
+export const rootCommandClasses = []
 
-]
-
-export const optionParameters: IOption<unknown>[] = [
-  help,
-  version,
-]
+export const optionParameters: IOption<unknown>[] = [help, version]
