@@ -26,6 +26,7 @@
     "prepare": "npm run compile",
     "dev": "webpack --progress --env mode=development",
     "compile": "webpack --progress --env mode=production",
+    "test": "jest --config=jest.config.ts",
     "types:check": "tsc --project tsconfig.test.json",
     "start": "ts-node src/index.ts",
     "lint": "eslint --fix \"src/**/*.ts\" && prettier --write \"src/**/*.ts\"",

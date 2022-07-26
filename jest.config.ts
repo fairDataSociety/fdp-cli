@@ -4,7 +4,7 @@
  */
 import type { Config } from '@jest/types'
 
-export default (): Promise<Config.InitialOptions> => {
+export default (): Config.InitialOptions => {
   return {
     // The directory where Jest should output its coverage files
     coverageDirectory: 'coverage',

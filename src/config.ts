@@ -1,5 +1,5 @@
 import { IOption } from 'furious-commander'
-import PackageJson from '../package.json'
+import { getPackageVersion } from './utils'
 
 export const help: IOption<boolean> = {
   key: 'help',
@@ -16,7 +16,7 @@ export const version: IOption<boolean> = {
   type: 'boolean',
   default: false,
   handler: () => {
-    process.stdout.write(PackageJson.version + '\n')
+    process.stdout.write(getPackageVersion() + '\n')
   },
 }
 
