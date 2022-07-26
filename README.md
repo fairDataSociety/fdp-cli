@@ -5,7 +5,7 @@
 ## Table of Contents
 
 - [Installation](#installation)
-  - [npm](#npm)
+  - [npm](#From npm)
 - [Contribute](#contribute)
 - [License](#license)
 
@@ -17,14 +17,6 @@ To install globally (requires `npm root --global` to be writable):
 
 ```sh
 npm install --global @fairdatasociety/fdp-cli
-```
-
-To install locally:
-
-```sh
-cd [some directory for nodejs files]
-npm install @fairdatasociety/fdp-cli
-./node_modules/.bin/fdp-cli --help
 ```
 
 # Development
