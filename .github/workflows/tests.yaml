@@ -9,7 +9,7 @@ on:
       - '**'
 
 env:
-  BEE_VERSION: '1.7.0'
+  BEE_VERSION: '1.6.2'
 
 jobs:
   nodejs:
