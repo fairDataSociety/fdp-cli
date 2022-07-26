@@ -101,18 +101,16 @@ const base = (env?: Partial<WebpackEnvParams>): Configuration => {
   }
 }
 
-export default async (env?: Partial<WebpackEnvParams>): Promise<Configuration> => {
+export default (env?: Partial<WebpackEnvParams>): Configuration => {
   // eslint-disable-next-line no-console
   console.log('env', env)
 
   if (env?.debug) {
-    const config = {
-      ...(await base(env)),
+    return {
+      ...base(env),
       plugins: [new BundleAnalyzerPlugin()],
       profile: true,
     }
-
-    return config
   }
 
   return base(env)
