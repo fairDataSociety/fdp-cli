@@ -7,6 +7,7 @@ import { errorHandler } from '../../src/utils/error'
 type describeFunctionArgs = {
   consoleMessages: string[]
   configFolderPath: string
+  configFilePath: string
   getNthLastMessage: (n: number) => string
   getLastMessage: () => string
   hasMessageContaining: (substring: string) => boolean
@@ -36,7 +37,7 @@ export function describeCommand(
     const configFolderPath = join(__dirname, '..', 'testconfig')
 
     //set config environment variable
-    process.env.SWARM_CLI_CONFIG_FOLDER = configFolderPath
+    process.env.FDP_CLI_CONFIG_FOLDER = configFolderPath
 
     global.console.log = jest.fn(message => {
       consoleMessages.push(message)
@@ -61,14 +62,16 @@ export function describeCommand(
 
     jest.spyOn(global.console, 'warn')
 
+    let configFilePath = ''
+
     //if own config is needed
     if (configFileName) {
       const fileName = `${configFileName}.json`
-      const configFilePath = join(configFolderPath, fileName)
+      configFilePath = join(configFolderPath, fileName)
 
       //set config environment variable
-      process.env.SWARM_CLI_CONFIG_FILE = fileName
-      process.env.SWARM_CLI_CONFIG_FILE_PATH = configFilePath
+      process.env.FDP_CLI_CONFIG_FILE = fileName
+      process.env.FDP_CLI_CONFIG_FILE_PATH = configFilePath
 
       //remove config file if it exists
       if (existsSync(configFilePath)) unlinkSync(configFilePath)
@@ -78,6 +81,6 @@ export function describeCommand(
       consoleMessages.length = 0
     })
 
-    func({ consoleMessages, getNthLastMessage, getLastMessage, hasMessageContaining, configFolderPath })
+    func({ consoleMessages, getNthLastMessage, getLastMessage, hasMessageContaining, configFolderPath, configFilePath })
   })
 }
