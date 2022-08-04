@@ -2,6 +2,7 @@ import crypto from 'crypto'
 import { BeeDebug } from '@ethersphere/bee-js'
 import fs from 'fs/promises'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
+import { utils } from 'ethers'
 
 export function getRandomString(length = 20): string {
   return crypto.randomBytes(length).toString('hex').substring(0, length)
@@ -60,7 +61,7 @@ export async function createUsableBatch(): Promise<void> {
 /**
  * Top up wallet for account registration
  */
-export async function topUpWallet(path: string, name: string): Promise<void> {
+export async function topUpWallet(path: string, name: string, amountInEther = '1'): Promise<void> {
   const data = JSON.parse(await fs.readFile(path, 'utf8'))
   const address = '0x' + data.identities[name].wallet.address
   const fdp = new FdpStorage(beeUrl(), beeDebugUrl())
@@ -70,7 +71,7 @@ export async function topUpWallet(path: string, name: string): Promise<void> {
     {
       from: account,
       to: address,
-      value: '0x2386f26fc10000', // 0.01 ETH
+      value: utils.hexlify(utils.parseEther(amountInEther)),
     },
   ])
 
