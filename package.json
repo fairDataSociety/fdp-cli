@@ -29,8 +29,8 @@
     "test": "jest --config=jest.config.ts",
     "types:check": "tsc --project tsconfig.test.json",
     "start": "ts-node src/index.ts",
-    "lint": "eslint --fix \"src/**/*.ts\" && prettier --write \"src/**/*.ts\"",
-    "lint:check": "eslint \"src/**/*.ts\" && prettier --check \"src/**/*.ts\""
+    "lint": "eslint --fix \"src/**/*.ts\" \"test/**/*.ts\" && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint:check": "eslint \"src/**/*.ts\" \"test/**/*.ts\" && prettier --check \"src/**/*.ts\" \"test/**/*.ts\""
   },
   "engines": {
     "node": ">=12.0.0",
