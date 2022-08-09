@@ -1,2 +1,2 @@
-export { V3Keystore, SimpleWallet } from './wallet'
-export { IdentityWallet, IdentityType, Identity, IdentityTypeArray } from './identity'
+export { V3Keystore } from './wallet'
+export { Identity } from './identity'

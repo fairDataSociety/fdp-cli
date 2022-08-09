@@ -1,15 +1,5 @@
-import { SimpleWallet, V3Keystore } from './wallet'
-
-export type IdentityWallet = V3Keystore | SimpleWallet
-
-export enum IdentityType {
-  simple,
-  v3,
-}
+import { V3Keystore } from './wallet'
 
 export interface Identity {
-  wallet: IdentityWallet
-  identityType: IdentityType
+  encryptedWallet: V3Keystore
 }
-
-export const IdentityTypeArray = Object.values(IdentityType).filter(String)

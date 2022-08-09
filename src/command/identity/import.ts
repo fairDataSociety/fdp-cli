@@ -1,24 +1,24 @@
-import { Wallet } from 'ethers'
+import { utils, Wallet } from 'ethers'
 import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { IdentityType } from '../../service/identity/types'
-import { expectFile, getFieldOrNull, isPrivateKey, normalizePrivateKey } from '../../utils'
+import { V3Keystore } from '../../service/identity/types'
+import { expectFile, getFieldOrNull } from '../../utils'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { createAndRunSpinner } from '../../utils/spinner'
 import { RootCommand } from '../root-command'
-import { VerbosityLevel } from '../root-command/command-log'
-import { walletToV3 } from '../../utils/wallet'
+import { assertV3ConvertsToMnemonic, mnemonicToV3, walletToV3 } from '../../utils/wallet'
+import { isV3Wallet } from '../../service/identity'
 
 export class Import extends RootCommand implements LeafCommand {
   public readonly name = 'import'
 
-  public readonly description = 'Import private key or V3 wallet as a new identity'
+  public readonly description = 'Import mnemonic or V3 wallet as a new identity'
 
   @Argument({
     key: 'resource',
     required: true,
-    description: 'Private key string or path to file with V3 Wallet or private key',
+    description: 'Mnemonic string or path to file with V3 Wallet',
     autocompletePath: true,
   })
   public resource!: string
@@ -26,7 +26,7 @@ export class Import extends RootCommand implements LeafCommand {
   @Option({ key: 'name', alias: 'i', description: 'Name of the identity to be saved as', required: true })
   public identityName!: string
 
-  @Option({ key: 'password', alias: 'P', description: 'Password for the V3 wallet' })
+  @Option({ key: 'password', alias: 'P', description: 'Password for the V3 wallet', required: true })
   public password!: string
 
   public async run(): Promise<void> {
@@ -36,14 +36,14 @@ export class Import extends RootCommand implements LeafCommand {
       throw new CommandLineError(Message.identityNameConflict(this.identityName))
     }
 
-    if (isPrivateKey(this.resource)) {
-      await this.runImportOnPrivateKey()
+    if (utils.isValidMnemonic(this.resource)) {
+      await this.runImportOnMnemonic()
     } else {
       expectFile(this.resource)
       this.resource = readFileSync(this.resource, 'utf-8')
 
-      if (isPrivateKey(this.resource)) {
-        await this.runImportOnPrivateKey()
+      if (utils.isValidMnemonic(this.resource)) {
+        await this.runImportOnMnemonic()
       } else {
         if (!this.password) {
           this.console.log(Message.optionNotDefined('password'))
@@ -63,70 +63,42 @@ export class Import extends RootCommand implements LeafCommand {
     }
   }
 
-  private async runImportOnPrivateKey(): Promise<void> {
-    if (await this.shouldConvertToV3Wallet()) {
-      await this.convertPrivateKeyToV3Wallet()
-    } else {
-      const data = {
-        wallet: {
-          privateKey: this.resource,
-        },
-        identityType: IdentityType.simple,
-      }
-
-      if (!this.commandConfig.saveIdentity(this.identityName, data)) {
-        throw new CommandLineError(Message.identityNameConflictOption(this.identityName))
-      }
-      this.console.log(`Private key imported as identity '${this.identityName}' successfully`)
+  private async runImportOnMnemonic(): Promise<void> {
+    const data = {
+      encryptedWallet: await mnemonicToV3(this.resource, this.password),
     }
+
+    if (!this.commandConfig.saveIdentity(this.identityName, data)) {
+      throw new CommandLineError(Message.identityNameConflictOption(this.identityName))
+    }
+
+    this.console.log(`Mnemonic imported as identity '${this.identityName}' successfully`)
   }
 
   private async decryptV3Wallet(data: string): Promise<Wallet> {
+    const v3 = JSON.parse(data) as V3Keystore
+
+    if (!isV3Wallet(v3)) {
+      throw new CommandLineError(Message.invalidV3Wallet())
+    }
+
     try {
-      return await Wallet.fromEncryptedJson(data, this.password)
+      await assertV3ConvertsToMnemonic(v3, this.password)
+
+      return Wallet.fromEncryptedJson(data, this.password)
     } catch (error: unknown) {
       const message: string = getFieldOrNull(error, 'message') || 'unknown error'
       throw new CommandLineError(`Failed to decrypt wallet: ${message}`)
     }
   }
 
-  private async convertPrivateKeyToV3Wallet(): Promise<void> {
-    if (!this.password) {
-      this.console.log(Message.optionNotDefined('password'))
-      this.password = await this.console.askForPasswordWithConfirmation(
-        Message.newV3Password(),
-        Message.newV3PasswordConfirmation(),
-      )
-    }
-    const wallet = new Wallet(Buffer.from(normalizePrivateKey(this.resource), 'hex'))
-    await this.saveWallet(wallet)
-    this.console.log(`V3 Wallet imported as identity '${this.identityName}' successfully`)
-  }
-
   private async saveWallet(wallet: Wallet): Promise<void> {
     const data = {
-      wallet: await walletToV3(wallet, this.password),
-      identityType: IdentityType.v3,
+      encryptedWallet: await walletToV3(wallet, this.password),
     }
 
     if (!this.commandConfig.saveIdentity(this.identityName, data)) {
       throw new CommandLineError(Message.identityNameConflict(this.identityName))
     }
-  }
-
-  private async shouldConvertToV3Wallet(): Promise<boolean> {
-    if (this.yes) {
-      return false
-    }
-
-    if (this.password) {
-      return true
-    }
-
-    if (this.verbosity !== VerbosityLevel.Quiet) {
-      return await this.console.confirmAndDelete('Convert private key to a secure V3 wallet?')
-    }
-
-    return false
   }
 }

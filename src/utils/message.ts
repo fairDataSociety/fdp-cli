@@ -26,16 +26,20 @@ function existingV3Password(): string {
   return 'Enter the current password of the V3 wallet'
 }
 
-function newV3Password(): string {
-  return 'Enter a new password for the V3 wallet'
+function newMnemonicPassword(): string {
+  return 'Enter a new password for the mnemonic'
 }
 
-function newV3PasswordConfirmation(): string {
-  return 'Enter the new password again for the V3 wallet'
+function newMnemonicPasswordConfirmation(): string {
+  return 'Enter the new password again for the mnemonic'
 }
 
 function requireOptionConfirmation(option: string, message: string): string {
   return `${message}. Pass the --${option} option to allow it`
+}
+
+function invalidV3Wallet(): string {
+  return 'Received data is not a valid V3 wallet'
 }
 
 export const Message = {
@@ -46,7 +50,8 @@ export const Message = {
   noSuchIdentity,
   optionNotDefined,
   existingV3Password,
-  newV3Password,
-  newV3PasswordConfirmation,
+  newMnemonicPassword,
+  newMnemonicPasswordConfirmation,
   requireOptionConfirmation,
+  invalidV3Wallet,
 }

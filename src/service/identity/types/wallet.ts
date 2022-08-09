@@ -15,7 +15,7 @@ interface PBKDFParamsOut {
 declare type KDFParamsOut = ScryptKDFParamsOut | PBKDFParamsOut
 
 export interface V3Keystore {
-  crypto: {
+  Crypto: {
     cipher: string
     cipherparams: {
       iv: string
@@ -27,9 +27,14 @@ export interface V3Keystore {
   }
   id: string
   version: number
-  address?: string
-}
-
-export interface SimpleWallet {
-  privateKey: string
+  address: string
+  'x-ethers': {
+    client: string
+    gethFilename: string
+    mnemonicCounter: string
+    mnemonicCiphertext: string
+    path: string
+    locale: string
+    version: string
+  }
 }

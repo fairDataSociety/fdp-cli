@@ -1,5 +1,4 @@
 import { Wallet } from 'ethers'
-import { getPrintableIdentityType } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
@@ -31,7 +30,7 @@ export class IdentityCommand extends RootCommand {
     }
 
     const choices = Object.entries(this.commandConfig.config.identities).map(x => ({
-      name: `${x[0]} (${getPrintableIdentityType(x[1].identityType)})`,
+      name: `${x[0]} (0x${x[1].encryptedWallet.address})`,
       value: x[0],
     }))
     const selection = await this.console.promptList(choices, 'Select an identity for this action')
@@ -40,13 +39,13 @@ export class IdentityCommand extends RootCommand {
   }
 
   protected printWallet(wallet: Wallet): void {
-    this.console.log(createKeyValue('Private key', wallet.privateKey))
+    this.console.log(createKeyValue('Mnemonic', wallet.mnemonic.phrase))
     this.console.log(createKeyValue('Public key', wallet.publicKey))
     this.console.log(createKeyValue('Address', wallet.address))
   }
 
   protected printWalletQuietly(wallet: Wallet): void {
-    this.console.quiet(wallet.privateKey)
+    this.console.quiet(wallet.mnemonic.phrase)
     this.console.quiet(wallet.publicKey)
     this.console.quiet(wallet.address)
   }

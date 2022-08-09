@@ -1,8 +1,6 @@
-import { Wallet } from 'ethers'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
-import { isSimpleWallet, isV3Wallet } from '../../service/identity'
-import { normalizePrivateKey } from '../../utils'
+import { isV3Wallet } from '../../service/identity'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { IdentityCommand } from './identity-command'
@@ -25,15 +23,12 @@ export class Show extends IdentityCommand implements LeafCommand {
 
     await this.maybePromptForSensitive()
 
-    if (isV3Wallet(identity.wallet, identity.identityType)) {
+    if (isV3Wallet(identity.encryptedWallet)) {
       if (!this.password) {
         this.password = await this.console.askForPassword(Message.existingV3Password())
       }
-      const wallet = await v3ToWallet(identity.wallet, this.password)
-      this.printWallet(wallet)
-      this.printWalletQuietly(wallet)
-    } else if (isSimpleWallet(identity.wallet, identity.identityType)) {
-      const wallet = new Wallet(Buffer.from(normalizePrivateKey(identity.wallet.privateKey), 'hex'))
+
+      const wallet = await v3ToWallet(identity.encryptedWallet, this.password)
       this.printWallet(wallet)
       this.printWalletQuietly(wallet)
     } else {

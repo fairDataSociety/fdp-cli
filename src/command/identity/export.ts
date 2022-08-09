@@ -1,7 +1,6 @@
 import { writeFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { isSimpleWallet } from '../../service/identity'
-import { IdentityType } from '../../service/identity/types'
+import { isV3Wallet } from '../../service/identity'
 import { CommandLineError } from '../../utils/error'
 import { IdentityCommand } from './identity-command'
 
@@ -24,10 +23,8 @@ export class Export extends IdentityCommand implements LeafCommand {
     await super.init()
     const { identity } = await this.getOrPickIdentity(this.identityName)
 
-    if (identity.identityType === IdentityType.v3) {
-      this.writeIdentityString(JSON.stringify(identity.wallet, null, 4))
-    } else if (isSimpleWallet(identity.wallet, identity.identityType)) {
-      this.writeIdentityString(identity.wallet.privateKey)
+    if (isV3Wallet(identity.encryptedWallet)) {
+      this.writeIdentityString(JSON.stringify(identity.encryptedWallet, null, 4))
     } else {
       throw new CommandLineError('Unsupported identity type')
     }

@@ -64,7 +64,7 @@ export async function createUsableBatch(): Promise<void> {
 export async function topUpWallet(path: string, name: string, amountInEther = '1'): Promise<void> {
   const data = JSON.parse(await fs.readFile(path, 'utf8'))
 
-  const walletAddress = data.identities[name]?.wallet?.address
+  const walletAddress = data.identities[name]?.encryptedWallet?.address
 
   if (!walletAddress) {
     throw new Error(`Wallet for ${name} no found`)

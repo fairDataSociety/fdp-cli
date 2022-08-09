@@ -35,13 +35,13 @@ export class Register extends AccountCommand implements LeafCommand {
     this.validateBeeDebugAvailable()
     const spinner = createSpinner('Registering new user. This may take a while.')
     try {
-      const wallet = await this.getWallet()
+      const mnemonic = await this.getMnemonic()
 
       if (this.verbosity !== VerbosityLevel.Quiet) {
         spinner.start()
       }
 
-      this.fdpStorage.account.setActiveAccount(wallet)
+      this.fdpStorage.account.setAccountFromMnemonic(mnemonic)
       await this.fdpStorage.account.register(this.fdpUsername, this.fdpPassword)
       this.console.log(createKeyValue('Username', this.fdpUsername))
     } finally {

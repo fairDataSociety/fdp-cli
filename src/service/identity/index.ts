@@ -1,49 +1,25 @@
-import { Wallet } from 'ethers'
 import { CommandConfig } from '../../command/root-command/command-config'
 import { CommandLog } from '../../command/root-command/command-log'
 import { CommandLineError } from '../../utils/error'
-import { hexToBytes } from '../../utils/hex'
 import { Message } from '../../utils/message'
-import { Identity, IdentityType, IdentityWallet, SimpleWallet, V3Keystore } from './types'
-import { v3ToWallet } from '../../utils/wallet'
+import { Identity, V3Keystore } from './types'
+import { v3ToMnemonic } from '../../utils/wallet'
 
-export function getPrintableIdentityType(type: IdentityType): string {
-  switch (type) {
-    case IdentityType.simple:
-      return 'Private Key'
-    case IdentityType.v3:
-      return 'V3 Wallet'
-    default:
-      return 'Unknown'
-  }
+export function isV3Wallet(wallet: V3Keystore): wallet is V3Keystore {
+  const data = wallet as V3Keystore
+
+  return data.address.length > 0 && typeof data.Crypto === 'object' && data.id.length > 0 && !isNaN(data.version)
 }
 
-export function isSimpleWallet(wallet: IdentityWallet, identityType: IdentityType): wallet is SimpleWallet {
-  return identityType === IdentityType.simple
-}
-
-export function isV3Wallet(wallet: IdentityWallet, identityType: IdentityType): wallet is V3Keystore {
-  return identityType === IdentityType.v3
-}
-
-export function getSimpleWallet(wallet: SimpleWallet): Wallet {
-  const privateKeyBytes = hexToBytes(wallet.privateKey)
-
-  return new Wallet(Buffer.from(privateKeyBytes))
-}
-
-/** Used when identity's wallet is not sure which type */
-export async function getWalletFromIdentity(
+export async function getMnemonicFromIdentity(
   console: CommandLog,
   quiet: boolean,
   identity: Identity,
   password?: string,
-): Promise<Wallet> {
-  const { wallet, identityType } = identity
+): Promise<string> {
+  const { encryptedWallet } = identity
 
-  if (isSimpleWallet(wallet, identityType)) {
-    return getSimpleWallet(wallet)
-  } else if (isV3Wallet(wallet, identityType)) {
+  if (isV3Wallet(encryptedWallet)) {
     if (!password) {
       if (quiet) {
         throw new CommandLineError('Password must be passed with the --password option in quiet mode')
@@ -51,10 +27,10 @@ export async function getWalletFromIdentity(
       password = await console.askForPassword('Please provide the password for this V3 Wallet')
     }
 
-    return v3ToWallet(wallet, password)
+    return v3ToMnemonic(encryptedWallet, password)
   }
 
-  throw new CommandLineError(`Wrong identity 'typeOfWallet' value: ${identity.identityType}`)
+  throw new CommandLineError(`Wrong identity type`)
 }
 
 export function pickIdentity(commandConfig: CommandConfig, console: CommandLog): Promise<string> {

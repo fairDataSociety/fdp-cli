@@ -1,8 +1,6 @@
-import { randomBytes } from 'crypto'
 import { Wallet } from 'ethers'
 import { Argument, LeafCommand, Option, Utils } from 'furious-commander'
-import { getPrintableIdentityType } from '../../service/identity'
-import { Identity, IdentityType } from '../../service/identity/types'
+import { Identity } from '../../service/identity/types'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { createAndRunSpinner } from '../../utils/spinner'
@@ -13,22 +11,13 @@ import { walletToV3 } from '../../utils/wallet'
 export class Create extends IdentityCommand implements LeafCommand {
   public readonly name = 'create'
 
-  public readonly description = 'Create Ethereum compatible keypair to sign chunks'
+  public readonly description = "Create Ethereum compatible mnemonic to manage account's data"
 
   @Argument({ key: 'name', default: 'main', description: 'Reference name of the generated identity' })
   public identityName!: string
 
   @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
   public password!: string
-
-  @Option({
-    key: 'only-keypair',
-    alias: 'k',
-    type: 'boolean',
-    description:
-      'Generate only the keypair for the identity. The private key will be stored cleartext. Fast to generate',
-  })
-  public onlyKeypair!: boolean
 
   public async run(): Promise<void> {
     await super.init()
@@ -41,8 +30,8 @@ export class Create extends IdentityCommand implements LeafCommand {
       throw new CommandLineError(Message.identityNameConflictArgument(this.identityName))
     }
 
-    const wallet = Create.generateWallet()
-    const identity = this.onlyKeypair ? Create.createPrivateKeyIdentity(wallet) : await this.createV3Identity(wallet)
+    const wallet = Wallet.createRandom()
+    const identity = await this.createMnemonicIdentity(wallet.mnemonic.phrase)
 
     const saved = this.commandConfig.saveIdentity(this.identityName, identity)
 
@@ -51,7 +40,6 @@ export class Create extends IdentityCommand implements LeafCommand {
     }
 
     this.console.log(createKeyValue('Name', this.identityName))
-    this.console.log(createKeyValue('Type', getPrintableIdentityType(identity.identityType)))
     this.printWallet(wallet)
     this.printWalletQuietly(wallet)
     this.console.info(
@@ -59,37 +47,22 @@ export class Create extends IdentityCommand implements LeafCommand {
     )
   }
 
-  private async createV3Identity(wallet: Wallet): Promise<Identity> {
+  private async createMnemonicIdentity(mnemonic: string): Promise<Identity> {
     if (!this.password) {
       this.console.log(Message.optionNotDefined('password'))
-      this.console.info('If you want to create passwordless keypair, use the --only-keypair option')
       this.password = await this.console.askForPasswordWithConfirmation(
-        Message.newV3Password(),
-        Message.newV3PasswordConfirmation(),
+        Message.newMnemonicPassword(),
+        Message.newMnemonicPasswordConfirmation(),
       )
     }
-    const spinner = createAndRunSpinner('Creating V3 wallet...', this.verbosity)
-    const v3 = await walletToV3(wallet, this.password)
+
+    const spinner = createAndRunSpinner('Creating mnemonic...', this.verbosity)
+    const encryptedWallet = await walletToV3(Wallet.fromMnemonic(mnemonic), this.password)
+
     spinner.stop()
 
     return {
-      wallet: v3,
-      identityType: IdentityType.v3,
+      encryptedWallet,
     }
-  }
-
-  private static createPrivateKeyIdentity(wallet: Wallet): Identity {
-    return {
-      wallet: {
-        privateKey: wallet.privateKey,
-      },
-      identityType: IdentityType.simple,
-    }
-  }
-
-  private static generateWallet(): Wallet {
-    const privateKey = randomBytes(32)
-
-    return new Wallet(privateKey)
   }
 }

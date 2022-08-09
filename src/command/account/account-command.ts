@@ -1,8 +1,7 @@
 import { Option } from 'furious-commander'
 import { RootCommand } from '../root-command'
 import { exit } from 'process'
-import { Wallet } from 'ethers'
-import { getWalletFromIdentity, pickIdentity } from '../../service/identity'
+import { getMnemonicFromIdentity, pickIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 
 export class AccountCommand extends RootCommand {
@@ -21,10 +20,10 @@ export class AccountCommand extends RootCommand {
     await super.init()
   }
 
-  protected async getWallet(): Promise<Wallet> {
+  protected async getMnemonic(): Promise<string> {
     const identity = await this.getIdentity()
 
-    return await getWalletFromIdentity(this.console, this.quiet, identity, this.password)
+    return getMnemonicFromIdentity(this.console, this.quiet, identity, this.password)
   }
 
   private async getIdentity(): Promise<Identity> {
