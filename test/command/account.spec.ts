@@ -12,10 +12,10 @@ describeCommand(
       const username = getRandomString()
       const password = getRandomString()
 
-      await invokeTestCli(['identity', 'create', 'test', '--password', 'test'])
+      await invokeTestCli(['identity', 'create', 'test', '--password', password])
       consoleMessages.length = 0
       await topUpWallet(configFilePath, 'test')
-      await invokeTestCli(['account', 'register', username, password, '--identity', 'test', '--password', 'test'])
+      await invokeTestCli(['account', 'register', username, '--identity', 'test', '--password', password])
       expect(consoleMessages[0]).toContain(`Username:`)
       expect(consoleMessages[0]).toContain(`${username}`)
     })

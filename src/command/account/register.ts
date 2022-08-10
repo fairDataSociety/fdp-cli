@@ -14,20 +14,10 @@ export class Register extends AccountCommand implements LeafCommand {
     description: 'Username for the FDP account',
     type: 'string',
     required: true,
-    minimumLength: 1,
+    minimumLength: 8,
     maximumLength: 255,
   })
-  public fdpUsername!: string
-
-  @Argument({
-    key: 'fdpPassword',
-    description: 'Password for the FDP account',
-    type: 'string',
-    required: true,
-    minimumLength: 1,
-    maximumLength: 255,
-  })
-  public fdpPassword!: string
+  public username!: string
 
   public async run(): Promise<void> {
     await super.init()
@@ -42,8 +32,8 @@ export class Register extends AccountCommand implements LeafCommand {
       }
 
       this.fdpStorage.account.setAccountFromMnemonic(mnemonic)
-      await this.fdpStorage.account.register(this.fdpUsername, this.fdpPassword)
-      this.console.log(createKeyValue('Username', this.fdpUsername))
+      await this.fdpStorage.account.register(this.username, this.password)
+      this.console.log(createKeyValue('Username', this.username))
     } finally {
       spinner.stop()
     }

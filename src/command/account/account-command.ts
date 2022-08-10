@@ -13,7 +13,14 @@ export class AccountCommand extends RootCommand {
   })
   public identity!: string
 
-  @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
+  @Option({
+    key: 'password',
+    alias: 'P',
+    description: 'Password for the wallet',
+    required: true,
+    minimumLength: 8,
+    maximumLength: 255,
+  })
   public password!: string
 
   protected async init(): Promise<void> {
