@@ -5,7 +5,7 @@
 ## Table of Contents
 
 - [Installation](#installation)
-  - [npm](#From npm)
+  - [npm](#from-npm)
 - [Contribute](#contribute)
 - [License](#license)
 
