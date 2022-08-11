@@ -6,6 +6,7 @@
 
 - [Installation](#installation)
   - [npm](#from-npm)
+- [Usage](#contribute)
 - [Contribute](#contribute)
 - [License](#license)
 
@@ -25,19 +26,19 @@ After the project has been cloned, the dependencies must be
 installed. Run the following in the project folder:
 
 ```sh
- $ npm ci
+npm ci
 ```
 
 Then you need to compile the TypeScript code:
 
 ```sh
- $ npm run compile
+npm run compile
 ```
 
 To make the local `fdp-cli` files in the `dist/` directory available as a global package:
 
 ```sh
- $ npm link
+npm link
 ```
 
 If all went well you should be able to run `fdp-cli`.
@@ -45,6 +46,24 @@ If all went well you should be able to run `fdp-cli`.
 If `npm link` fails, or you don't want to install anything, then you
 can use `node dist/index.js` to run `fdp-cli` from the checked out
 directory.
+
+## Usage
+
+Create an identity for managing FDP account's data
+
+```sh
+fdp-cli account create
+```
+
+Make your identity portable between devices.
+
+This action will upload the encrypted identity to swarm and you will be able to use your username and password to access your account. The username will be registered with ENS. To perform this action, your wallet must be replenished with at least 0.01 token of the current network.
+
+**This action is optional and you can manage your account information without registering.**
+
+```sh
+fdp-cli account register YOUR_USERNAME
+```
 
 ## Contribute
 

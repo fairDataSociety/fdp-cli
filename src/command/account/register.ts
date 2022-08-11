@@ -11,6 +11,7 @@ import {
 import { createKeyValue } from '../../utils/text'
 import { Message } from '../../utils/message'
 import { CommandLineError } from '../../utils/error'
+import { getFieldOrNull } from '../../utils'
 
 export class Register extends AccountCommand implements LeafCommand {
   public readonly name = 'register'
@@ -53,6 +54,10 @@ export class Register extends AccountCommand implements LeafCommand {
 
       this.fdpStorage.account.setAccountFromMnemonic(mnemonic)
       isRegistered = Boolean(await this.fdpStorage.account.register(this.username, this.accountPassword))
+    } catch (error: unknown) {
+      const ensError = getFieldOrNull(error, 'error')
+      const message: string = getFieldOrNull(error, 'message') || getFieldOrNull(ensError, 'message') || 'unknown error'
+      throw new CommandLineError(`Failed to register account: ${message}`)
     } finally {
       if (spinner.isSpinning) {
         spinner.stop()

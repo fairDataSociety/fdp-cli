@@ -10,18 +10,19 @@ describeCommand(
 
     it('should register portable FDP account', async () => {
       const username = getRandomString()
+      const identity = getRandomString()
       const identityPassword = getRandomString()
       const accountPassword = getRandomString()
 
-      await invokeTestCli(['account', 'create', 'test', '--password', identityPassword])
+      await invokeTestCli(['account', 'create', identity, '--password', identityPassword])
       consoleMessages.length = 0
-      await topUpWallet(configFilePath, 'test')
+      await topUpWallet(configFilePath, identity)
       await invokeTestCli([
         'account',
         'register',
         username,
         '--identity',
-        'test',
+        identity,
         '--password',
         identityPassword,
         '--account-password',
@@ -30,6 +31,28 @@ describeCommand(
       expect(consoleMessages[0]).toContain('New account registered successfully!')
       expect(consoleMessages[1]).toContain('Username:')
       expect(consoleMessages[1]).toContain(`${username}`)
+    })
+
+    it('should fail during registration portable FDP account with insufficient balance', async () => {
+      const username = getRandomString()
+      const identity = getRandomString()
+      const identityPassword = getRandomString()
+      const accountPassword = getRandomString()
+
+      await invokeTestCli(['account', 'create', identity, '--password', identityPassword])
+      consoleMessages.length = 0
+      await invokeTestCli([
+        'account',
+        'register',
+        username,
+        '--identity',
+        identity,
+        '--password',
+        identityPassword,
+        '--account-password',
+        accountPassword,
+      ])
+      expect(consoleMessages[0]).toContain('Failed to register account: insufficient funds for gas * price + value')
     })
 
     it('should fail on incorrect username length', async () => {
