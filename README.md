@@ -6,7 +6,8 @@
 
 - [Installation](#installation)
   - [npm](#from-npm)
-- [Usage](#contribute)
+- [Usage](#usage)
+- [Development](#development)
 - [Contribute](#contribute)
 - [License](#license)
 
@@ -18,6 +19,24 @@ To install globally (requires `npm root --global` to be writable):
 
 ```sh
 npm install --global @fairdatasociety/fdp-cli
+```
+
+## Usage
+
+Create an identity for managing FDP account's data. The identity will only be stored on your device.
+
+```sh
+fdp-cli account create IDENTITY_NAME
+```
+
+Make your identity portable between devices.
+
+This action will upload the encrypted identity to swarm and you will be able to use your username and password to access your account. The username will be registered in ENS. To perform this action, your wallet must be topped up with at least 0.01 token of the current network.
+
+**This action is optional and you can manage your account information without registering.**
+
+```sh
+fdp-cli account register YOUR_USERNAME
 ```
 
 # Development
@@ -46,24 +65,6 @@ If all went well you should be able to run `fdp-cli`.
 If `npm link` fails, or you don't want to install anything, then you
 can use `node dist/index.js` to run `fdp-cli` from the checked out
 directory.
-
-## Usage
-
-Create an identity for managing FDP account's data
-
-```sh
-fdp-cli account create
-```
-
-Make your identity portable between devices.
-
-This action will upload the encrypted identity to swarm and you will be able to use your username and password to access your account. The username will be registered with ENS. To perform this action, your wallet must be replenished with at least 0.01 token of the current network.
-
-**This action is optional and you can manage your account information without registering.**
-
-```sh
-fdp-cli account register YOUR_USERNAME
-```
 
 ## Contribute
 
