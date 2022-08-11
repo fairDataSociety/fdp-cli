@@ -54,6 +54,10 @@ function invalidV3Wallet(): string {
   return 'Received data is not a valid V3 wallet'
 }
 
+function invalidMnemonic(): string {
+  return 'Received data is not a valid mnemonic'
+}
+
 function newAccountRegistered(): string {
   return 'New account registered successfully!'
 }
@@ -81,6 +85,7 @@ export const Message = {
   newAccountPassword,
   newAccountPasswordConfirmation,
   invalidV3Wallet,
+  invalidMnemonic,
   newAccountRegistered,
   passwordLengthError,
   topUpBalance,

@@ -1,24 +1,21 @@
-import { utils, Wallet } from 'ethers'
+import { utils } from 'ethers'
 import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { V3Keystore } from '../../service/identity/types'
-import { expectFile, getFieldOrNull } from '../../utils'
+import { expectFile } from '../../utils'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
-import { createAndRunSpinner } from '../../utils/spinner'
 import { RootCommand } from '../root-command'
-import { assertV3ConvertsToMnemonic, mnemonicToV3, walletToV3 } from '../../utils/wallet'
-import { isV3Wallet } from '../../service/identity'
+import { mnemonicToV3 } from '../../utils/wallet'
 
 export class Import extends RootCommand implements LeafCommand {
   public readonly name = 'import'
 
-  public readonly description = 'Import mnemonic or V3 wallet as a new identity'
+  public readonly description = 'Import mnemonic or a file with mnemonic as a new identity'
 
   @Argument({
     key: 'resource',
     required: true,
-    description: 'Mnemonic string or path to file with V3 Wallet',
+    description: 'Mnemonic string or path to a file with mnemonic',
     autocompletePath: true,
   })
   public resource!: string
@@ -42,24 +39,11 @@ export class Import extends RootCommand implements LeafCommand {
       expectFile(this.resource)
       this.resource = readFileSync(this.resource, 'utf-8')
 
-      if (utils.isValidMnemonic(this.resource)) {
-        await this.runMnemonicImport()
-      } else {
-        if (!this.password) {
-          this.console.log(Message.optionNotDefined('password'))
-          this.password = await this.console.askForPassword(Message.existingV3Password())
-        }
-        const spinner = createAndRunSpinner('Decrypting V3 wallet...', this.verbosity)
-        try {
-          const wallet: Wallet = await this.decryptV3Wallet(this.resource, this.password)
-
-          spinner.text = 'Importing V3 wallet...'
-          await this.saveWallet(wallet)
-        } finally {
-          spinner.stop()
-        }
-        this.console.log(`V3 Wallet imported as identity '${this.identityName}' successfully`)
+      if (!utils.isValidMnemonic(this.resource)) {
+        throw new CommandLineError(Message.invalidMnemonic())
       }
+
+      await this.runMnemonicImport()
     }
   }
 
@@ -76,38 +60,5 @@ export class Import extends RootCommand implements LeafCommand {
     }
 
     this.console.log(`Mnemonic imported as identity '${this.identityName}' successfully`)
-  }
-
-  /**
-   * Decrypts V3 wallet with the password
-   */
-  private async decryptV3Wallet(data: string, password: string): Promise<Wallet> {
-    const v3 = JSON.parse(data) as V3Keystore
-
-    if (!isV3Wallet(v3)) {
-      throw new CommandLineError(Message.invalidV3Wallet())
-    }
-
-    try {
-      await assertV3ConvertsToMnemonic(v3, password)
-
-      return Wallet.fromEncryptedJson(data, password)
-    } catch (error: unknown) {
-      const message: string = getFieldOrNull(error, 'message') || 'unknown error'
-      throw new CommandLineError(`Failed to decrypt wallet: ${message}`)
-    }
-  }
-
-  /**
-   * Saves wallet to the config as a new identity
-   */
-  private async saveWallet(wallet: Wallet): Promise<void> {
-    const data = {
-      encryptedWallet: await walletToV3(wallet, this.password),
-    }
-
-    if (!this.commandConfig.saveIdentity(this.identityName, data)) {
-      throw new CommandLineError(Message.identityNameConflict(this.identityName))
-    }
   }
 }
