@@ -8,6 +8,7 @@
   - [npm](#from-npm)
 - [Usage](#usage)
 - [Development](#development)
+- [System environment](#system-environment)
 - [Contribute](#contribute)
 - [License](#license)
 
@@ -65,6 +66,15 @@ If all went well you should be able to run `fdp-cli`.
 If `npm link` fails, or you don't want to install anything, then you
 can use `node dist/index.js` to run `fdp-cli` from the checked out
 directory.
+
+## System environment
+
+With specific system environment variables you can alter the behaviour of the CLI
+
+* `BEE_API_URL` - API URL of Bee client
+* `BEE_DEBUG_API_URL` - Debug API URL of Bee client
+* `FDP_CLI_CONFIG_FOLDER` - full path to a configuration folder
+* `FDP_CLI_CONFIG_FILE` - configuration file name, defaults to config.json
 
 ## Contribute
 
