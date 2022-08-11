@@ -79,7 +79,7 @@ export async function topUpWallet(path: string, name: string, amountInEther = '1
   const fdp = new FdpStorage(beeUrl(), beeDebugUrl())
 
   const account = (await fdp.ens.provider.listAccounts())[0]
-  await fdp.ens.provider.send('eth_sendTransaction', [
+  const txHash = await fdp.ens.provider.send('eth_sendTransaction', [
     {
       from: account,
       to: address,
@@ -87,5 +87,5 @@ export async function topUpWallet(path: string, name: string, amountInEther = '1
     },
   ])
 
-  await fdp.ens.provider.send('evm_mine', [1])
+  await fdp.ens.provider.waitForTransaction(txHash)
 }
