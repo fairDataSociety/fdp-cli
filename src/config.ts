@@ -1,7 +1,6 @@
 import { IOption } from 'furious-commander'
 import { getPackageVersion } from './utils'
 import { Account } from './command/account'
-import { Identity } from './command/identity'
 
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',
@@ -72,7 +71,7 @@ export const yes: IOption<string[]> = {
   description: 'Agree to all prompts',
 }
 
-export const rootCommandClasses = [Account, Identity]
+export const rootCommandClasses = [Account]
 
 export const optionParameters: IOption<unknown>[] = [
   beeApiUrl,

@@ -1,21 +1,18 @@
-import { Argument, LeafCommand, Option } from 'furious-commander'
+import { Argument, LeafCommand } from 'furious-commander'
 import { exit } from 'process'
 import { isV3Wallet } from '../../service/identity'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
-import { IdentityCommand } from './identity-command'
+import { AccountCommand } from './account-command'
 import { v3ToWallet } from '../../utils/wallet'
 
-export class Show extends IdentityCommand implements LeafCommand {
+export class Show extends AccountCommand implements LeafCommand {
   public readonly name = 'show'
 
   public readonly description = 'Print private key, public key and address of an identity'
 
   @Argument({ key: 'name', description: 'Name of the identity to show' })
   public identityName!: string
-
-  @Option({ key: 'password', alias: 'P', description: 'Password of the wallet' })
-  public password!: string
 
   public async run(): Promise<void> {
     await super.init()
@@ -36,6 +33,9 @@ export class Show extends IdentityCommand implements LeafCommand {
     }
   }
 
+  /**
+   * Prompts warning about sensitive information output
+   */
   private async maybePromptForSensitive(): Promise<void | never> {
     if (this.yes) {
       return

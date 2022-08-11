@@ -2,9 +2,10 @@ import { writeFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { isV3Wallet } from '../../service/identity'
 import { CommandLineError } from '../../utils/error'
-import { IdentityCommand } from './identity-command'
+import { AccountCommand } from './account-command'
+import { V3Keystore } from '../../service/identity/types'
 
-export class Export extends IdentityCommand implements LeafCommand {
+export class Export extends AccountCommand implements LeafCommand {
   public readonly name = 'export'
 
   public readonly description = 'Export identity'
@@ -24,13 +25,18 @@ export class Export extends IdentityCommand implements LeafCommand {
     const { identity } = await this.getOrPickIdentity(this.identityName)
 
     if (isV3Wallet(identity.encryptedWallet)) {
-      this.writeIdentityString(JSON.stringify(identity.encryptedWallet, null, 4))
+      this.writeIdentity(identity.encryptedWallet)
     } else {
       throw new CommandLineError('Unsupported identity type')
     }
   }
 
-  private writeIdentityString(identity: string): void {
+  /**
+   * Writes the identity to a file or to the console
+   */
+  private writeIdentity(data: V3Keystore): void {
+    const identity = JSON.stringify(data, null, 4)
+
     if (this.outFile) {
       writeFileSync(this.outFile, identity)
     } else {

@@ -1,9 +1,9 @@
 import { Argument, LeafCommand } from 'furious-commander'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
-import { IdentityCommand } from './identity-command'
+import { AccountCommand } from './account-command'
 
-export class Rename extends IdentityCommand implements LeafCommand {
+export class Rename extends AccountCommand implements LeafCommand {
   public readonly name = 'rename'
 
   public readonly alias = 'mv'

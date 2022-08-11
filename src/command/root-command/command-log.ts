@@ -116,12 +116,21 @@ export class CommandLog {
    *
    * @returns password
    */
-  public async askForPasswordWithConfirmation(passwordMessage: string, confirmationMessage: string): Promise<string> {
+  public async askForPasswordWithConfirmation(
+    passwordMessage: string,
+    confirmationMessage: string,
+    minPasswordLength: number,
+    maxPasswordLength: number,
+  ): Promise<string> {
     const password = await this.askForPassword(passwordMessage, false)
     const passwordAgain = await this.askForPassword(confirmationMessage, false)
 
     if (password !== passwordAgain) {
       throw new CommandLineError('The two passwords do not match')
+    }
+
+    if (password.length < minPasswordLength || password.length > maxPasswordLength) {
+      throw new CommandLineError(Message.passwordLengthError(minPasswordLength, maxPasswordLength))
     }
 
     return password

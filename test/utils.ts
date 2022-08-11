@@ -4,6 +4,11 @@ import fs from 'fs/promises'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { utils } from 'ethers'
 
+/**
+ * Generates a random hex string with the passed length
+ *
+ * @param length length of output string
+ */
 export function getRandomString(length = 20): string {
   return crypto.randomBytes(length).toString('hex').substring(0, length)
 }
@@ -25,7 +30,7 @@ export function beeDebugUrl(): string {
 /**
  * Sleeps for passed time in milliseconds
  */
-export function sleep(milliseconds: number): Promise<void> {
+export async function sleep(milliseconds: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 

@@ -2,9 +2,9 @@ import { Argument, LeafCommand } from 'furious-commander'
 import { exit } from 'process'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
-import { IdentityCommand } from './identity-command'
+import { AccountCommand } from './account-command'
 
-export class Remove extends IdentityCommand implements LeafCommand {
+export class Remove extends AccountCommand implements LeafCommand {
   public readonly name = 'remove'
 
   public readonly alias = 'rm'

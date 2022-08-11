@@ -37,13 +37,13 @@ export class Import extends RootCommand implements LeafCommand {
     }
 
     if (utils.isValidMnemonic(this.resource)) {
-      await this.runImportOnMnemonic()
+      await this.runMnemonicImport()
     } else {
       expectFile(this.resource)
       this.resource = readFileSync(this.resource, 'utf-8')
 
       if (utils.isValidMnemonic(this.resource)) {
-        await this.runImportOnMnemonic()
+        await this.runMnemonicImport()
       } else {
         if (!this.password) {
           this.console.log(Message.optionNotDefined('password'))
@@ -51,7 +51,7 @@ export class Import extends RootCommand implements LeafCommand {
         }
         const spinner = createAndRunSpinner('Decrypting V3 wallet...', this.verbosity)
         try {
-          const wallet: Wallet = await this.decryptV3Wallet(this.resource)
+          const wallet: Wallet = await this.decryptV3Wallet(this.resource, this.password)
 
           spinner.text = 'Importing V3 wallet...'
           await this.saveWallet(wallet)
@@ -63,7 +63,10 @@ export class Import extends RootCommand implements LeafCommand {
     }
   }
 
-  private async runImportOnMnemonic(): Promise<void> {
+  /**
+   * Runs import of mnemonic as a new identity
+   */
+  private async runMnemonicImport(): Promise<void> {
     const data = {
       encryptedWallet: await mnemonicToV3(this.resource, this.password),
     }
@@ -75,7 +78,10 @@ export class Import extends RootCommand implements LeafCommand {
     this.console.log(`Mnemonic imported as identity '${this.identityName}' successfully`)
   }
 
-  private async decryptV3Wallet(data: string): Promise<Wallet> {
+  /**
+   * Decrypts V3 wallet with the password
+   */
+  private async decryptV3Wallet(data: string, password: string): Promise<Wallet> {
     const v3 = JSON.parse(data) as V3Keystore
 
     if (!isV3Wallet(v3)) {
@@ -83,15 +89,18 @@ export class Import extends RootCommand implements LeafCommand {
     }
 
     try {
-      await assertV3ConvertsToMnemonic(v3, this.password)
+      await assertV3ConvertsToMnemonic(v3, password)
 
-      return Wallet.fromEncryptedJson(data, this.password)
+      return Wallet.fromEncryptedJson(data, password)
     } catch (error: unknown) {
       const message: string = getFieldOrNull(error, 'message') || 'unknown error'
       throw new CommandLineError(`Failed to decrypt wallet: ${message}`)
     }
   }
 
+  /**
+   * Saves wallet to the config as a new identity
+   */
   private async saveWallet(wallet: Wallet): Promise<void> {
     const data = {
       encryptedWallet: await walletToV3(wallet, this.password),
