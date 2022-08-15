@@ -24,13 +24,13 @@ npm install --global @fairdatasociety/fdp-cli
 
 ## Usage
 
-Create an identity for managing FDP account's data. The identity will only be stored on your device.
+Create FDP account. The account will only be stored on your device.
 
 ```sh
-fdp-cli account create IDENTITY_NAME
+fdp-cli account create ACCOUNT_NAME
 ```
 
-Make your identity portable between devices.
+Make your account portable between devices.
 
 This action will upload the encrypted account to Ethereum Swarm and you will be able to use your username and password to access your account. The username will be registered in ENS. To perform this action, your wallet must be topped up with at least 0.01 token of the current network.
 
