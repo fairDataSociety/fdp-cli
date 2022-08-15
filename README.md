@@ -32,7 +32,7 @@ fdp-cli account create IDENTITY_NAME
 
 Make your identity portable between devices.
 
-This action will upload the encrypted identity to swarm and you will be able to use your username and password to access your account. The username will be registered in ENS. To perform this action, your wallet must be topped up with at least 0.01 token of the current network.
+This action will upload the encrypted account to Ethereum Swarm and you will be able to use your username and password to access your account. The username will be registered in ENS. To perform this action, your wallet must be topped up with at least 0.01 token of the current network.
 
 **This action is optional and you can manage your account information without registering.**
 
