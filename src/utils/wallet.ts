@@ -2,17 +2,6 @@ import { Wallet } from 'ethers'
 import { V3Keystore } from '../service/account/types'
 
 /**
- * Asserts that the given wallet has a possibility to extract mnemonic phrase
- */
-export async function assertV3ConvertsToMnemonic(v3: V3Keystore, password: string): Promise<void> {
-  const mnemonic = (await v3ToWallet(v3, password)).mnemonic?.phrase
-
-  if (!mnemonic) {
-    throw new Error('V3 wallet does not convert to mnemonic')
-  }
-}
-
-/**
  * Converts and encrypts the given wallet to V3 format
  *
  * @param mnemonic mnemonic phrase

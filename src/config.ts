@@ -73,7 +73,7 @@ export const yes: IOption<string[]> = {
 
 export const rootCommandClasses = [Account]
 
-export const optionParameters: IOption<unknown>[] = [
+export const optionParameters: IOption[] = [
   beeApiUrl,
   beeDebugApiUrl,
   configFolder,
