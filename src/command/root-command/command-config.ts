@@ -3,7 +3,7 @@ import { homedir, platform } from 'os'
 import { join } from 'path'
 import { exit } from 'process'
 import { beeApiUrl, beeDebugApiUrl } from '../../config'
-import { Identity } from '../../service/identity/types'
+import { Account } from '../../service/account/types'
 import { ConfigOption } from '../../utils/types/config-option'
 import { CommandLog } from './command-log'
 
@@ -24,7 +24,7 @@ export interface Config {
 
   beeDebugApiUrl: string
 
-  identities: { [name: string]: Identity }
+  accounts: { [name: string]: Account }
 }
 
 export class CommandConfig {
@@ -41,25 +41,25 @@ export class CommandConfig {
     this.config = {
       beeApiUrl: beeApiUrl.default || '',
       beeDebugApiUrl: beeDebugApiUrl.default || '',
-      identities: {},
+      accounts: {},
     }
     this.configFolderPath = CommandConfig.getConfigFolderPath(appName, configFolder)
     this.configFilePath = join(this.configFolderPath, configFile)
     this.prepareConfig()
   }
 
-  public saveIdentity(name: string, identity: Identity): boolean {
-    if (this.config.identities?.[name]) return false
+  public saveAccount(name: string, account: Account): boolean {
+    if (this.config.accounts?.[name]) return false
 
-    this.config.identities[name] = identity
+    this.config.accounts[name] = account
 
     this.saveConfig()
 
     return true
   }
 
-  public removeIdentity(name: string): void {
-    delete this.config.identities?.[name]
+  public removeAccount(name: string): void {
+    delete this.config.accounts?.[name]
     this.saveConfig()
   }
 

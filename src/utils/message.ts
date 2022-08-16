@@ -1,21 +1,21 @@
-function identityNameConflict(name: string): string {
-  return `An identity with the name '${name}' already exists`
+function accountNameConflict(name: string): string {
+  return `An account with the name '${name}' already exists`
 }
 
-function identityNameConflictArgument(name: string): string {
-  return `${identityNameConflict(name)}. Provide a unique name in the first argument`
+function accountNameConflictArgument(name: string): string {
+  return `${accountNameConflict(name)}. Provide a unique name in the first argument`
 }
 
-function identityNameConflictOption(name: string): string {
-  return `${identityNameConflict(name)}. Provide a unique name with the --name option`
+function accountNameConflictOption(name: string): string {
+  return `${accountNameConflict(name)}. Provide a unique name with the --name option`
 }
 
-function noIdentity(): string {
-  return "No identities found. Create one with the command 'account create'"
+function noAccount(): string {
+  return "No accounts found. Create one with the command 'account create'"
 }
 
-function noSuchIdentity(name: string): string {
-  return `No identity found with the name '${name}'`
+function noSuchAccount(name: string): string {
+  return `No account found with the name '${name}'`
 }
 
 function optionNotDefined(name: string, option?: string): string {
@@ -38,20 +38,16 @@ function newMnemonicPasswordConfirmation(): string {
   return 'Enter the new password again for the mnemonic'
 }
 
-function newAccountPassword(): string {
-  return 'Enter a new password for the FDP account'
+function portableAccountPassword(): string {
+  return 'Enter a password for the portable FDP account'
 }
 
-function newAccountPasswordConfirmation(): string {
-  return 'Enter the new password again for the FDP account'
+function portableAccountPasswordConfirmation(): string {
+  return 'Enter a password again for the portable FDP account'
 }
 
 function requireOptionConfirmation(option: string, message: string): string {
   return `${message}. Pass the --${option} option to allow it`
-}
-
-function invalidV3Wallet(): string {
-  return 'Received data is not a valid V3 wallet'
 }
 
 function invalidMnemonic(): string {
@@ -67,26 +63,30 @@ function passwordLengthError(minPasswordLength: number, maxPasswordLength: numbe
 }
 
 function topUpBalance(): string {
-  return 'In order to register with the identity in ENS you need to top up the balance before registration'
+  return 'In order to register with the account in ENS you need to top up the balance before registration'
+}
+
+function unsupportedAccountType(): string {
+  return 'Unsupported account type'
 }
 
 export const Message = {
-  identityNameConflict,
-  identityNameConflictArgument,
-  identityNameConflictOption,
-  noIdentity,
-  noSuchIdentity,
+  accountNameConflict,
+  accountNameConflictArgument,
+  accountNameConflictOption,
+  noAccount,
+  noSuchAccount,
   optionNotDefined,
   optionNotDefinedWithTitle,
   existingV3Password,
   requireOptionConfirmation,
   newMnemonicPassword,
   newMnemonicPasswordConfirmation,
-  newAccountPassword,
-  newAccountPasswordConfirmation,
-  invalidV3Wallet,
+  portableAccountPassword,
+  portableAccountPasswordConfirmation,
   invalidMnemonic,
   newAccountRegistered,
   passwordLengthError,
   topUpBalance,
+  unsupportedAccountType,
 }

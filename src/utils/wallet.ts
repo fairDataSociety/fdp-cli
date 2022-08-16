@@ -1,5 +1,5 @@
 import { Wallet } from 'ethers'
-import { V3Keystore } from '../service/identity/types'
+import { V3Keystore } from '../service/account/types'
 
 /**
  * Asserts that the given wallet has a possibility to extract mnemonic phrase

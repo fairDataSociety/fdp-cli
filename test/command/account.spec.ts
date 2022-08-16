@@ -9,48 +9,48 @@ describeCommand(
     })
 
     it('should register portable FDP account', async () => {
-      const username = getRandomString()
-      const identity = getRandomString()
-      const identityPassword = getRandomString()
+      const portableUsername = getRandomString()
+      const account = getRandomString()
       const accountPassword = getRandomString()
+      const portablePassword = getRandomString()
 
-      await invokeTestCli(['account', 'create', identity, '--password', identityPassword])
+      await invokeTestCli(['account', 'create', account, '--password', accountPassword])
       consoleMessages.length = 0
-      await topUpWallet(configFilePath, identity)
+      await topUpWallet(configFilePath, account)
       await invokeTestCli([
         'account',
         'register',
-        username,
-        '--identity',
-        identity,
+        portableUsername,
+        '--account',
+        account,
         '--password',
-        identityPassword,
-        '--account-password',
         accountPassword,
+        '--portable-password',
+        portablePassword,
       ])
       expect(consoleMessages[0]).toContain('New account registered successfully!')
       expect(consoleMessages[1]).toContain('Username:')
-      expect(consoleMessages[1]).toContain(`${username}`)
+      expect(consoleMessages[1]).toContain(`${portableUsername}`)
     })
 
     it('should fail during registration portable FDP account with insufficient balance', async () => {
-      const username = getRandomString()
-      const identity = getRandomString()
-      const identityPassword = getRandomString()
+      const portableUsername = getRandomString()
+      const account = getRandomString()
       const accountPassword = getRandomString()
+      const portablePassword = getRandomString()
 
-      await invokeTestCli(['account', 'create', identity, '--password', identityPassword])
+      await invokeTestCli(['account', 'create', account, '--password', accountPassword])
       consoleMessages.length = 0
       await invokeTestCli([
         'account',
         'register',
-        username,
-        '--identity',
-        identity,
+        portableUsername,
+        '--account',
+        account,
         '--password',
-        identityPassword,
-        '--account-password',
         accountPassword,
+        '--portable-password',
+        portablePassword,
       ])
       expect(consoleMessages[0]).toContain('Failed to register account: insufficient funds for gas * price + value')
     })
@@ -58,22 +58,22 @@ describeCommand(
     it('should fail on incorrect username length', async () => {
       const shortUsername = getRandomString(3)
       const longUsername = getRandomString(83)
-      const identityPassword = getRandomString()
       const accountPassword = getRandomString()
+      const portablePassword = getRandomString()
 
-      await invokeTestCli(['account', 'create', 'test', '--password', identityPassword])
+      await invokeTestCli(['account', 'create', 'test', '--password', accountPassword])
       consoleMessages.length = 0
 
       await invokeTestCli([
         'account',
         'register',
         shortUsername,
-        '--identity',
+        '--account',
         'test',
         '--password',
-        identityPassword,
-        '--account-password',
         accountPassword,
+        '--portable-password',
+        portablePassword,
       ])
       expect(consoleMessages[consoleMessages.length - 1]).toContain(
         '[username] must have length of at least 4 characters',
@@ -84,12 +84,12 @@ describeCommand(
         'account',
         'register',
         longUsername,
-        '--identity',
+        '--account',
         'test',
         '--password',
-        identityPassword,
-        '--account-password',
         accountPassword,
+        '--portable-password',
+        portablePassword,
       ])
       expect(consoleMessages[consoleMessages.length - 1]).toContain(
         '[username] must have length of at most 82 characters',
@@ -97,40 +97,40 @@ describeCommand(
     })
 
     it('should fail on incorrect password length', async () => {
-      const identityName = getRandomString()
+      const accountName = getRandomString()
       const username = getRandomString()
       const password = getRandomString()
-      const shortPassword = getRandomString(7)
-      const longPassword = getRandomString(256)
+      const shortPortablePassword = getRandomString(7)
+      const longPortablePassword = getRandomString(256)
 
-      await invokeTestCli(['account', 'create', identityName, '--password', shortPassword])
+      await invokeTestCli(['account', 'create', accountName, '--password', shortPortablePassword])
       expect(consoleMessages[consoleMessages.length - 1]).toContain(
         '[password] must have length of at least 8 characters',
       )
       consoleMessages.length = 0
 
-      await invokeTestCli(['account', 'create', identityName, '--password', longPassword])
+      await invokeTestCli(['account', 'create', accountName, '--password', longPortablePassword])
       expect(consoleMessages[consoleMessages.length - 1]).toContain(
         '[password] must have length of at most 255 characters',
       )
       consoleMessages.length = 0
 
-      await invokeTestCli(['account', 'create', identityName, '--password', password])
+      await invokeTestCli(['account', 'create', accountName, '--password', password])
       consoleMessages.length = 0
 
       await invokeTestCli([
         'account',
         'register',
         username,
-        '--identity',
-        identityName,
+        '--account',
+        accountName,
         '--password',
         password,
-        '--account-password',
-        shortPassword,
+        '--portable-password',
+        shortPortablePassword,
       ])
       expect(consoleMessages[consoleMessages.length - 1]).toContain(
-        '[account-password] must have length of at least 8 characters',
+        '[portable-password] must have length of at least 8 characters',
       )
       consoleMessages.length = 0
 
@@ -138,15 +138,15 @@ describeCommand(
         'account',
         'register',
         username,
-        '--identity',
-        identityName,
+        '--account',
+        accountName,
         '--password',
         password,
-        '--account-password',
-        longPassword,
+        '--portable-password',
+        longPortablePassword,
       ])
       expect(consoleMessages[consoleMessages.length - 1]).toContain(
-        '[account-password] must have length of at most 255 characters',
+        '[portable-password] must have length of at most 255 characters',
       )
     })
 
@@ -156,7 +156,7 @@ describeCommand(
       const mnemonic = 'color rely balcony exotic wrist order face uncle spell alien style ozone balance front fever'
 
       await invokeTestCli(['account', 'import', mnemonic, '--name', username, '--password', password])
-      expect(consoleMessages[0]).toEqual(`Mnemonic imported as identity '${username}' successfully`)
+      expect(consoleMessages[0]).toEqual(`Mnemonic imported as account '${username}' successfully`)
     })
   },
   { configFileName: 'account' },

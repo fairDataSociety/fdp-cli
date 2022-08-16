@@ -1,6 +1,6 @@
 import { Wallet } from 'ethers'
 import { Argument, LeafCommand, Utils } from 'furious-commander'
-import { Identity } from '../../service/identity/types'
+import { Account } from '../../service/account/types'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { createAndRunSpinner } from '../../utils/spinner'
@@ -13,38 +13,38 @@ export class Create extends AccountCommand implements LeafCommand {
 
   public readonly description = "Create Ethereum compatible mnemonic to manage account's data"
 
-  @Argument({ key: 'name', default: 'main', description: 'Reference name of the generated identity' })
-  public identityName!: string
+  @Argument({ key: 'name', default: 'main', description: 'Reference name of the generated account' })
+  public accountName!: string
 
   public async run(): Promise<void> {
     await super.init()
 
     if (Utils.getSourcemap().name === 'default') {
-      this.console.info(`No identity name specified, defaulting to '${this.identityName}'`)
+      this.console.info(`No account name specified, defaulting to '${this.accountName}'`)
     }
 
-    if (this.commandConfig.config.identities[this.identityName]) {
-      throw new CommandLineError(Message.identityNameConflictArgument(this.identityName))
+    if (this.commandConfig.config.accounts[this.accountName]) {
+      throw new CommandLineError(Message.accountNameConflictArgument(this.accountName))
     }
 
     const wallet = Wallet.createRandom()
-    const identity = await this.createMnemonicIdentity(wallet.mnemonic.phrase)
-    const saved = this.commandConfig.saveIdentity(this.identityName, identity)
+    const account = await this.createMnemonicAccount(wallet.mnemonic.phrase)
+    const saved = this.commandConfig.saveAccount(this.accountName, account)
 
     if (!saved) {
-      throw new CommandLineError(Message.identityNameConflictArgument(this.identityName))
+      throw new CommandLineError(Message.accountNameConflictArgument(this.accountName))
     }
 
-    this.console.log(createKeyValue('Name', this.identityName))
+    this.console.log(createKeyValue('Name', this.accountName))
     this.printWallet(wallet)
     this.printWalletQuietly(wallet)
     this.console.info(Message.topUpBalance())
   }
 
   /**
-   * Creates an encrypted identity with a mnemonic
+   * Creates an encrypted account with a mnemonic
    */
-  private async createMnemonicIdentity(mnemonic: string): Promise<Identity> {
+  private async createMnemonicAccount(mnemonic: string): Promise<Account> {
     if (!this.password) {
       this.console.log(Message.optionNotDefined('password'))
       this.password = await this.console.askForPasswordWithConfirmation(

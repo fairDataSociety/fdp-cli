@@ -9,22 +9,22 @@ export class Remove extends AccountCommand implements LeafCommand {
 
   public readonly alias = 'rm'
 
-  public readonly description = 'Remove identity'
+  public readonly description = 'Remove account'
 
-  @Argument({ key: 'name', description: 'Name of the identity to be deleted' })
-  public identityName!: string
+  @Argument({ key: 'name', description: 'Name of the account to be deleted' })
+  public accountName!: string
 
   public async run(): Promise<void> {
     await super.init()
-    const { name } = await this.getOrPickIdentity(this.identityName)
+    const { name } = await this.getOrPickAccount(this.accountName)
 
     if (!this.yes) {
       if (this.quiet) {
         throw new CommandLineError(
-          Message.requireOptionConfirmation('yes', 'This will delete the identity with no way to recover it'),
+          Message.requireOptionConfirmation('yes', 'This will delete the account with no way to recover it'),
         )
       }
-      const confirmation = await this.console.confirmAndDelete(`Are you sure you want delete the identity '${name}'?`)
+      const confirmation = await this.console.confirmAndDelete(`Are you sure you want delete the account '${name}'?`)
 
       if (!confirmation) {
         this.console.log('Aborted')
@@ -32,7 +32,7 @@ export class Remove extends AccountCommand implements LeafCommand {
       }
     }
 
-    this.commandConfig.removeIdentity(name)
-    this.console.log(`Identity '${name}' has been successfully deleted`)
+    this.commandConfig.removeAccount(name)
+    this.console.log(`Account '${name}' has been successfully deleted`)
   }
 }

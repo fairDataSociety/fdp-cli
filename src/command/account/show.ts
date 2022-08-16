@@ -1,6 +1,6 @@
 import { Argument, LeafCommand } from 'furious-commander'
 import { exit } from 'process'
-import { isV3Wallet } from '../../service/identity'
+import { isV3Wallet } from '../../service/account'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { AccountCommand } from './account-command'
@@ -9,27 +9,27 @@ import { v3ToWallet } from '../../utils/wallet'
 export class Show extends AccountCommand implements LeafCommand {
   public readonly name = 'show'
 
-  public readonly description = 'Print private key, public key and address of an identity'
+  public readonly description = 'Print private key, public key and address of an account'
 
-  @Argument({ key: 'name', description: 'Name of the identity to show' })
-  public identityName!: string
+  @Argument({ key: 'name', description: 'Name of the account to show' })
+  public accountName!: string
 
   public async run(): Promise<void> {
     await super.init()
-    const { identity } = await this.getOrPickIdentity(this.identityName)
+    const { account } = await this.getOrPickAccount(this.accountName)
 
     await this.maybePromptForSensitive()
 
-    if (isV3Wallet(identity.encryptedWallet)) {
+    if (isV3Wallet(account.encryptedWallet)) {
       if (!this.password) {
         this.password = await this.console.askForPassword(Message.existingV3Password())
       }
 
-      const wallet = await v3ToWallet(identity.encryptedWallet, this.password)
+      const wallet = await v3ToWallet(account.encryptedWallet, this.password)
       this.printWallet(wallet)
       this.printWalletQuietly(wallet)
     } else {
-      throw new CommandLineError('Unsupported identity type')
+      throw new CommandLineError(Message.unsupportedAccountType())
     }
   }
 
