@@ -87,16 +87,14 @@ module.exports = {
         minimumDescriptionLength: 6,
       },
     ],
-    'require-await': 'off',
     '@typescript-eslint/promise-function-async': 'error',
-    '@typescript-eslint/require-await': 'off',
-    '@typescript-eslint/no-non-null-assertion': 'off',
-    '@typescript-eslint/no-unused-vars': 'off',
+    // necessary to disable the base rule as it can report incorrect errors
+    'require-await': 'off',
+    '@typescript-eslint/require-await': 'error',
+    '@typescript-eslint/no-non-null-assertion': 'warn',
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['error'],
     'unused-imports/no-unused-imports': 'error',
-    'unused-imports/no-unused-vars': [
-      'warn',
-      { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
-    ],
   },
   overrides: [
     {
