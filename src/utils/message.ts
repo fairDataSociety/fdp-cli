@@ -70,6 +70,10 @@ function unsupportedAccountType(): string {
   return 'Unsupported account type'
 }
 
+function noUsableBatch(): string {
+  return 'Usable batch not found'
+}
+
 export const Message = {
   accountNameConflict,
   accountNameConflictArgument,
@@ -89,4 +93,5 @@ export const Message = {
   passwordLengthError,
   topUpBalance,
   unsupportedAccountType,
+  noUsableBatch,
 }

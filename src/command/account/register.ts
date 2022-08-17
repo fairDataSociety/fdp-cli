@@ -42,6 +42,7 @@ export class Register extends AccountCommand implements LeafCommand {
     await super.init()
 
     this.validateBeeDebugAvailable()
+    await this.validateUsableBatchExists()
     const spinner = createSpinner('Registering new user. This may take a while.')
     let isRegistered = false
     try {

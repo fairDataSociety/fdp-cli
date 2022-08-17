@@ -4,6 +4,8 @@ import { CommandConfig, CONFIG_OPTIONS } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { exit } from 'process'
+import { isUsableBatchExists } from '../../utils/bee'
+import { Message } from '../../utils/message'
 
 export class RootCommand {
   @ExternalOption('bee-api-url')
@@ -69,6 +71,17 @@ export class RootCommand {
       for (const message of this.debugApiErrors) {
         this.console.error(message)
       }
+
+      exit(1)
+    }
+  }
+
+  /**
+   * Checks availability of the usable batch
+   */
+  public async validateUsableBatchExists(): Promise<void> {
+    if (!(await isUsableBatchExists(this.fdpStorage.connection.beeDebug.url))) {
+      this.console.error(Message.noUsableBatch())
 
       exit(1)
     }
