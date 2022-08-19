@@ -77,24 +77,10 @@ module.exports = {
         },
       },
     ],
-    '@typescript-eslint/ban-ts-comment': [
-      'error',
-      {
-        'ts-expect-error': 'allow-with-description',
-        'ts-ignore': 'allow-with-description',
-        'ts-nocheck': 'allow-with-description',
-        'ts-check': 'allow-with-description',
-        minimumDescriptionLength: 6,
-      },
-    ],
-    '@typescript-eslint/promise-function-async': 'error',
     // necessary to disable the base rule as it can report incorrect errors
     'require-await': 'off',
     '@typescript-eslint/require-await': 'error',
-    '@typescript-eslint/no-non-null-assertion': 'warn',
-    'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': ['error'],
-    'unused-imports/no-unused-imports': 'error',
   },
   overrides: [
     {
