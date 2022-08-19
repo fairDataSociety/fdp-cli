@@ -40,6 +40,12 @@ This action will upload the encrypted account to Ethereum Swarm and you will be 
 fdp-cli account register YOUR_USERNAME
 ```
 
+Login to portable account with storing account's seed to local machine.
+
+```sh
+fdp-cli account login YOUR_USERNAME
+```
+
 # Development
 
 After the project has been cloned, the dependencies must be
