@@ -158,6 +158,44 @@ describeCommand(
       await invokeTestCli(['account', 'import', mnemonic, '--name', username, '--password', password])
       expect(consoleMessages[0]).toEqual(`Mnemonic imported as account '${username}' successfully`)
     })
+
+    it('should login with portable FDP account', async () => {
+      const portableUsername = getRandomString()
+      const account = getRandomString()
+      const accountPassword = getRandomString()
+      const newAccountPassword = getRandomString()
+      const portablePassword = getRandomString()
+
+      await invokeTestCli(['account', 'create', account, '--password', accountPassword])
+      consoleMessages.length = 0
+      await topUpWallet(configFilePath, account)
+      await invokeTestCli([
+        'account',
+        'register',
+        portableUsername,
+        '--account',
+        account,
+        '--password',
+        accountPassword,
+        '--portable-password',
+        portablePassword,
+      ])
+      expect(consoleMessages[0]).toContain('New account registered successfully!')
+      expect(consoleMessages[1]).toContain('Username:')
+      expect(consoleMessages[1]).toContain(`${portableUsername}`)
+      consoleMessages.length = 0
+
+      await invokeTestCli([
+        'account',
+        'login',
+        portableUsername,
+        '--portable-password',
+        portablePassword,
+        '--password',
+        newAccountPassword,
+      ])
+      expect(consoleMessages[0]).toContain('Logged in successfully!')
+    })
   },
   { configFileName: 'account' },
 )

@@ -14,6 +14,9 @@ interface PBKDFParamsOut {
 }
 declare type KDFParamsOut = ScryptKDFParamsOut | PBKDFParamsOut
 
+/**
+ * Encrypted wallet with mnemonic phrase
+ */
 export interface V3Keystore {
   Crypto: {
     cipher: string
@@ -37,4 +40,12 @@ export interface V3Keystore {
     locale: string
     version: string
   }
+}
+
+/**
+ * Seed from logged in account encrypted with a password
+ */
+export interface EncryptedSeed {
+  address: string
+  encryptedSeed: string
 }

@@ -7,11 +7,12 @@ import { List } from './list'
 import { Remove } from './remove'
 import { Rename } from './rename'
 import { Show } from './show'
+import { Login } from './login'
 
 export class Account implements GroupCommand {
   public readonly name = 'account'
 
   public readonly description = 'FDP account handling'
 
-  public subCommandClasses = [Register, Create, Export, Import, List, Remove, Rename, Show]
+  public subCommandClasses = [Register, Create, Export, Import, List, Remove, Rename, Show, Login]
 }
