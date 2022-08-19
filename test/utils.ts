@@ -59,7 +59,7 @@ export async function createUsableBatch(): Promise<void> {
       break
     }
 
-    await sleep(3000)
+    await sleep(10000)
   }
 }
 
