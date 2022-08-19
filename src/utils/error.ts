@@ -2,7 +2,42 @@ import { printer } from '../printer'
 import { FORMATTED_ERROR } from '../command/root-command/printer'
 import { getFieldOrNull } from './index'
 
-export function errorHandler(error: unknown): void {
+/**
+ * Thrown when the error is not related to Bee/network
+ */
+export class CommandLineError extends Error {
+  public readonly type = 'CommandLineError'
+}
+
+export interface BeeErrorOptions {
+  notFoundMessage?: string
+}
+
+function isGenericErrorPattern(errorName: string, message: string | unknown): boolean {
+  if (!message || typeof message !== 'string') {
+    return true
+  }
+
+  errorName = errorName.toLowerCase()
+  message = message.toLowerCase()
+
+  // also handles Internal Server Error: Internal Server Error message pattern
+  return message === errorName || message === `${errorName}: ${errorName}`
+}
+
+function hasStatusCode(error: unknown, statusCode: number): boolean {
+  return getFieldOrNull(error, 'status') === statusCode
+}
+
+function isNotFoundError(error: unknown): boolean {
+  return hasStatusCode(error, 404)
+}
+
+function isInternalServerError(error: unknown): boolean {
+  return hasStatusCode(error, 500)
+}
+
+export function errorHandler(error: unknown, options?: BeeErrorOptions): void {
   if (!process.exitCode) {
     process.exitCode = 1
   }
@@ -10,7 +45,24 @@ export function errorHandler(error: unknown): void {
   const message: string | null = typeof error === 'string' ? error : getFieldOrNull(error, 'message')
   const type: string | null = getFieldOrNull(error, 'type')
 
-  if (message) {
+  // write custom message for 500
+  if (isInternalServerError(error)) {
+    printer.printError(FORMATTED_ERROR + ' Bee responded with HTTP 500 (Internal Server Error).')
+
+    if (!isGenericErrorPattern('Internal Server Error', message)) {
+      printer.printError('')
+      printer.printError('The error message is: ' + message)
+    }
+    // write custom message for 404
+  } else if (isNotFoundError(error)) {
+    printer.printError(FORMATTED_ERROR + ' Bee responded with HTTP 404 (Not Found).')
+
+    if (options?.notFoundMessage || !isGenericErrorPattern('Not Found', message)) {
+      printer.printError('')
+      printer.printError('The error message is: ' + (options?.notFoundMessage || message))
+    }
+    // print 'command failed' message with error message if available
+  } else if (message) {
     printer.printError(FORMATTED_ERROR + ' ' + message)
   } else {
     printer.printError(FORMATTED_ERROR + ' The command failed, but there is no error message available.')

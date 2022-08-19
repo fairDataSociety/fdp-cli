@@ -5,7 +5,10 @@
 ## Table of Contents
 
 - [Installation](#installation)
-  - [npm](#From npm)
+  - [npm](#from-npm)
+- [Usage](#usage)
+- [Development](#development)
+- [System environment](#system-environment)
 - [Contribute](#contribute)
 - [License](#license)
 
@@ -19,25 +22,43 @@ To install globally (requires `npm root --global` to be writable):
 npm install --global @fairdatasociety/fdp-cli
 ```
 
+## Usage
+
+Create FDP account. The account will only be stored on your device.
+
+```sh
+fdp-cli account create ACCOUNT_NAME
+```
+
+Make your account portable between devices.
+
+This action will upload the encrypted account to Ethereum Swarm and you will be able to use your username and password to access your account. The username will be registered in ENS. To perform this action, your wallet must be topped up with at least 0.01 token of the current network.
+
+**This action is optional and you can manage your account information without registering.**
+
+```sh
+fdp-cli account register YOUR_USERNAME
+```
+
 # Development
 
 After the project has been cloned, the dependencies must be
 installed. Run the following in the project folder:
 
 ```sh
- $ npm ci
+npm ci
 ```
 
 Then you need to compile the TypeScript code:
 
 ```sh
- $ npm run compile
+npm run compile
 ```
 
 To make the local `fdp-cli` files in the `dist/` directory available as a global package:
 
 ```sh
- $ npm link
+npm link
 ```
 
 If all went well you should be able to run `fdp-cli`.
@@ -45,6 +66,15 @@ If all went well you should be able to run `fdp-cli`.
 If `npm link` fails, or you don't want to install anything, then you
 can use `node dist/index.js` to run `fdp-cli` from the checked out
 directory.
+
+## System environment
+
+With specific system environment variables you can alter the behaviour of the CLI
+
+* `BEE_API_URL` - API URL of Bee client
+* `BEE_DEBUG_API_URL` - Debug API URL of Bee client
+* `FDP_CLI_CONFIG_FOLDER` - full path to a configuration folder
+* `FDP_CLI_CONFIG_FILE` - configuration file name, defaults to config.json
 
 ## Contribute
 

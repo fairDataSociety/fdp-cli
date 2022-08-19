@@ -3,6 +3,7 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
     ecmaVersion: 2018,
+    project: './tsconfig.test.json',
   },
   env: {
     jest: true,
@@ -11,7 +12,7 @@ module.exports = {
     browser: true,
     page: true,
   },
-  plugins: ['jest'],
+  plugins: ['jest', 'unused-imports'],
   rules: {
     'array-bracket-newline': ['error', 'consistent'],
     strict: ['error', 'safe'],
@@ -26,6 +27,7 @@ module.exports = {
     'no-case-declarations': 'error',
     'no-console': 'error',
     'no-constant-condition': 'error',
+    'no-continue': 'warn',
     'no-div-regex': 'error',
     'no-empty': 'warn',
     'no-empty-pattern': 'error',
@@ -40,7 +42,6 @@ module.exports = {
     'require-yield': 'error',
     'max-nested-callbacks': ['error', 4],
     'max-depth': ['error', 4],
-    'require-await': 'error',
     'space-before-function-paren': [
       'error',
       {
@@ -71,17 +72,20 @@ module.exports = {
           requireLast: true,
         },
         singleline: {
-          delimiter: 'comma',
+          delimiter: 'semi',
           requireLast: false,
         },
       },
     ],
+    // necessary to disable the base rule as it can report incorrect errors
+    'require-await': 'off',
+    '@typescript-eslint/require-await': 'error',
+    '@typescript-eslint/no-unused-vars': ['error'],
   },
   overrides: [
     {
       files: ['*.spec.ts'],
       rules: {
-        // '@typescript-eslint/ban-ts-ignore': 'off',
         'max-nested-callbacks': ['error', 10], // allow describe/it nesting
       },
     },
