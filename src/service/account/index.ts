@@ -8,6 +8,8 @@ import { EncryptedSeed } from './types/wallet'
 
 /**
  * Available account types
+ *
+ * Types are used to request a specific wallet type from an array of wallets
  */
 export enum AccountType {
   mnemonic = 'mnemonic',
