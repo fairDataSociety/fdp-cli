@@ -52,7 +52,7 @@ export function encrypt(
 /**
  * Encrypt seed with password
  */
-export function encryptSeed(seed: Uint8Array, password: string): string {
+export function encryptSeed(seed: Utils.Bytes<64>, password: string): string {
   const encryptedBytes = encryptBytes(password, bytesToWordArray(seed))
 
   return Utils.bytesToHex(encryptedBytes)

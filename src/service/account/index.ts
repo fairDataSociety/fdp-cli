@@ -56,9 +56,10 @@ export function isV3Wallet(wallet: unknown): wallet is V3Keystore {
   const data = wallet as V3Keystore
 
   return (
-    data.address.length === ADDRESS_LENGTH &&
+    Boolean(data) &&
+    data.address?.length === ADDRESS_LENGTH &&
     typeof data.Crypto === 'object' &&
-    data.id.length > 0 &&
+    data.id?.length > 0 &&
     !isNaN(data.version)
   )
 }
@@ -69,7 +70,7 @@ export function isV3Wallet(wallet: unknown): wallet is V3Keystore {
 export function isEncryptedSeed(wallet: unknown): wallet is EncryptedSeed {
   const data = wallet as EncryptedSeed
 
-  return data.address.length === ADDRESS_LENGTH && data.encryptedSeed.length > 0
+  return Boolean(data) && data.address?.length === ADDRESS_LENGTH && data.encryptedSeed?.length > 0
 }
 
 /**
