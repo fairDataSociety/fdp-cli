@@ -12,7 +12,7 @@ import { Login } from './login'
 export class Account implements GroupCommand {
   public readonly name = 'account'
 
-  public readonly description = 'FDP account handling'
+  public readonly description = 'FDS account handling'
 
   public subCommandClasses = [Register, Create, Export, Import, List, Remove, Rename, Show, Login]
 }

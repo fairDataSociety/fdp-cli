@@ -35,11 +35,11 @@ function newAccountPasswordConfirmation(): string {
 }
 
 function portableAccountPassword(): string {
-  return 'Enter a password for the portable FDP account'
+  return 'Enter a password for the portable FDS account'
 }
 
 function portableAccountPasswordConfirmation(): string {
-  return 'Enter a password again for the portable FDP account'
+  return 'Enter a password again for the portable FDS account'
 }
 
 function requireOptionConfirmation(option: string, message: string): string {

@@ -16,11 +16,11 @@ import { assertBytes } from '../../utils/types'
 export class Login extends AccountCommand implements LeafCommand {
   public readonly name = 'login'
 
-  public readonly description = 'Login to a portable FDP account'
+  public readonly description = 'Login to a portable FDS account'
 
   @Argument({
     key: 'username',
-    description: 'Username for the portable FDP account',
+    description: 'Username for the portable FDS account',
     type: 'string',
     required: true,
     minimumLength: MIN_USERNAME_LENGTH,
@@ -30,7 +30,7 @@ export class Login extends AccountCommand implements LeafCommand {
 
   @Option({
     key: 'portable-password',
-    description: 'Password for the portable FDP account',
+    description: 'Password for the portable FDS account',
     type: 'string',
     required: { when: 'quiet' },
     minimumLength: MIN_PASSWORD_LENGTH,
@@ -46,7 +46,7 @@ export class Login extends AccountCommand implements LeafCommand {
     }
 
     this.portablePassword = await this.askPortableAccountPassword(this.portablePassword, false)
-    const spinner = createSpinner('Logging in to FDP account. This may take a while.')
+    const spinner = createSpinner('Logging in to FDS account. This may take a while.')
 
     let isSaved = false
     try {

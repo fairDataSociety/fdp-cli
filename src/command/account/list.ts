@@ -8,7 +8,7 @@ export class List extends AccountCommand implements LeafCommand {
 
   public readonly alias = 'ls'
 
-  public readonly description = 'List accounts which can be used to manage FDP data'
+  public readonly description = 'List accounts which can be used to manage FDS data'
 
   public async run(): Promise<void> {
     await super.init()

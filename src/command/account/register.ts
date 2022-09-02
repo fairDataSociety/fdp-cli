@@ -16,11 +16,11 @@ import { getFieldOrNull } from '../../utils'
 export class Register extends AccountCommand implements LeafCommand {
   public readonly name = 'register'
 
-  public readonly description = 'Register a portable FDP account'
+  public readonly description = 'Register a portable FDS account'
 
   @Argument({
     key: 'username',
-    description: 'Username for the portable FDP account',
+    description: 'Username for the portable FDS account',
     type: 'string',
     required: true,
     minimumLength: MIN_USERNAME_LENGTH,
@@ -30,7 +30,7 @@ export class Register extends AccountCommand implements LeafCommand {
 
   @Option({
     key: 'portable-password',
-    description: 'Password for the portable FDP account',
+    description: 'Password for the portable FDS account',
     type: 'string',
     required: { when: 'quiet' },
     minimumLength: MIN_PASSWORD_LENGTH,
