@@ -11,6 +11,7 @@ import { createKeyValue } from '../../utils/text'
 import { createAndRunSpinner } from '../../utils/spinner'
 import { walletToV3 } from '../../utils/wallet'
 import { encryptSeed } from '../../utils/encryption'
+import { Utils } from '@ethersphere/bee-js'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255
@@ -201,7 +202,7 @@ export class AccountCommand extends RootCommand {
   /**
    * Creates an encrypted account from a seed
    */
-  protected async createSeedAccount(seed: Uint8Array): Promise<Account> {
+  protected async createSeedAccount(seed: Utils.Bytes<64>): Promise<Account> {
     await this.askPassword()
     const spinner = createAndRunSpinner('Creating account...', this.verbosity)
     let { address } = utils.HDNode.fromSeed(seed).derivePath(HD_PATH)
