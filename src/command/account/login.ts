@@ -40,7 +40,6 @@ export class Login extends AccountCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     await super.init()
-    this.validateBeeDebugAvailable()
 
     if (this.commandConfig.config.accounts[this.username]) {
       throw new CommandLineError(Message.accountNameConflictArgument(this.username))

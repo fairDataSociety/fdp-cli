@@ -4,8 +4,9 @@ import { CommandConfig, CONFIG_OPTIONS } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { exit } from 'process'
-import { isUsableBatchExists } from '../../utils/bee'
 import { Message } from '../../utils/message'
+import { BatchId, BeeDebug } from '@ethersphere/bee-js'
+import { assertBatchId, beeDebugUrl } from '../../../test/utils'
 
 export class RootCommand {
   @ExternalOption('bee-api-url')
@@ -13,6 +14,9 @@ export class RootCommand {
 
   @ExternalOption('bee-debug-api-url')
   public beeDebugApiUrl!: string
+
+  @ExternalOption('bee-postage-batch-id')
+  public beePostageBatchId!: string
 
   @ExternalOption('config-folder')
   public configFolder!: string
@@ -80,7 +84,7 @@ export class RootCommand {
    * Checks availability of the usable batch
    */
   public async validateUsableBatchExists(): Promise<void> {
-    if (!(await isUsableBatchExists(this.fdpStorage.connection.beeDebug.url))) {
+    if (!(await isUsableBatchExists())) {
       this.console.error(Message.noUsableBatch())
 
       exit(1)
@@ -95,7 +99,9 @@ export class RootCommand {
       this.maybeSetFromConfig(option)
     })
 
-    this.fdpStorage = new FdpStorage(this.beeApiUrl, this.beeDebugApiUrl)
+    const batchId = this.beePostageBatchId || (await getUsableBatch())
+    assertBatchId(batchId)
+    this.fdpStorage = new FdpStorage(this.beeApiUrl, batchId)
     this.verbosity = VerbosityLevel.Normal
 
     if (this.quiet) {
@@ -132,12 +138,40 @@ export class RootCommand {
   }
 
   private async checkDebugApiHealth(): Promise<boolean> {
+    const beeDebug = new BeeDebug(beeDebugUrl())
     try {
-      const health = await this.fdpStorage.connection.beeDebug.getHealth()
+      const health = await beeDebug.getHealth()
 
       return health.status === 'ok'
     } catch (error) {
       return false
     }
+  }
+}
+
+/**
+ * Gets usable batch id
+ */
+export async function getUsableBatch(beeDebug?: BeeDebug): Promise<BatchId> {
+  beeDebug = beeDebug ? beeDebug : new BeeDebug(beeDebugUrl())
+  const allBatch = await beeDebug.getAllPostageBatch()
+
+  const result = allBatch.find(item => item.usable)
+
+  if (!result) {
+    throw new Error('Usable batch not found')
+  }
+
+  return result.batchID
+}
+
+/**
+ * Checks if usable batch is present
+ */
+export async function isUsableBatchExists(beeDebug?: BeeDebug): Promise<boolean> {
+  try {
+    return Boolean(await getUsableBatch(beeDebug))
+  } catch (e) {
+    return false
   }
 }

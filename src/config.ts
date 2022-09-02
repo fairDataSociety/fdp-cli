@@ -16,6 +16,12 @@ export const beeDebugApiUrl: IOption<string> = {
   envKey: 'BEE_DEBUG_API_URL',
 }
 
+export const beePostageBatchId: IOption<string> = {
+  key: 'bee-postage-batch-id',
+  description: 'URL of the Bee-client Debug API',
+  envKey: 'BEE_POSTAGE_BATCH_ID',
+}
+
 export const configFolder: IOption<string> = {
   key: 'config-folder',
   description: 'Path to the configuration folder that the CLI uses',
@@ -76,6 +82,7 @@ export const rootCommandClasses = [Account]
 export const optionParameters: IOption[] = [
   beeApiUrl,
   beeDebugApiUrl,
+  beePostageBatchId,
   configFolder,
   configFile,
   help,

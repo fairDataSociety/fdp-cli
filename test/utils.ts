@@ -1,8 +1,20 @@
 import crypto from 'crypto'
-import { BeeDebug } from '@ethersphere/bee-js'
+import { BATCH_ID_HEX_LENGTH, BatchId, BeeDebug, Utils } from '@ethersphere/bee-js'
 import fs from 'fs/promises'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { utils } from 'ethers'
+import { isUsableBatchExists } from '../src/command/root-command'
+
+const EMPTY_BATCH = '0000000000000000000000000000000000000000000000000000000000000000'
+
+/**
+ * Asserts whether batch id passed
+ */
+export function assertBatchId(value: unknown, name = 'batchId'): asserts value is BatchId {
+  if (!Utils.isHexString(value, BATCH_ID_HEX_LENGTH)) {
+    throw new Error(`Incorrect hex string: ${name}`)
+  }
+}
 
 /**
  * Generates a random hex string with the passed length
@@ -32,16 +44,6 @@ export function beeDebugUrl(): string {
  */
 export async function sleep(milliseconds: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, milliseconds))
-}
-
-/**
- * Checks if usable batch is present
- */
-export async function isUsableBatchExists(beeDebug?: BeeDebug): Promise<boolean> {
-  beeDebug = beeDebug ? beeDebug : new BeeDebug(beeDebugUrl())
-  const allBatch = await beeDebug.getAllPostageBatch()
-
-  return Boolean(allBatch.find(item => item.usable))
 }
 
 /**
@@ -76,8 +78,8 @@ export async function topUpWallet(path: string, name: string, amountInEther = '1
   }
 
   const address = '0x' + walletAddress
-  const fdp = new FdpStorage(beeUrl(), beeDebugUrl())
-
+  assertBatchId(EMPTY_BATCH)
+  const fdp = new FdpStorage(beeUrl(), EMPTY_BATCH)
   const account = (await fdp.ens.provider.listAccounts())[0]
   const txHash = await fdp.ens.provider.send('eth_sendTransaction', [
     {
