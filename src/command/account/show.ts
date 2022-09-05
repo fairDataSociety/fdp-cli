@@ -22,7 +22,7 @@ export class Show extends AccountCommand implements LeafCommand {
 
     if (isV3Wallet(account.encryptedWallet)) {
       if (!this.password) {
-        this.password = await this.console.askForPassword(Message.existingV3Password())
+        this.password = await this.console.askForPassword(Message.portableAccountPassword())
       }
 
       const wallet = await v3ToWallet(account.encryptedWallet, this.password)

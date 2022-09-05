@@ -1,9 +1,9 @@
 import { writeFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { isV3Wallet } from '../../service/account'
+import { getAccountType } from '../../service/account'
 import { CommandLineError } from '../../utils/error'
 import { AccountCommand } from './account-command'
-import { V3Keystore } from '../../service/account/types'
+import { Account } from '../../service/account/types'
 import { Message } from '../../utils/message'
 
 export class Export extends AccountCommand implements LeafCommand {
@@ -25,18 +25,20 @@ export class Export extends AccountCommand implements LeafCommand {
     await super.init()
     const { account } = await this.getOrPickAccount(this.accountName)
 
-    if (isV3Wallet(account.encryptedWallet)) {
-      this.writeAccount(account.encryptedWallet)
-    } else {
+    try {
+      getAccountType(account)
+    } catch (e) {
       throw new CommandLineError(Message.unsupportedAccountType())
     }
+
+    this.writeAccount(account)
   }
 
   /**
    * Writes the account to a file or to the console
    */
-  private writeAccount(data: V3Keystore): void {
-    const account = JSON.stringify(data, null, 4)
+  private writeAccount(data: Account): void {
+    const account = JSON.stringify(data.encryptedWallet, null, 4)
 
     if (this.outFile) {
       writeFileSync(this.outFile, account)

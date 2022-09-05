@@ -40,6 +40,12 @@ This action will upload the encrypted account to Ethereum Swarm and you will be 
 fdp-cli account register YOUR_USERNAME
 ```
 
+Login to portable account with storing account's seed to local machine.
+
+```sh
+fdp-cli account login YOUR_USERNAME
+```
+
 # Development
 
 After the project has been cloned, the dependencies must be
@@ -72,7 +78,7 @@ directory.
 With specific system environment variables you can alter the behaviour of the CLI
 
 * `BEE_API_URL` - API URL of Bee client
-* `BEE_DEBUG_API_URL` - Debug API URL of Bee client
+* `BEE_DEBUG_API_URL` - debug API URL of Bee client
 * `FDP_CLI_CONFIG_FOLDER` - full path to a configuration folder
 * `FDP_CLI_CONFIG_FILE` - configuration file name, defaults to config.json
 

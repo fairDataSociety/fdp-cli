@@ -4,8 +4,10 @@ import { CommandConfig, CONFIG_OPTIONS } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { exit } from 'process'
-import { isUsableBatchExists } from '../../utils/bee'
 import { Message } from '../../utils/message'
+import { BeeDebug } from '@ethersphere/bee-js'
+import { assertBatchId, beeDebugUrl } from '../../../test/utils'
+import { getUsableBatch, isUsableBatchExists, ZERO_BATCH_ID } from '../../utils/bee'
 
 export class RootCommand {
   @ExternalOption('bee-api-url')
@@ -39,6 +41,7 @@ export class RootCommand {
   public console!: CommandLog
   public readonly appName = 'fdp-cli'
   public commandConfig!: CommandConfig
+  public postageBatchRequired!: boolean
   private sourcemap!: Sourcemap
   /**
    * Store Debug API errors here. It cannot be determined beforehand if Debug API is going to be used,
@@ -80,7 +83,7 @@ export class RootCommand {
    * Checks availability of the usable batch
    */
   public async validateUsableBatchExists(): Promise<void> {
-    if (!(await isUsableBatchExists(this.fdpStorage.connection.beeDebug.url))) {
+    if (!(await isUsableBatchExists())) {
       this.console.error(Message.noUsableBatch())
 
       exit(1)
@@ -95,7 +98,14 @@ export class RootCommand {
       this.maybeSetFromConfig(option)
     })
 
-    this.fdpStorage = new FdpStorage(this.beeApiUrl, this.beeDebugApiUrl)
+    let batchId = ZERO_BATCH_ID
+
+    if (this.postageBatchRequired) {
+      batchId = await getUsableBatch()
+    }
+
+    assertBatchId(batchId)
+    this.fdpStorage = new FdpStorage(this.beeApiUrl, batchId)
     this.verbosity = VerbosityLevel.Normal
 
     if (this.quiet) {
@@ -132,8 +142,9 @@ export class RootCommand {
   }
 
   private async checkDebugApiHealth(): Promise<boolean> {
+    const beeDebug = new BeeDebug(beeDebugUrl())
     try {
-      const health = await this.fdpStorage.connection.beeDebug.getHealth()
+      const health = await beeDebug.getHealth()
 
       return health.status === 'ok'
     } catch (error) {

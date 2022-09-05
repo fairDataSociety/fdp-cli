@@ -26,24 +26,20 @@ function optionNotDefinedWithTitle(title: string, name: string, option?: string)
   return `No ${title} specified with the '--${option || name}' option`
 }
 
-function existingV3Password(): string {
-  return 'Enter the current password of the V3 wallet'
+function newAccountPassword(): string {
+  return 'Enter a new password for the account'
 }
 
-function newMnemonicPassword(): string {
-  return 'Enter a new password for the mnemonic'
-}
-
-function newMnemonicPasswordConfirmation(): string {
-  return 'Enter the new password again for the mnemonic'
+function newAccountPasswordConfirmation(): string {
+  return 'Enter the new password again for the account'
 }
 
 function portableAccountPassword(): string {
-  return 'Enter a password for the portable FDP account'
+  return 'Enter a password for the portable FDS account'
 }
 
 function portableAccountPasswordConfirmation(): string {
-  return 'Enter a password again for the portable FDP account'
+  return 'Enter a password again for the portable FDS account'
 }
 
 function requireOptionConfirmation(option: string, message: string): string {
@@ -74,6 +70,10 @@ function noUsableBatch(): string {
   return 'Usable batch not found'
 }
 
+function loggedInSuccessfully(): string {
+  return 'Logged in successfully!'
+}
+
 export const Message = {
   accountNameConflict,
   accountNameConflictArgument,
@@ -82,10 +82,9 @@ export const Message = {
   noSuchAccount,
   optionNotDefined,
   optionNotDefinedWithTitle,
-  existingV3Password,
   requireOptionConfirmation,
-  newMnemonicPassword,
-  newMnemonicPasswordConfirmation,
+  newAccountPassword,
+  newAccountPasswordConfirmation,
   portableAccountPassword,
   portableAccountPasswordConfirmation,
   invalidMnemonic,
@@ -94,4 +93,5 @@ export const Message = {
   topUpBalance,
   unsupportedAccountType,
   noUsableBatch,
+  loggedInSuccessfully,
 }

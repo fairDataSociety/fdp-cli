@@ -10,6 +10,33 @@ interface NameValue {
   value: string
 }
 
+/**
+ * Options for the password prompt
+ */
+export interface AskForPasswordOptions {
+  optionLabel: string
+  optionName: string
+  clear: boolean
+}
+
+/**
+ * Default options for password asking
+ */
+export const DEFAULT_ASK_FOR_PASSWORD_OPTIONS = {
+  optionLabel: 'password',
+  optionName: 'password',
+  clear: true,
+}
+
+/**
+ * Default options for portable password asking
+ */
+export const ASK_FOR_PORTABLE_PASSWORD_OPTIONS = {
+  optionLabel: 'portable password',
+  optionName: 'portable-password',
+  clear: false,
+}
+
 export enum VerbosityLevel {
   /** No output message, only at errors or result strings (e.g. hash of uploaded file) */
   Quiet,
@@ -87,9 +114,12 @@ export class CommandLog {
    *
    * @returns password
    */
-  public async askForPassword(message: string, clear = true): Promise<string> {
+  public async askForPassword(
+    message: string,
+    options: AskForPasswordOptions = DEFAULT_ASK_FOR_PASSWORD_OPTIONS,
+  ): Promise<string> {
     if (this.verbosityLevel === VerbosityLevel.Quiet) {
-      throw new CommandLineError(Message.optionNotDefined('password'))
+      throw new CommandLineError(Message.optionNotDefined(options.optionLabel, options.optionName))
     }
 
     const { value } = await prompt({
@@ -104,7 +134,7 @@ export class CommandLog {
       throw new CommandLineError('No password specified')
     }
 
-    if (clear) {
+    if (options.clear) {
       deletePreviousLine()
     }
 
@@ -122,8 +152,8 @@ export class CommandLog {
     minPasswordLength: number,
     maxPasswordLength: number,
   ): Promise<string> {
-    const password = await this.askForPassword(passwordMessage, false)
-    const passwordAgain = await this.askForPassword(confirmationMessage, false)
+    const password = await this.askForPassword(passwordMessage, ASK_FOR_PORTABLE_PASSWORD_OPTIONS)
+    const passwordAgain = await this.askForPassword(confirmationMessage, ASK_FOR_PORTABLE_PASSWORD_OPTIONS)
 
     if (password !== passwordAgain) {
       throw new CommandLineError('The two passwords do not match')

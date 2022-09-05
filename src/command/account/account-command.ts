@@ -1,18 +1,23 @@
 import { Option } from 'furious-commander'
 import { RootCommand } from '../root-command'
 import { exit } from 'process'
-import { getMnemonicFromAccount, pickAccount } from '../../service/account'
+import { AccountType, getMnemonicFromAccount, pickAccount } from '../../service/account'
 import { Account } from '../../service/account/types'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
-import { VerbosityLevel } from '../root-command/command-log'
-import { Wallet } from 'ethers'
+import { ASK_FOR_PORTABLE_PASSWORD_OPTIONS, VerbosityLevel } from '../root-command/command-log'
+import { utils, Wallet } from 'ethers'
 import { createKeyValue } from '../../utils/text'
+import { createAndRunSpinner } from '../../utils/spinner'
+import { walletToV3 } from '../../utils/wallet'
+import { encryptSeed } from '../../utils/encryption'
+import { Utils } from '@ethersphere/bee-js'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255
 export const MIN_USERNAME_LENGTH = 4
 export const MAX_USERNAME_LENGTH = 82
+export const HD_PATH = `m/44'/60'/0'/0/0`
 
 interface NamedAccount {
   name: string
@@ -46,7 +51,7 @@ export class AccountCommand extends RootCommand {
    * Gets a mnemonic from an account
    */
   protected async getMnemonic(): Promise<string> {
-    const account = await this.getAccount()
+    const account = await this.getAccount(AccountType.v3Keystore)
 
     return getMnemonicFromAccount(this.console, this.quiet, account, this.password)
   }
@@ -54,7 +59,7 @@ export class AccountCommand extends RootCommand {
   /**
    * Gets an account from the config
    */
-  private async getAccount(): Promise<Account> {
+  private async getAccount(accountType: AccountType): Promise<Account> {
     const { accounts } = this.commandConfig.config
 
     if (this.account && !accounts[this.account]) {
@@ -66,7 +71,7 @@ export class AccountCommand extends RootCommand {
       this.console.error('The provided account does not exist. Please select one that exists.')
     }
 
-    return accounts[this.account] || accounts[await pickAccount(this.commandConfig, this.console)]
+    return accounts[this.account] || accounts[await pickAccount(this.commandConfig, this.console, accountType)]
   }
 
   /**
@@ -133,24 +138,83 @@ export class AccountCommand extends RootCommand {
   }
 
   /**
-   * Checks if the account password is valid
+   * Asks portable account password with confirmation if it is empty
    */
-  protected async checkPortableAccountPassword(portablePassword: string): Promise<string> {
+  protected async askPortableAccountPassword(portablePassword: string, withConfirmation = true): Promise<string> {
     if (portablePassword) {
       return portablePassword
     } else {
       if (this.quiet) {
-        throw new CommandLineError('Password must be passed with the --portable-password option in quiet mode')
+        throw new CommandLineError(
+          `Password must be passed with the --${ASK_FOR_PORTABLE_PASSWORD_OPTIONS.optionName} option in quiet mode`,
+        )
       }
 
-      this.console.log(Message.optionNotDefinedWithTitle('portable password', 'portable-password'))
+      this.console.log(
+        Message.optionNotDefinedWithTitle(
+          ASK_FOR_PORTABLE_PASSWORD_OPTIONS.optionLabel,
+          ASK_FOR_PORTABLE_PASSWORD_OPTIONS.optionName,
+        ),
+      )
 
-      return this.console.askForPasswordWithConfirmation(
-        Message.portableAccountPassword(),
-        Message.portableAccountPasswordConfirmation(),
+      if (withConfirmation) {
+        return this.console.askForPasswordWithConfirmation(
+          Message.portableAccountPassword(),
+          Message.portableAccountPasswordConfirmation(),
+          MIN_PASSWORD_LENGTH,
+          MAX_PASSWORD_LENGTH,
+        )
+      } else {
+        return this.console.askForPassword(Message.portableAccountPassword(), ASK_FOR_PORTABLE_PASSWORD_OPTIONS)
+      }
+    }
+  }
+
+  /**
+   * Asks to enter a password for an account if the password is not provided
+   */
+  protected async askPassword(): Promise<void> {
+    if (!this.password) {
+      this.console.log(Message.optionNotDefined('password'))
+      this.password = await this.console.askForPasswordWithConfirmation(
+        Message.newAccountPassword(),
+        Message.newAccountPasswordConfirmation(),
         MIN_PASSWORD_LENGTH,
         MAX_PASSWORD_LENGTH,
       )
+    }
+  }
+
+  /**
+   * Creates an encrypted account from a mnemonic
+   */
+  protected async createMnemonicAccount(mnemonic: string): Promise<Account> {
+    await this.askPassword()
+    const spinner = createAndRunSpinner('Creating account...', this.verbosity)
+    const encryptedWallet = await walletToV3(Wallet.fromMnemonic(mnemonic), this.password)
+    spinner.stop()
+
+    return {
+      encryptedWallet,
+    }
+  }
+
+  /**
+   * Creates an encrypted account from a seed
+   */
+  protected async createSeedAccount(seed: Utils.Bytes<64>): Promise<Account> {
+    await this.askPassword()
+    const spinner = createAndRunSpinner('Creating account...', this.verbosity)
+    let { address } = utils.HDNode.fromSeed(seed).derivePath(HD_PATH)
+    address = address.replace('0x', '')
+    const encryptedSeed = encryptSeed(seed, this.password)
+    spinner.stop()
+
+    return {
+      encryptedWallet: {
+        address,
+        encryptedSeed,
+      },
     }
   }
 }

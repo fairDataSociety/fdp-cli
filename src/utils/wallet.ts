@@ -1,6 +1,8 @@
 import { Wallet } from 'ethers'
 import { V3Keystore } from '../service/account/types'
 
+export const ADDRESS_LENGTH = 40
+
 /**
  * Converts and encrypts the given wallet to V3 format
  *

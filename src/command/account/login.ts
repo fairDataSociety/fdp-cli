@@ -8,15 +8,16 @@ import {
   MIN_PASSWORD_LENGTH,
   MIN_USERNAME_LENGTH,
 } from './account-command'
-import { createKeyValue } from '../../utils/text'
 import { Message } from '../../utils/message'
 import { CommandLineError } from '../../utils/error'
 import { getFieldOrNull } from '../../utils'
+import { assertBytes } from '../../utils/types'
+import { Utils } from '@ethersphere/bee-js'
 
-export class Register extends AccountCommand implements LeafCommand {
-  public readonly name = 'register'
+export class Login extends AccountCommand implements LeafCommand {
+  public readonly name = 'login'
 
-  public readonly description = 'Register a portable FDS account'
+  public readonly description = 'Login to a portable FDS account'
 
   @Argument({
     key: 'username',
@@ -39,38 +40,42 @@ export class Register extends AccountCommand implements LeafCommand {
     maximumLength: MAX_PASSWORD_LENGTH,
   })
   public portablePassword!: string
-  public postageBatchRequired = true
 
   public async run(): Promise<void> {
     await super.init()
 
-    this.validateBeeDebugAvailable()
-    await this.validateUsableBatchExists()
-    const spinner = createSpinner('Registering new user. This may take a while.')
-    let isRegistered = false
-    try {
-      const mnemonic = await this.getMnemonic()
-      this.portablePassword = await this.askPortableAccountPassword(this.portablePassword)
+    if (this.commandConfig.config.accounts[this.username]) {
+      throw new CommandLineError(Message.accountNameConflictArgument(this.username))
+    }
 
+    this.portablePassword = await this.askPortableAccountPassword(this.portablePassword, false)
+    const spinner = createSpinner('Logging in to FDS account. This may take a while.')
+
+    let isSaved = false
+    try {
       if (this.verbosity !== VerbosityLevel.Quiet) {
         spinner.start()
       }
 
-      this.fdpStorage.account.setAccountFromMnemonic(mnemonic)
-      isRegistered = Boolean(await this.fdpStorage.account.register(this.username, this.portablePassword))
+      await this.fdpStorage.account.login(this.username, this.portablePassword)
+      assertBytes(this.fdpStorage.account.seed)
+      spinner.stop()
+      const account = await this.createSeedAccount(this.fdpStorage.account.seed as Utils.Bytes<64>)
+      isSaved = this.commandConfig.saveAccount(this.username, account)
     } catch (error: unknown) {
       const ensError = getFieldOrNull(error, 'error')
       const message: string = getFieldOrNull(error, 'message') || getFieldOrNull(ensError, 'message') || 'unknown error'
-      throw new CommandLineError(`Failed to register account: ${message}`)
+      throw new CommandLineError(`Failed to login to account: ${message}`)
     } finally {
       if (spinner.isSpinning) {
         spinner.stop()
       }
     }
 
-    if (isRegistered) {
-      this.console.log(Message.newAccountRegistered())
-      this.console.log(createKeyValue('Username', this.username))
+    this.console.log(Message.loggedInSuccessfully())
+
+    if (!isSaved) {
+      throw new CommandLineError(Message.accountNameConflictArgument(this.username))
     }
   }
 }
