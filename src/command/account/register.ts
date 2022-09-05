@@ -20,6 +20,7 @@ export class Register extends AccountCommand implements LeafCommand {
 
   @Argument({
     key: 'username',
+    alias: 'u',
     description: 'Username for the portable FDS account',
     type: 'string',
     required: true,
@@ -30,6 +31,7 @@ export class Register extends AccountCommand implements LeafCommand {
 
   @Option({
     key: 'portable-password',
+    alias: 'p',
     description: 'Password for the portable FDS account',
     type: 'string',
     required: { when: 'quiet' },
