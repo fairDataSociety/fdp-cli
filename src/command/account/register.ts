@@ -39,6 +39,7 @@ export class Register extends AccountCommand implements LeafCommand {
     maximumLength: MAX_PASSWORD_LENGTH,
   })
   public portablePassword!: string
+  public postageBatchRequired = true
 
   public async run(): Promise<void> {
     await super.init()

@@ -79,7 +79,6 @@ With specific system environment variables you can alter the behaviour of the CL
 
 * `BEE_API_URL` - API URL of Bee client
 * `BEE_DEBUG_API_URL` - debug API URL of Bee client
-* `BEE_POSTAGE_BATCH_ID` - postage batch ID for data uploading. If empty, the first found usable will be used
 * `FDP_CLI_CONFIG_FOLDER` - full path to a configuration folder
 * `FDP_CLI_CONFIG_FILE` - configuration file name, defaults to config.json
 

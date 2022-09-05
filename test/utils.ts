@@ -3,9 +3,7 @@ import { BATCH_ID_HEX_LENGTH, BatchId, BeeDebug, Utils } from '@ethersphere/bee-
 import fs from 'fs/promises'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { utils } from 'ethers'
-import { isUsableBatchExists } from '../src/command/root-command'
-
-const EMPTY_BATCH = '0000000000000000000000000000000000000000000000000000000000000000'
+import { isUsableBatchExists, ZERO_BATCH_ID } from '../src/utils/bee'
 
 /**
  * Asserts whether batch id passed
@@ -78,8 +76,8 @@ export async function topUpWallet(path: string, name: string, amountInEther = '1
   }
 
   const address = '0x' + walletAddress
-  assertBatchId(EMPTY_BATCH)
-  const fdp = new FdpStorage(beeUrl(), EMPTY_BATCH)
+  assertBatchId(ZERO_BATCH_ID)
+  const fdp = new FdpStorage(beeUrl(), ZERO_BATCH_ID)
   const account = (await fdp.ens.provider.listAccounts())[0]
   const txHash = await fdp.ens.provider.send('eth_sendTransaction', [
     {

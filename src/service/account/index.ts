@@ -12,8 +12,8 @@ import { EncryptedSeed } from './types/wallet'
  * Types are used to request a specific wallet type from an array of wallets
  */
 export enum AccountType {
-  mnemonic = 'mnemonic',
-  seed = 'seed',
+  v3Keystore = 'v3Keystore',
+  encryptedSeed = 'encryptedSeed',
   all = 'all',
 }
 
@@ -24,9 +24,9 @@ export function getAccountType(account: Account): AccountType {
   const { encryptedWallet } = account
 
   if (isV3Wallet(encryptedWallet)) {
-    return AccountType.mnemonic
+    return AccountType.v3Keystore
   } else if (isEncryptedSeed(encryptedWallet)) {
-    return AccountType.seed
+    return AccountType.encryptedSeed
   } else {
     throw new Error(Message.unsupportedAccountType())
   }
@@ -38,9 +38,9 @@ export function getAccountType(account: Account): AccountType {
 export function isCorrectType(type: AccountType, account: Account): boolean {
   const { encryptedWallet } = account
   switch (type) {
-    case AccountType.mnemonic:
+    case AccountType.v3Keystore:
       return isV3Wallet(encryptedWallet)
-    case AccountType.seed:
+    case AccountType.encryptedSeed:
       return isEncryptedSeed(encryptedWallet)
     case AccountType.all:
       return true

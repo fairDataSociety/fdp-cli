@@ -51,7 +51,7 @@ export class AccountCommand extends RootCommand {
    * Gets a mnemonic from an account
    */
   protected async getMnemonic(): Promise<string> {
-    const account = await this.getAccount(AccountType.mnemonic)
+    const account = await this.getAccount(AccountType.v3Keystore)
 
     return getMnemonicFromAccount(this.console, this.quiet, account, this.password)
   }
