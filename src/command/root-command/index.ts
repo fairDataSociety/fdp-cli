@@ -8,6 +8,16 @@ import { Message } from '../../utils/message'
 import { BeeDebug } from '@ethersphere/bee-js'
 import { assertBatchId, beeDebugUrl } from '../../../test/utils'
 import { getUsableBatch, isUsableBatchExists, ZERO_BATCH_ID } from '../../utils/bee'
+import { CommandLineError } from '../../utils/error'
+import { Account } from '../../service/account/types'
+import { isEncryptedSeed, isV3Wallet } from '../../service/account'
+import { v3ToWallet } from '../../utils/wallet'
+import { decryptSeed } from '../../utils/encryption'
+
+interface NamedAccount {
+  name: string
+  account: Account
+}
 
 export class RootCommand {
   @ExternalOption('bee-api-url')
@@ -150,5 +160,67 @@ export class RootCommand {
     } catch (error) {
       return false
     }
+  }
+
+  /**
+   * Throws an error if there are no accounts
+   */
+  protected throwIfNoAccounts(): void {
+    if (!this.commandConfig.config.accounts) {
+      throw new CommandLineError(Message.noAccount())
+    }
+  }
+
+  protected async fillFdpAccount(name?: string | null, password?: string | null): Promise<void> {
+    const { account } = await this.getOrPickAccount(name)
+
+    if (!password) {
+      password = await this.console.askForPassword(Message.portableAccountPassword())
+    }
+
+    if (isV3Wallet(account.encryptedWallet)) {
+      const wallet = await v3ToWallet(account.encryptedWallet, password)
+      this.fdpStorage.account.setAccountFromMnemonic(wallet.mnemonic.phrase)
+    } else if (isEncryptedSeed(account.encryptedWallet)) {
+      this.fdpStorage.account.setAccountFromSeed(decryptSeed(account.encryptedWallet.encryptedSeed, password))
+    } else {
+      throw new CommandLineError(Message.unsupportedAccountType())
+    }
+  }
+
+  /**
+   * Gets an account from the config by name or pick it from the list
+   */
+  protected async getOrPickAccount(name?: string | null): Promise<NamedAccount> {
+    this.throwIfNoAccounts()
+
+    if (name) {
+      return { name, account: this.getAccountByName(name) }
+    }
+
+    if (this.verbosity === VerbosityLevel.Quiet) {
+      throw new CommandLineError('Account name must be specified when running in --quiet mode')
+    }
+
+    const choices = Object.entries(this.commandConfig.config.accounts).map(x => ({
+      name: `${x[0]} (0x${x[1].encryptedWallet.address})`,
+      value: x[0],
+    }))
+    const selection = await this.console.promptList(choices, 'Select an account for this action')
+
+    return { name: selection, account: this.getAccountByName(selection) }
+  }
+
+  /**
+   * Gets an account by name from the config
+   */
+  protected getAccountByName(name: string): Account {
+    const { accounts } = this.commandConfig.config
+
+    if (!accounts || !accounts[name]) {
+      throw new CommandLineError(Message.noSuchAccount(name))
+    }
+
+    return accounts[name]
   }
 }

@@ -1,18 +1,13 @@
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { createSpinner } from '../../utils/spinner'
 import { VerbosityLevel } from '../root-command/command-log'
-import {
-  AccountCommand,
-  MAX_PASSWORD_LENGTH,
-  MAX_USERNAME_LENGTH,
-  MIN_PASSWORD_LENGTH,
-  MIN_USERNAME_LENGTH,
-} from './account-command'
+import { AccountCommand } from './account-command'
 import { Message } from '../../utils/message'
 import { CommandLineError } from '../../utils/error'
 import { getFieldOrNull } from '../../utils'
 import { assertBytes } from '../../utils/types'
 import { Utils } from '@ethersphere/bee-js'
+import { MAX_PASSWORD_LENGTH, MAX_USERNAME_LENGTH, MIN_PASSWORD_LENGTH, MIN_USERNAME_LENGTH } from '../../utils/account'
 
 export class Login extends AccountCommand implements LeafCommand {
   public readonly name = 'login'
