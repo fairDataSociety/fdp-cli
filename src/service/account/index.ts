@@ -4,7 +4,6 @@ import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { Account, V3Keystore } from './types'
 import { ADDRESS_LENGTH, v3ToMnemonic } from '../../utils/wallet'
-import { EncryptedSeed } from './types/wallet'
 
 /**
  * Available account types
@@ -13,7 +12,6 @@ import { EncryptedSeed } from './types/wallet'
  */
 export enum AccountType {
   v3Keystore = 'v3Keystore',
-  encryptedSeed = 'encryptedSeed',
   all = 'all',
 }
 
@@ -25,8 +23,6 @@ export function getAccountType(account: Account): AccountType {
 
   if (isV3Wallet(encryptedWallet)) {
     return AccountType.v3Keystore
-  } else if (isEncryptedSeed(encryptedWallet)) {
-    return AccountType.encryptedSeed
   } else {
     throw new Error(Message.unsupportedAccountType())
   }
@@ -40,8 +36,6 @@ export function isCorrectType(type: AccountType, account: Account): boolean {
   switch (type) {
     case AccountType.v3Keystore:
       return isV3Wallet(encryptedWallet)
-    case AccountType.encryptedSeed:
-      return isEncryptedSeed(encryptedWallet)
     case AccountType.all:
       return true
     default:
@@ -62,15 +56,6 @@ export function isV3Wallet(wallet: unknown): wallet is V3Keystore {
     data.id?.length > 0 &&
     !isNaN(data.version)
   )
-}
-
-/**
- * Validates that the given wallet is a valid encrypted seed
- */
-export function isEncryptedSeed(wallet: unknown): wallet is EncryptedSeed {
-  const data = wallet as EncryptedSeed
-
-  return Boolean(data) && data.address?.length === ADDRESS_LENGTH && data.encryptedSeed?.length > 0
 }
 
 /**

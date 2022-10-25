@@ -10,8 +10,7 @@ import { utils, Wallet } from 'ethers'
 import { createKeyValue } from '../../utils/text'
 import { createAndRunSpinner } from '../../utils/spinner'
 import { walletToV3 } from '../../utils/wallet'
-import { encryptSeed } from '../../utils/encryption'
-import { Utils } from '@ethersphere/bee-js'
+import { isSeed, isString, Seed } from '../../utils/type'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255
@@ -188,33 +187,24 @@ export class AccountCommand extends RootCommand {
   /**
    * Creates an encrypted account from a mnemonic
    */
-  protected async createMnemonicAccount(mnemonic: string): Promise<Account> {
+  protected async createAccount(seedOrMnemonic: Seed | string): Promise<Account> {
     await this.askPassword()
     const spinner = createAndRunSpinner('Creating account...', this.verbosity)
-    const encryptedWallet = await walletToV3(Wallet.fromMnemonic(mnemonic), this.password)
+    let wallet
+
+    if (isString(seedOrMnemonic)) {
+      wallet = Wallet.fromMnemonic(seedOrMnemonic)
+    } else if (isSeed(seedOrMnemonic)) {
+      wallet = new Wallet(utils.HDNode.fromSeed(seedOrMnemonic).derivePath(HD_PATH))
+    } else {
+      throw new Error('Incorrect data type. Expected seed in form of bytes or mnemonic in form of string')
+    }
+
+    const encryptedWallet = await walletToV3(wallet, this.password)
     spinner.stop()
 
     return {
       encryptedWallet,
-    }
-  }
-
-  /**
-   * Creates an encrypted account from a seed
-   */
-  protected async createSeedAccount(seed: Utils.Bytes<64>): Promise<Account> {
-    await this.askPassword()
-    const spinner = createAndRunSpinner('Creating account...', this.verbosity)
-    let { address } = utils.HDNode.fromSeed(seed).derivePath(HD_PATH)
-    address = address.replace('0x', '')
-    const encryptedSeed = encryptSeed(seed, this.password)
-    spinner.stop()
-
-    return {
-      encryptedWallet: {
-        address,
-        encryptedSeed,
-      },
     }
   }
 }

@@ -60,7 +60,7 @@ export class Login extends AccountCommand implements LeafCommand {
       await this.fdpStorage.account.login(this.username, this.portablePassword)
       assertBytes(this.fdpStorage.account.seed)
       spinner.stop()
-      const account = await this.createSeedAccount(this.fdpStorage.account.seed as Utils.Bytes<64>)
+      const account = await this.createAccount(this.fdpStorage.account.seed as Utils.Bytes<64>)
       isSaved = this.commandConfig.saveAccount(this.username, account)
     } catch (error: unknown) {
       const ensError = getFieldOrNull(error, 'error')
