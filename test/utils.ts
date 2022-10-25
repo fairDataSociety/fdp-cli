@@ -31,6 +31,16 @@ export function beeUrl(): string {
 }
 
 /**
+ * Returns a batch id for Bee
+ */
+export function batchId(): BatchId {
+  const result = process.env.BEE_BATCH_ID || process.env.CACHED_BEE_BATCH_ID
+  assertBatchId(result)
+
+  return result
+}
+
+/**
  * Returns an url for testing the Bee Debug API
  */
 export function beeDebugUrl(): string {
@@ -45,22 +55,41 @@ export async function sleep(milliseconds: number): Promise<void> {
 }
 
 /**
- * Creates and awaits for a usable batch
+ * Gets usable batch id
  */
-export async function createUsableBatch(): Promise<void> {
-  if (await isUsableBatchExists()) {
-    return
+export async function getUsableBatch(beeDebug?: BeeDebug): Promise<BatchId> {
+  beeDebug = beeDebug ? beeDebug : new BeeDebug(beeDebugUrl())
+  const allBatch = await beeDebug.getAllPostageBatch()
+
+  const result = allBatch.find(item => item.usable)
+
+  if (!result) {
+    throw new Error('Usable batch not found')
   }
 
+  return result.batchID
+}
+
+/**
+ * Creates and awaits for a usable batch
+ */
+export async function createUsableBatch(): Promise<BatchId> {
   const beeDebug = new BeeDebug(beeDebugUrl())
+
+  if (await isUsableBatchExists()) {
+    return getUsableBatch(beeDebug)
+  }
+
   await beeDebug.createPostageBatch('10000000', 24)
   for (let i = 0; i < 100; i++) {
     if (await isUsableBatchExists()) {
       break
     }
 
-    await sleep(10000)
+    await sleep(3000)
   }
+
+  return getUsableBatch(beeDebug)
 }
 
 /**
@@ -88,4 +117,11 @@ export async function topUpWallet(path: string, name: string, amountInEther = '1
   ])
 
   await fdp.ens.provider.waitForTransaction(txHash)
+}
+
+/**
+ * Creates FDP instance
+ */
+export function createFdp(): FdpStorage {
+  return new FdpStorage(beeUrl(), batchId())
 }

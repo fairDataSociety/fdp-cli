@@ -4,10 +4,39 @@ import { Utils } from '@ethersphere/bee-js'
 export const IV_LENGTH = 16
 
 /**
+ * Decrypts WordsArray with password
+ *
+ * @param password string to decrypt bytes
+ * @param data WordsArray to be decrypted
+ */
+export function decrypt(password: string, data: CryptoJS.lib.WordArray): CryptoJS.lib.WordArray {
+  const wordSize = 4
+  const key = CryptoJS.SHA256(password)
+  const iv = CryptoJS.lib.WordArray.create(data.words.slice(0, IV_LENGTH), IV_LENGTH)
+  const textBytes = CryptoJS.lib.WordArray.create(data.words.slice(IV_LENGTH / wordSize), data.sigBytes - IV_LENGTH)
+  const cipherParams = CryptoJS.lib.CipherParams.create({
+    ciphertext: textBytes,
+  })
+
+  return CryptoJS.AES.decrypt(cipherParams, key, {
+    iv,
+    mode: CryptoJS.mode.CFB,
+    padding: CryptoJS.pad.NoPadding,
+  })
+}
+
+/**
  * Converts bytes to CryptoJS WordArray
  */
 export function bytesToWordArray(data: Uint8Array): CryptoJS.lib.WordArray {
   return CryptoJS.enc.Hex.parse(Utils.bytesToHex(data))
+}
+
+/**
+ * Converts hex string to CryptoJS WordArray
+ */
+export function hexToWordArray(data: string): CryptoJS.lib.WordArray {
+  return CryptoJS.enc.Hex.parse(data)
 }
 
 /**
@@ -53,7 +82,12 @@ export function encrypt(
  * Encrypt seed with password
  */
 export function encryptSeed(seed: Utils.Bytes<64>, password: string): string {
-  const encryptedBytes = encryptBytes(password, bytesToWordArray(seed))
+  return Utils.bytesToHex(encryptBytes(password, bytesToWordArray(seed)))
+}
 
-  return Utils.bytesToHex(encryptedBytes)
+/**
+ * Decrypt seed with password
+ */
+export function decryptSeed(seed: string, password: string): Utils.Bytes<64> {
+  return Utils.hexToBytes(CryptoJS.enc.Hex.stringify(decrypt(password, hexToWordArray(seed))))
 }

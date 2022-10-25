@@ -1,13 +1,9 @@
 import { describeCommand, invokeTestCli } from '../utility'
-import { createUsableBatch, getRandomString, topUpWallet } from '../utils'
+import { getRandomString, topUpWallet } from '../utils'
 
 describeCommand(
   'Test Account command',
   ({ consoleMessages, configFilePath }) => {
-    beforeAll(async () => {
-      await createUsableBatch()
-    })
-
     it('should create account', async () => {
       const account = getRandomString()
       const account1 = getRandomString()

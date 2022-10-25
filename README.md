@@ -46,6 +46,24 @@ Login to portable account with storing account's seed to local machine.
 fdp-cli account login YOUR_USERNAME
 ```
 
+Create a pod.
+
+```sh
+fdp-cli pod create POD_NAME
+```
+
+Delete a pod.
+
+```sh
+fdp-cli pod delete POD_NAME
+```
+
+Show list of pods.
+
+```sh
+fdp-cli pod list
+```
+
 # Development
 
 After the project has been cloned, the dependencies must be
@@ -78,6 +96,7 @@ directory.
 With specific system environment variables you can alter the behaviour of the CLI
 
 * `BEE_API_URL` - API URL of Bee client
+* `BEE_BATCH_ID` - batch id for Bee client
 * `BEE_DEBUG_API_URL` - debug API URL of Bee client
 * `FDP_CLI_CONFIG_FOLDER` - full path to a configuration folder
 * `FDP_CLI_CONFIG_FILE` - configuration file name, defaults to config.json
