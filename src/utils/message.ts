@@ -74,6 +74,14 @@ function loggedInSuccessfully(): string {
   return 'Logged in successfully!'
 }
 
+function podCreatedSuccessfully(): string {
+  return 'Pod created successfully!'
+}
+
+function podDeletedSuccessfully(): string {
+  return 'Pod deleted successfully!'
+}
+
 export const Message = {
   accountNameConflict,
   accountNameConflictArgument,
@@ -94,4 +102,6 @@ export const Message = {
   unsupportedAccountType,
   noUsableBatch,
   loggedInSuccessfully,
+  podCreatedSuccessfully,
+  podDeletedSuccessfully,
 }
