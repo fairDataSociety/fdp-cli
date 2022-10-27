@@ -25,7 +25,7 @@ export class Create extends AccountCommand implements LeafCommand {
     }
 
     const wallet = Wallet.createRandom()
-    const account = await this.createMnemonicAccount(wallet.mnemonic.phrase)
+    const account = await this.createAccount(wallet.mnemonic.phrase)
     const saved = this.commandConfig.saveAccount(this.accountName, account)
 
     if (!saved) {

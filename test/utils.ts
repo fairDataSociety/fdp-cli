@@ -4,6 +4,7 @@ import fs from 'fs/promises'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { utils } from 'ethers'
 import { isUsableBatchExists, ZERO_BATCH_ID } from '../src/utils/bee'
+import { V3Keystore } from '../src/service/account/types'
 
 /**
  * Asserts whether batch id passed
@@ -67,12 +68,10 @@ export async function createUsableBatch(): Promise<void> {
  * Top up wallet for account registration
  */
 export async function topUpWallet(path: string, name: string, amountInEther = '1'): Promise<void> {
-  const data = JSON.parse(await fs.readFile(path, 'utf8'))
-
-  const walletAddress = data.accounts[name]?.encryptedWallet?.address
+  const walletAddress = (await getEncryptedAccount(path, name)).address
 
   if (!walletAddress) {
-    throw new Error(`Wallet for ${name} no found`)
+    throw new Error(`Wallet for "${name}" not found`)
   }
 
   const address = '0x' + walletAddress
@@ -88,4 +87,18 @@ export async function topUpWallet(path: string, name: string, amountInEther = '1
   ])
 
   await fdp.ens.provider.waitForTransaction(txHash)
+}
+
+/**
+ * Gets encrypted account from the file
+ */
+export async function getEncryptedAccount(path: string, name: string): Promise<V3Keystore> {
+  const data = JSON.parse(await fs.readFile(path, 'utf8'))
+  const encryptedWallet = data.accounts[name]?.encryptedWallet
+
+  if (!encryptedWallet) {
+    throw new Error(`Account "${name}" not found`)
+  }
+
+  return encryptedWallet
 }

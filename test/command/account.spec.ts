@@ -1,5 +1,8 @@
 import { describeCommand, invokeTestCli } from '../utility'
-import { createUsableBatch, getRandomString, topUpWallet } from '../utils'
+import { assertBatchId, beeUrl, createUsableBatch, getEncryptedAccount, getRandomString, topUpWallet } from '../utils'
+import { FdpStorage } from '@fairdatasociety/fdp-storage'
+import { ZERO_BATCH_ID } from '../../src/utils/bee'
+import { v3ToWallet } from '../../src/utils/wallet'
 
 describeCommand(
   'Test Account command',
@@ -73,6 +76,14 @@ describeCommand(
       expect(consoleMessages[0]).toContain('New account registered successfully!')
       expect(consoleMessages[1]).toContain('Username:')
       expect(consoleMessages[1]).toContain(`${portableUsername}`)
+
+      // comparing stored cli account address with fdp portable account address
+      assertBatchId(ZERO_BATCH_ID)
+      const fdp = new FdpStorage(beeUrl(), ZERO_BATCH_ID)
+      await fdp.account.login(portableUsername, portablePassword)
+      const encryptedAccount = await getEncryptedAccount(configFilePath, account)
+      const decryptedWallet = await v3ToWallet(encryptedAccount, accountPassword)
+      expect(fdp.account.wallet?.address).toEqual(decryptedWallet.address)
     })
 
     it('should fail during registration portable FDP account with insufficient balance', async () => {
