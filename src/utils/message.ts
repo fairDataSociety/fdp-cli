@@ -78,8 +78,16 @@ function podCreatedSuccessfully(): string {
   return 'Pod created successfully!'
 }
 
+function directoryCreatedSuccessfully(): string {
+  return 'Directory created successfully!'
+}
+
 function podDeletedSuccessfully(): string {
   return 'Pod deleted successfully!'
+}
+
+function directoryDeletedSuccessfully(name?: string): string {
+  return `Directory ${name ? `"${name}"` : ''} deleted successfully!`
 }
 
 export const Message = {
@@ -104,4 +112,6 @@ export const Message = {
   loggedInSuccessfully,
   podCreatedSuccessfully,
   podDeletedSuccessfully,
+  directoryDeletedSuccessfully,
+  directoryCreatedSuccessfully,
 }
