@@ -46,7 +46,7 @@ Login to portable account with storing account's seed to local machine.
 fdp-cli account login YOUR_USERNAME
 ```
 
-Create a pod.
+### Pods management
 
 ```sh
 fdp-cli pod create POD_NAME
@@ -62,6 +62,32 @@ Show list of pods.
 
 ```sh
 fdp-cli pod list
+```
+
+### Directories management
+
+Create a directory.
+
+```sh
+fdp-cli directory create "/YOUR_DIRECTORY" --pod POD_NAME
+```
+
+Get list of files and directories in the root.
+
+```sh
+fdp-cli directory read "/" --pod POD_NAME
+```
+
+Get list of in subdirectory.
+
+```sh
+fdp-cli directory read "/YOUR_SUBDIR" --pod POD_NAME
+```
+
+Delete a directory.
+
+```sh
+fdp-cli directory delete "/YOUR_DIRECTORY" --pod POD_NAME
 ```
 
 # Development

@@ -82,6 +82,22 @@ function podDeletedSuccessfully(): string {
   return 'Pod deleted successfully!'
 }
 
+function directoryCreatedSuccessfully(): string {
+  return 'Directory created successfully!'
+}
+
+function directoryDeletedSuccessfully(name?: string): string {
+  return `Directory ${name ? `"${name}"` : ''} deleted successfully!`
+}
+
+function emptyAccountsList(): string {
+  return 'Account list is empty'
+}
+
+function emptyDirectory(): string {
+  return 'Directory is empty'
+}
+
 export const Message = {
   accountNameConflict,
   accountNameConflictArgument,
@@ -104,4 +120,8 @@ export const Message = {
   loggedInSuccessfully,
   podCreatedSuccessfully,
   podDeletedSuccessfully,
+  directoryCreatedSuccessfully,
+  directoryDeletedSuccessfully,
+  emptyAccountsList,
+  emptyDirectory,
 }
