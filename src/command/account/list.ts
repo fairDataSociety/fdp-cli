@@ -1,6 +1,7 @@
 import { LeafCommand } from 'furious-commander'
 import { createKeyValue } from '../../utils/text'
 import { AccountCommand } from './account-command'
+import { Message } from '../../utils/message'
 
 export class List extends AccountCommand implements LeafCommand {
   public readonly name = 'list'
@@ -13,10 +14,15 @@ export class List extends AccountCommand implements LeafCommand {
     await super.init()
     this.throwIfNoAccounts()
 
-    for (const [accountName, accountData] of Object.entries(this.commandConfig.config.accounts)) {
+    const accounts = Object.entries(this.commandConfig.config.accounts)
+    for (const [accountName, accountData] of accounts) {
       this.console.log(createKeyValue('Name', accountName))
       this.console.log(createKeyValue('Address', accountData.address))
       this.console.divider()
+    }
+
+    if (accounts.length === 0) {
+      this.console.log(Message.emptyAccountsList())
     }
   }
 }
