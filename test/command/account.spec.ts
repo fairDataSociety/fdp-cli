@@ -1,5 +1,5 @@
 import { describeCommand, invokeTestCli } from '../utility'
-import { assertBatchId, beeUrl, createUsableBatch, getEncryptedAccount, getRandomString, topUpWallet } from '../utils'
+import { assertBatchId, beeUrl, createUsableBatch, getEncryptedAccount, getRandomString, topUpAccount } from '../utils'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { ZERO_BATCH_ID } from '../../src/utils/bee'
 import { v3ToWallet } from '../../src/utils/wallet'
@@ -36,7 +36,7 @@ describeCommand(
 
       await invokeTestCli(['account', 'create', account, '--password', accountPassword])
       consoleMessages.length = 0
-      await topUpWallet(configFilePath, account)
+      await topUpAccount(configFilePath, account)
       await invokeTestCli([
         'account',
         'register',
@@ -61,7 +61,7 @@ describeCommand(
 
       await invokeTestCli(['account', 'create', account, '-P', accountPassword])
       consoleMessages.length = 0
-      await topUpWallet(configFilePath, account)
+      await topUpAccount(configFilePath, account)
       await invokeTestCli([
         'account',
         'register',
@@ -234,7 +234,7 @@ describeCommand(
 
       await invokeTestCli(['account', 'create', account, '--password', accountPassword])
       consoleMessages.length = 0
-      await topUpWallet(configFilePath, account)
+      await topUpAccount(configFilePath, account)
       await invokeTestCli([
         'account',
         'register',
