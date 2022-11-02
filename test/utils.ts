@@ -32,6 +32,16 @@ export function beeUrl(): string {
 }
 
 /**
+ * Returns a batch id for Bee
+ */
+export function batchId(): BatchId {
+  const result = process.env.BEE_BATCH_ID || process.env.CACHED_BEE_BATCH_ID
+  assertBatchId(result)
+
+  return result
+}
+
+/**
  * Returns an url for testing the Bee Debug API
  */
 export function beeDebugUrl(): string {
@@ -46,35 +56,47 @@ export async function sleep(milliseconds: number): Promise<void> {
 }
 
 /**
- * Creates and awaits for a usable batch
+ * Gets usable batch id
  */
-export async function createUsableBatch(): Promise<void> {
-  if (await isUsableBatchExists()) {
-    return
+export async function getUsableBatch(beeDebug?: BeeDebug): Promise<BatchId> {
+  beeDebug = beeDebug ? beeDebug : new BeeDebug(beeDebugUrl())
+  const allBatch = await beeDebug.getAllPostageBatch()
+
+  const result = allBatch.find(item => item.usable)
+
+  if (!result) {
+    throw new Error('Usable batch not found')
   }
 
+  return result.batchID
+}
+
+/**
+ * Creates and awaits for a usable batch
+ */
+export async function createUsableBatch(): Promise<BatchId> {
   const beeDebug = new BeeDebug(beeDebugUrl())
+
+  if (await isUsableBatchExists()) {
+    return getUsableBatch(beeDebug)
+  }
+
   await beeDebug.createPostageBatch('10000000', 24)
   for (let i = 0; i < 100; i++) {
     if (await isUsableBatchExists()) {
       break
     }
 
-    await sleep(10000)
+    await sleep(3000)
   }
+
+  return getUsableBatch(beeDebug)
 }
 
 /**
- * Top up wallet for account registration
+ * Top up specific Ethereum address
  */
-export async function topUpWallet(path: string, name: string, amountInEther = '1'): Promise<void> {
-  const walletAddress = (await getEncryptedAccount(path, name)).address
-
-  if (!walletAddress) {
-    throw new Error(`Wallet for "${name}" not found`)
-  }
-
-  const address = '0x' + walletAddress
+export async function topUpAddress(address: string, amountInEther = '1'): Promise<void> {
   assertBatchId(ZERO_BATCH_ID)
   const fdp = new FdpStorage(beeUrl(), ZERO_BATCH_ID)
   const account = (await fdp.ens.provider.listAccounts())[0]
@@ -90,6 +112,19 @@ export async function topUpWallet(path: string, name: string, amountInEther = '1
 }
 
 /**
+ * Top up wallet of the account
+ */
+export async function topUpAccount(path: string, name: string, amountInEther = '1'): Promise<void> {
+  const walletAddress = (await getEncryptedAccount(path, name)).address
+
+  if (!walletAddress) {
+    throw new Error(`Wallet for "${name}" not found`)
+  }
+
+  return topUpAddress('0x' + walletAddress, amountInEther)
+}
+
+/**
  * Gets encrypted account from the file
  */
 export async function getEncryptedAccount(path: string, name: string): Promise<V3Keystore> {
@@ -101,4 +136,11 @@ export async function getEncryptedAccount(path: string, name: string): Promise<V
   }
 
   return encryptedWallet
+}
+
+/**
+ * Creates FDP instance
+ */
+export function createFdp(): FdpStorage {
+  return new FdpStorage(beeUrl(), batchId())
 }

@@ -10,9 +10,8 @@ import { assertBatchId, beeDebugUrl } from '../../../test/utils'
 import { getUsableBatch, isUsableBatchExists, ZERO_BATCH_ID } from '../../utils/bee'
 import { CommandLineError } from '../../utils/error'
 import { Account } from '../../service/account/types'
-import { isEncryptedSeed, isV3Wallet } from '../../service/account'
-import { v3ToWallet } from '../../utils/wallet'
-import { decryptSeed } from '../../utils/encryption'
+import { isV3Wallet } from '../../service/account'
+import { v3ToSeed } from '../../utils/wallet'
 
 interface NamedAccount {
   name: string
@@ -171,6 +170,13 @@ export class RootCommand {
     }
   }
 
+  /**
+   * Fill FDP instance with decrypted seed
+   *
+   * @param name name of stored account
+   * @param password password for decrypting the account
+   * @protected
+   */
   protected async fillFdpAccount(name?: string | null, password?: string | null): Promise<void> {
     const { account } = await this.getOrPickAccount(name)
 
@@ -179,10 +185,8 @@ export class RootCommand {
     }
 
     if (isV3Wallet(account.encryptedWallet)) {
-      const wallet = await v3ToWallet(account.encryptedWallet, password)
-      this.fdpStorage.account.setAccountFromMnemonic(wallet.mnemonic.phrase)
-    } else if (isEncryptedSeed(account.encryptedWallet)) {
-      this.fdpStorage.account.setAccountFromSeed(decryptSeed(account.encryptedWallet.encryptedSeed, password))
+      const seed = await v3ToSeed(account.encryptedWallet, password)
+      this.fdpStorage.account.setAccountFromSeed(seed)
     } else {
       throw new CommandLineError(Message.unsupportedAccountType())
     }

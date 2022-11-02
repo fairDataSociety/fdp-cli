@@ -40,4 +40,5 @@ export interface V3Keystore {
     locale: string
     version: string
   }
+  'x-seed': string
 }
