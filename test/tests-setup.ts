@@ -6,6 +6,7 @@ export default async function testsSetup(): Promise<void> {
     process.env.CACHED_BEE_BATCH_ID = await createUsableBatch()
   }
 
+  // eslint-disable-next-line no-console
   console.log(
     `\nBatch ID will be used: ${process.env.CACHED_BEE_BATCH_ID}. It is stored in 'process.env.CACHED_BEE_BATCH_ID'\n`,
   )
