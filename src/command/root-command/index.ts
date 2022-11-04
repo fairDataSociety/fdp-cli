@@ -10,8 +10,9 @@ import { assertBatchId, beeDebugUrl } from '../../../test/utils'
 import { getUsableBatch, isUsableBatchExists, ZERO_BATCH_ID } from '../../utils/bee'
 import { CommandLineError } from '../../utils/error'
 import { Account } from '../../service/account/types'
-import { isV3Wallet } from '../../service/account'
-import { v3ToSeed } from '../../utils/wallet'
+import { decryptSeedString } from '../../utils/encryption'
+import { isAccount } from '../../service/account'
+import { uncompressedPublicKeyFromSeed } from '../../utils/wallet'
 
 interface NamedAccount {
   name: string
@@ -184,9 +185,10 @@ export class RootCommand {
       password = await this.console.askForPassword(Message.portableAccountPassword())
     }
 
-    if (isV3Wallet(account.encryptedWallet)) {
-      const seed = await v3ToSeed(account.encryptedWallet, password)
+    if (isAccount(account)) {
+      const seed = await decryptSeedString(account.encryptedSeed, password)
       this.fdpStorage.account.setAccountFromSeed(seed)
+      this.fdpStorage.account.publicKey = uncompressedPublicKeyFromSeed(seed)
     } else {
       throw new CommandLineError(Message.unsupportedAccountType())
     }
@@ -206,10 +208,15 @@ export class RootCommand {
       throw new CommandLineError('Account name must be specified when running in --quiet mode')
     }
 
-    const choices = Object.entries(this.commandConfig.config.accounts).map(x => ({
-      name: `${x[0]} (0x${x[1].encryptedWallet.address})`,
-      value: x[0],
-    }))
+    const choices = Object.entries(this.commandConfig.config.accounts).map(accountInfo => {
+      const name = accountInfo[0]
+      const account = accountInfo[1]
+
+      return {
+        name: `${name} (${account.address})`,
+        value: name,
+      }
+    })
     const selection = await this.console.promptList(choices, 'Select an account for this action')
 
     return { name: selection, account: this.getAccountByName(selection) }

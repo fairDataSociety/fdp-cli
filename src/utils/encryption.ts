@@ -1,5 +1,6 @@
 import CryptoJS from 'crypto-js'
 import { Utils } from '@ethersphere/bee-js'
+import { Seed } from './type'
 
 export const IV_LENGTH = 16
 
@@ -79,15 +80,15 @@ export function encrypt(
 }
 
 /**
- * Encrypt seed with password
+ * Encrypt seed with password and convert it to a string
  */
-export function encryptSeed(seed: Utils.Bytes<64>, password: string): string {
+export function encryptSeed(seed: Seed, password: string): string {
   return Utils.bytesToHex(encryptBytes(password, bytesToWordArray(seed)))
 }
 
 /**
- * Decrypt seed with password
+ * Decrypt seed string with password
  */
-export function decryptSeed(seed: string, password: string): Utils.Bytes<64> {
+export function decryptSeedString(seed: string, password: string): Seed {
   return Utils.hexToBytes(CryptoJS.enc.Hex.stringify(decrypt(password, hexToWordArray(seed))))
 }

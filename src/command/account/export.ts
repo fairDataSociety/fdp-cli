@@ -1,10 +1,10 @@
 import { writeFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { getAccountType } from '../../service/account'
 import { CommandLineError } from '../../utils/error'
 import { AccountCommand } from './account-command'
 import { Account } from '../../service/account/types'
 import { Message } from '../../utils/message'
+import { isAccount } from '../../service/account'
 
 export class Export extends AccountCommand implements LeafCommand {
   public readonly name = 'export'
@@ -25,9 +25,7 @@ export class Export extends AccountCommand implements LeafCommand {
     await super.init()
     const { account } = await this.getOrPickAccount(this.accountName)
 
-    try {
-      getAccountType(account)
-    } catch (e) {
+    if (!isAccount(account)) {
       throw new CommandLineError(Message.unsupportedAccountType())
     }
 
@@ -38,7 +36,7 @@ export class Export extends AccountCommand implements LeafCommand {
    * Writes the account to a file or to the console
    */
   private writeAccount(data: Account): void {
-    const account = JSON.stringify(data.encryptedWallet, null, 4)
+    const account = JSON.stringify(data.encryptedSeed, null, 4)
 
     if (this.outFile) {
       writeFileSync(this.outFile, account)

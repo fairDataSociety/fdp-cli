@@ -4,11 +4,12 @@ import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { createKeyValue } from '../../utils/text'
 import { AccountCommand } from './account-command'
+import { mnemonicToSeed } from '../../utils/wallet'
 
 export class Create extends AccountCommand implements LeafCommand {
   public readonly name = 'create'
 
-  public readonly description = "Create Ethereum compatible mnemonic to manage account's data"
+  public readonly description = "Create HD Wallet seed to manage account's data"
 
   @Argument({ key: 'name', default: 'main', description: 'Reference name of the generated account' })
   public accountName!: string
@@ -25,7 +26,8 @@ export class Create extends AccountCommand implements LeafCommand {
     }
 
     const wallet = Wallet.createRandom()
-    const account = await this.createAccount(wallet.mnemonic.phrase)
+    const seed = mnemonicToSeed(wallet.mnemonic.phrase)
+    const account = await this.createAccount(seed)
     const saved = this.commandConfig.saveAccount(this.accountName, account)
 
     if (!saved) {
@@ -33,8 +35,8 @@ export class Create extends AccountCommand implements LeafCommand {
     }
 
     this.console.log(createKeyValue('Name', this.accountName))
-    this.printWallet(wallet)
-    this.printWalletQuietly(wallet)
+    this.printSeed(seed)
+    this.printSeedQuietly(seed)
     this.console.info(Message.topUpBalance())
   }
 }

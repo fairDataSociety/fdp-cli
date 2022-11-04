@@ -1,16 +1,13 @@
 import { describeCommand, invokeTestCli } from '../utility'
-import { assertBatchId, beeUrl, createUsableBatch, getEncryptedAccount, getRandomString, topUpAccount } from '../utils'
+import { assertBatchId, beeUrl, getEncryptedSeed, getRandomString, topUpAccount } from '../utils'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { ZERO_BATCH_ID } from '../../src/utils/bee'
-import { v3ToWallet } from '../../src/utils/wallet'
+import { decryptSeedString } from '../../src/utils/encryption'
+import { hdNodeFromSeed } from '../../src/utils/wallet'
 
 describeCommand(
   'Test Account command',
   ({ consoleMessages, configFilePath }) => {
-    beforeAll(async () => {
-      await createUsableBatch()
-    })
-
     it('should create account', async () => {
       const account = getRandomString()
       const account1 = getRandomString()
@@ -36,7 +33,7 @@ describeCommand(
 
       await invokeTestCli(['account', 'create', account, '--password', accountPassword])
       consoleMessages.length = 0
-      await topUpAccount(configFilePath, account)
+      await topUpAccount(configFilePath, account, accountPassword)
       await invokeTestCli([
         'account',
         'register',
@@ -61,7 +58,7 @@ describeCommand(
 
       await invokeTestCli(['account', 'create', account, '-P', accountPassword])
       consoleMessages.length = 0
-      await topUpAccount(configFilePath, account)
+      await topUpAccount(configFilePath, account, accountPassword)
       await invokeTestCli([
         'account',
         'register',
@@ -81,9 +78,10 @@ describeCommand(
       assertBatchId(ZERO_BATCH_ID)
       const fdp = new FdpStorage(beeUrl(), ZERO_BATCH_ID)
       await fdp.account.login(portableUsername, portablePassword)
-      const encryptedAccount = await getEncryptedAccount(configFilePath, account)
-      const decryptedWallet = await v3ToWallet(encryptedAccount, accountPassword)
-      expect(fdp.account.wallet?.address).toEqual(decryptedWallet.address)
+      const encryptedSeed = await getEncryptedSeed(configFilePath, account)
+      const decryptedSeed = await decryptSeedString(encryptedSeed, accountPassword)
+      const hdNode = hdNodeFromSeed(decryptedSeed)
+      expect(fdp.account.wallet?.address).toEqual(hdNode.address)
     })
 
     it('should fail during registration portable FDP account with insufficient balance', async () => {
@@ -234,7 +232,7 @@ describeCommand(
 
       await invokeTestCli(['account', 'create', account, '--password', accountPassword])
       consoleMessages.length = 0
-      await topUpAccount(configFilePath, account)
+      await topUpAccount(configFilePath, account, accountPassword)
       await invokeTestCli([
         'account',
         'register',
