@@ -1,15 +1,15 @@
 import { Argument, LeafCommand } from 'furious-commander'
 import { exit } from 'process'
-import { isV3Wallet } from '../../service/account'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { AccountCommand } from './account-command'
-import { v3ToWallet } from '../../utils/wallet'
+import { decryptSeedString } from '../../utils/encryption'
+import { isAccount } from '../../service/account'
 
 export class Show extends AccountCommand implements LeafCommand {
   public readonly name = 'show'
 
-  public readonly description = 'Print private key, public key and address of an account'
+  public readonly description = 'Print seed, private key, public key and address of an account'
 
   @Argument({ key: 'name', description: 'Name of the account to show' })
   public accountName!: string
@@ -20,17 +20,17 @@ export class Show extends AccountCommand implements LeafCommand {
 
     await this.maybePromptForSensitive()
 
-    if (isV3Wallet(account.encryptedWallet)) {
-      if (!this.password) {
-        this.password = await this.console.askForPassword(Message.portableAccountPassword())
-      }
-
-      const wallet = await v3ToWallet(account.encryptedWallet, this.password)
-      this.printWallet(wallet)
-      this.printWalletQuietly(wallet)
-    } else {
+    if (!isAccount(account)) {
       throw new CommandLineError(Message.unsupportedAccountType())
     }
+
+    if (!this.password) {
+      this.password = await this.console.askForPassword(Message.portableAccountPassword())
+    }
+
+    const seed = await decryptSeedString(account.encryptedSeed, this.password)
+    this.printSeed(seed)
+    this.printSeedQuietly(seed)
   }
 
   /**

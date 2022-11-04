@@ -1,5 +1,7 @@
-import { V3Keystore } from './wallet'
-
+/**
+ * Account data
+ */
 export interface Account {
-  encryptedWallet: V3Keystore
+  address: string
+  encryptedSeed: string
 }

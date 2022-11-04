@@ -46,8 +46,8 @@ function requireOptionConfirmation(option: string, message: string): string {
   return `${message}. Pass the --${option} option to allow it`
 }
 
-function invalidMnemonic(): string {
-  return 'Received data is not a valid mnemonic'
+function invalidAccount(): string {
+  return 'Received data is not a valid account'
 }
 
 function newAccountRegistered(): string {
@@ -95,7 +95,7 @@ export const Message = {
   newAccountPasswordConfirmation,
   portableAccountPassword,
   portableAccountPasswordConfirmation,
-  invalidMnemonic,
+  invalidAccount,
   newAccountRegistered,
   passwordLengthError,
   topUpBalance,

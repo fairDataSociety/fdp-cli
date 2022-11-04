@@ -1,27 +1,15 @@
 import { Option } from 'furious-commander'
 import { RootCommand } from '../root-command'
-import { exit } from 'process'
-import { AccountType, getMnemonicFromAccount, pickAccount } from '../../service/account'
 import { Account } from '../../service/account/types'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
-import { ASK_FOR_PORTABLE_PASSWORD_OPTIONS, VerbosityLevel } from '../root-command/command-log'
-import { utils, Wallet } from 'ethers'
+import { ASK_FOR_PORTABLE_PASSWORD_OPTIONS } from '../root-command/command-log'
 import { createKeyValue } from '../../utils/text'
 import { createAndRunSpinner } from '../../utils/spinner'
-import { walletToV3 } from '../../utils/wallet'
-import { isSeed, isString, Seed } from '../../utils/type'
-
-export const MIN_PASSWORD_LENGTH = 8
-export const MAX_PASSWORD_LENGTH = 255
-export const MIN_USERNAME_LENGTH = 4
-export const MAX_USERNAME_LENGTH = 82
-export const HD_PATH = `m/44'/60'/0'/0/0`
-
-interface NamedAccount {
-  name: string
-  account: Account
-}
+import { isSeed, Seed } from '../../utils/type'
+import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../../utils/account'
+import { encryptSeed } from '../../utils/encryption'
+import { getPrintDataFromSeed, hdNodeFromSeed } from '../../utils/wallet'
 
 export class AccountCommand extends RootCommand {
   @Option({
@@ -47,33 +35,6 @@ export class AccountCommand extends RootCommand {
   }
 
   /**
-   * Gets a mnemonic from an account
-   */
-  protected async getMnemonic(): Promise<string> {
-    const account = await this.getAccount(AccountType.v3Keystore)
-
-    return getMnemonicFromAccount(this.console, this.quiet, account, this.password)
-  }
-
-  /**
-   * Gets an account from the config
-   */
-  private async getAccount(accountType: AccountType): Promise<Account> {
-    const { accounts } = this.commandConfig.config
-
-    if (this.account && !accounts[this.account]) {
-      if (this.quiet) {
-        this.console.error('The provided account does not exist.')
-        exit(1)
-      }
-
-      this.console.error('The provided account does not exist. Please select one that exists.')
-    }
-
-    return accounts[this.account] || accounts[await pickAccount(this.commandConfig, this.console, accountType)]
-  }
-
-  /**
    * Throws an error if there are no accounts
    */
   protected throwIfNoAccounts(): void {
@@ -83,44 +44,25 @@ export class AccountCommand extends RootCommand {
   }
 
   /**
-   * Gets an account from the config by name or pick it from the list
+   * Prints seed information to the console
    */
-  protected async getOrPickAccount(name?: string | null): Promise<NamedAccount> {
-    this.throwIfNoAccounts()
-
-    if (name) {
-      return { name, account: this.getAccountByName(name) }
-    }
-
-    if (this.verbosity === VerbosityLevel.Quiet) {
-      throw new CommandLineError('Account name must be specified when running in --quiet mode')
-    }
-
-    const choices = Object.entries(this.commandConfig.config.accounts).map(x => ({
-      name: `${x[0]} (0x${x[1].encryptedWallet.address})`,
-      value: x[0],
-    }))
-    const selection = await this.console.promptList(choices, 'Select an account for this action')
-
-    return { name: selection, account: this.getAccountByName(selection) }
-  }
-
-  /**
-   * Prints a wallet information to the console
-   */
-  protected printWallet(wallet: Wallet): void {
-    this.console.log(createKeyValue('Mnemonic', wallet.mnemonic.phrase))
-    this.console.log(createKeyValue('Public key', wallet.publicKey))
-    this.console.log(createKeyValue('Address', wallet.address))
+  protected printSeed(seed: Seed): void {
+    const data = getPrintDataFromSeed(seed)
+    this.console.log(createKeyValue('Seed', data.seed))
+    this.console.log(createKeyValue('Public key', data.publicKey))
+    this.console.log(createKeyValue('Private key', data.privateKey))
+    this.console.log(createKeyValue('Address', data.address))
   }
 
   /**
    * Prints a wallet information to the console in quiet mode
    */
-  protected printWalletQuietly(wallet: Wallet): void {
-    this.console.quiet(wallet.mnemonic.phrase)
-    this.console.quiet(wallet.publicKey)
-    this.console.quiet(wallet.address)
+  protected printSeedQuietly(seed: Seed): void {
+    const data = getPrintDataFromSeed(seed)
+    this.console.quiet(data.seed)
+    this.console.quiet(data.publicKey)
+    this.console.quiet(data.privateKey)
+    this.console.quiet(data.address)
   }
 
   /**
@@ -185,26 +127,22 @@ export class AccountCommand extends RootCommand {
   }
 
   /**
-   * Creates an encrypted account from a mnemonic
+   * Creates an encrypted account from a seed
    */
-  protected async createAccount(seedOrMnemonic: Seed | string): Promise<Account> {
-    await this.askPassword()
-    const spinner = createAndRunSpinner('Creating account...', this.verbosity)
-    let wallet
-
-    if (isString(seedOrMnemonic)) {
-      wallet = Wallet.fromMnemonic(seedOrMnemonic)
-    } else if (isSeed(seedOrMnemonic)) {
-      wallet = new Wallet(utils.HDNode.fromSeed(seedOrMnemonic).derivePath(HD_PATH))
-    } else {
-      throw new Error('Incorrect data type. Expected seed in form of bytes or mnemonic in form of string')
+  protected async createAccount(seed: Seed): Promise<Account> {
+    if (!isSeed(seed)) {
+      throw new Error('Incorrect data type. Expected seed in form of bytes')
     }
 
-    const encryptedWallet = await walletToV3(wallet, this.password)
+    await this.askPassword()
+    const spinner = createAndRunSpinner('Creating account...', this.verbosity)
+
+    const encryptedSeed = encryptSeed(seed, this.password)
     spinner.stop()
 
     return {
-      encryptedWallet,
+      address: hdNodeFromSeed(seed).address,
+      encryptedSeed,
     }
   }
 }

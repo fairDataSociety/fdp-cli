@@ -4,7 +4,8 @@ import fs from 'fs/promises'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { utils } from 'ethers'
 import { isUsableBatchExists, ZERO_BATCH_ID } from '../src/utils/bee'
-import { V3Keystore } from '../src/service/account/types'
+import { decryptSeedString } from '../src/utils/encryption'
+import { hdNodeFromSeed } from '../src/utils/wallet'
 
 /**
  * Asserts whether batch id passed
@@ -114,28 +115,31 @@ export async function topUpAddress(address: string, amountInEther = '1'): Promis
 /**
  * Top up wallet of the account
  */
-export async function topUpAccount(path: string, name: string, amountInEther = '1'): Promise<void> {
-  const walletAddress = (await getEncryptedAccount(path, name)).address
+export async function topUpAccount(path: string, name: string, password: string, amountInEther = '1'): Promise<void> {
+  const encryptedSeed = await getEncryptedSeed(path, name)
+  const decryptedSeed = decryptSeedString(encryptedSeed, password)
+  const hdNode = hdNodeFromSeed(decryptedSeed)
+  const walletAddress = hdNode.address
 
   if (!walletAddress) {
     throw new Error(`Wallet for "${name}" not found`)
   }
 
-  return topUpAddress('0x' + walletAddress, amountInEther)
+  return topUpAddress(walletAddress, amountInEther)
 }
 
 /**
- * Gets encrypted account from the file
+ * Gets encrypted seed from the file
  */
-export async function getEncryptedAccount(path: string, name: string): Promise<V3Keystore> {
+export async function getEncryptedSeed(path: string, name: string): Promise<string> {
   const data = JSON.parse(await fs.readFile(path, 'utf8'))
-  const encryptedWallet = data.accounts[name]?.encryptedWallet
+  const encryptedSeed = data.accounts[name]?.encryptedSeed
 
-  if (!encryptedWallet) {
-    throw new Error(`Account "${name}" not found`)
+  if (!encryptedSeed) {
+    throw new Error(`Seed for "${name}" not found`)
   }
 
-  return encryptedWallet
+  return encryptedSeed
 }
 
 /**
