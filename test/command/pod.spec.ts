@@ -17,8 +17,12 @@ describeCommand(
       await invokeTestCli(['pod', 'list', '--account', account, '--password', accountPassword])
       expect(consoleMessages[0]).toContain('Name:')
       expect(consoleMessages[0]).toContain(podName1)
-      expect(consoleMessages[2]).toContain('Name:')
-      expect(consoleMessages[2]).toContain(podName2)
+      expect(consoleMessages[1]).toContain('Type:')
+      expect(consoleMessages[1]).toContain('pod')
+      expect(consoleMessages[3]).toContain('Name:')
+      expect(consoleMessages[3]).toContain(podName2)
+      expect(consoleMessages[4]).toContain('Type:')
+      expect(consoleMessages[4]).toContain('pod')
     })
 
     it('should create pods', async () => {
