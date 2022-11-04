@@ -63,6 +63,8 @@ describeCommand(
       await invokeTestCli(['pod', 'list', '--account', account, '--password', accountPassword])
       expect(consoleMessages[0]).toContain('Name:')
       expect(consoleMessages[0]).toContain(podName2)
+      expect(consoleMessages[1]).toContain('Type:')
+      expect(consoleMessages[1]).toContain('pod')
 
       const pods1 = (await fdp.personalStorage.list()).getPods()
       expect(pods1).toHaveLength(1)
