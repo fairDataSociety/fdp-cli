@@ -64,7 +64,7 @@ describeCommand(
       await invokeTestCli(['pod', 'create', podName2, '--account', account, '--password', accountPassword])
       consoleMessages.length = 0
 
-      await invokeTestCli(['pod', 'delete', podName1, '--account', account, '--password', accountPassword])
+      await invokeTestCli(['pod', 'delete', podName1, '--account', account, '--password', accountPassword, '-f'])
       expect(consoleMessages[0]).toContain('Pod deleted successfully!')
       consoleMessages.length = 0
 
