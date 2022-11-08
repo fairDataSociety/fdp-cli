@@ -186,7 +186,7 @@ export class RootCommand {
     }
 
     if (isAccount(account)) {
-      const seed = await decryptSeedString(account.encryptedSeed, password)
+      const seed = decryptSeedString(account.encryptedSeed, password)
       this.fdpStorage.account.setAccountFromSeed(seed)
       this.fdpStorage.account.publicKey = uncompressedPublicKeyFromSeed(seed)
     } else {

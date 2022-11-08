@@ -38,7 +38,7 @@ export class Import extends RootCommand implements LeafCommand {
     }
 
     if (utils.isValidMnemonic(this.resource)) {
-      await this.runSeedImport(mnemonicToSeed(this.resource))
+      this.runSeedImport(mnemonicToSeed(this.resource))
     } else {
       expectFile(this.resource)
       this.resource = JSON.parse(readFileSync(this.resource, 'utf-8'))
@@ -47,7 +47,7 @@ export class Import extends RootCommand implements LeafCommand {
         throw new CommandLineError(Message.invalidAccount())
       }
 
-      await this.runAccountImport(this.resource)
+      this.runAccountImport(this.resource)
     }
   }
 
