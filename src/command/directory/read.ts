@@ -11,7 +11,7 @@ export class Read extends DirectoryCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    await this.fillFdpAccount(this.account, this.password)
+    await this.setFdpAccount(this.account, this.password)
     const directoryItems = await this.fdpStorage.directory.read(this.pod, this.path)
     for (const directory of directoryItems.getDirectories()) {
       this.console.log(createKeyValue('Name', directory.name))
