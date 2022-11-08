@@ -9,7 +9,7 @@ import { isAccount } from '../../service/account'
 export class Show extends AccountCommand implements LeafCommand {
   public readonly name = 'show'
 
-  public readonly description = 'Print seed, private key, public key and address of an account'
+  public readonly description = 'Print the HD Wallet seed and the Main Identity properties of an account'
 
   @Argument({ key: 'name', description: 'Name of the account to show' })
   public accountName!: string
