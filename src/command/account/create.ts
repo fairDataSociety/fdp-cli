@@ -9,7 +9,7 @@ import { mnemonicToSeed } from '../../utils/wallet'
 export class Create extends AccountCommand implements LeafCommand {
   public readonly name = 'create'
 
-  public readonly description = "Create HD Wallet seed to manage account's data"
+  public readonly description = "Create HD Wallet of the Personal Storage"
 
   @Argument({ key: 'name', default: 'main', description: 'Reference name of the generated account' })
   public accountName!: string
