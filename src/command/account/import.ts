@@ -5,8 +5,7 @@ import { expectFile } from '../../utils'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { RootCommand } from '../root-command'
-import { encryptSeed } from '../../utils/encryption'
-import { hdNodeFromSeed, mnemonicToSeed } from '../../utils/wallet'
+import { encryptSeed, mainHDNodeFromSeed, mnemonicToSeed } from '../../utils/wallet'
 import { isAccount } from '../../service/account'
 import { Seed } from '../../utils/type'
 import { Account } from '../../service/account/types'
@@ -65,7 +64,7 @@ export class Import extends RootCommand implements LeafCommand {
    */
   private runSeedImport(seed: Seed): void {
     const account = {
-      address: hdNodeFromSeed(seed).address,
+      address: mainHDNodeFromSeed(seed).address,
       encryptedSeed: encryptSeed(seed, this.password),
     }
 

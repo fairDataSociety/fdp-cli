@@ -14,7 +14,7 @@ export class Create extends PodCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    await this.fillFdpAccount(this.account, this.password)
+    await this.setFdpAccount(this.account, this.password)
     await this.fdpStorage.personalStorage.create(this.podName)
     this.console.log(Message.podCreatedSuccessfully())
     this.console.log(createKeyValue('Name', this.podName))

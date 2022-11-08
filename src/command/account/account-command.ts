@@ -8,8 +8,7 @@ import { createKeyValue } from '../../utils/text'
 import { createAndRunSpinner } from '../../utils/spinner'
 import { isSeed, Seed } from '../../utils/type'
 import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../../utils/account'
-import { encryptSeed } from '../../utils/encryption'
-import { getPrintDataFromSeed, hdNodeFromSeed } from '../../utils/wallet'
+import { encryptSeed, getPrintDataFromSeed, mainHDNodeFromSeed } from '../../utils/wallet'
 
 export class AccountCommand extends RootCommand {
   @Option({
@@ -141,7 +140,7 @@ export class AccountCommand extends RootCommand {
     spinner.stop()
 
     return {
-      address: hdNodeFromSeed(seed).address,
+      address: mainHDNodeFromSeed(seed).address,
       encryptedSeed,
     }
   }

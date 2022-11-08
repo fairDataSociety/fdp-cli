@@ -10,9 +10,8 @@ import { assertBatchId, beeDebugUrl } from '../../../test/utils'
 import { getUsableBatch, isUsableBatchExists, ZERO_BATCH_ID } from '../../utils/bee'
 import { CommandLineError } from '../../utils/error'
 import { Account } from '../../service/account/types'
-import { decryptSeedString } from '../../utils/encryption'
 import { isAccount } from '../../service/account'
-import { uncompressedPublicKeyFromSeed } from '../../utils/wallet'
+import { decryptSeedString, uncompressedPublicKeyFromSeed } from '../../utils/wallet'
 
 interface NamedAccount {
   name: string
@@ -178,7 +177,7 @@ export class RootCommand {
    * @param password password for decrypting the account
    * @protected
    */
-  protected async fillFdpAccount(name?: string | null, password?: string | null): Promise<void> {
+  protected async setFdpAccount(name?: string | null, password?: string | null): Promise<void> {
     const { account } = await this.getOrPickAccount(name)
 
     if (!password) {

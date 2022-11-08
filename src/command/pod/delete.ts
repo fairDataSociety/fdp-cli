@@ -23,7 +23,7 @@ export class Delete extends PodCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    await this.fillFdpAccount(this.account, this.password)
+    await this.setFdpAccount(this.account, this.password)
     await this.promptPodDeletion()
     await this.fdpStorage.personalStorage.delete(this.podName)
     this.console.log(Message.podDeletedSuccessfully())

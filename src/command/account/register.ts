@@ -50,7 +50,7 @@ export class Register extends AccountCommand implements LeafCommand {
         spinner.start()
       }
 
-      await this.fillFdpAccount(this.account, this.password)
+      await this.setFdpAccount(this.account, this.password)
       isRegistered = Boolean(await this.fdpStorage.account.register(this.username, this.portablePassword))
     } catch (error: unknown) {
       const ensError = getFieldOrNull(error, 'error')
