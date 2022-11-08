@@ -79,7 +79,7 @@ describeCommand(
       const fdp = new FdpStorage(beeUrl(), ZERO_BATCH_ID)
       await fdp.account.login(portableUsername, portablePassword)
       const encryptedSeed = await getEncryptedSeed(configFilePath, account)
-      const decryptedSeed = await decryptSeedString(encryptedSeed, accountPassword)
+      const decryptedSeed = decryptSeedString(encryptedSeed, accountPassword)
       const hdNode = hdNodeFromSeed(decryptedSeed)
       expect(fdp.account.wallet?.address).toEqual(hdNode.address)
     })

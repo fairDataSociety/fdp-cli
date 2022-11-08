@@ -28,7 +28,7 @@ export class Show extends AccountCommand implements LeafCommand {
       this.password = await this.console.askForPassword(Message.portableAccountPassword())
     }
 
-    const seed = await decryptSeedString(account.encryptedSeed, this.password)
+    const seed = decryptSeedString(account.encryptedSeed, this.password)
     this.printSeed(seed)
     this.printSeedQuietly(seed)
   }

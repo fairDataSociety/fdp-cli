@@ -81,12 +81,13 @@ module.exports = {
     'require-await': 'off',
     '@typescript-eslint/require-await': 'error',
     '@typescript-eslint/no-unused-vars': ['error'],
+    '@typescript-eslint/await-thenable': 'error',
   },
   overrides: [
     {
       files: ['*.spec.ts'],
       rules: {
-        'max-nested-callbacks': ['error', 10], // allow describe/it nesting
+        'max-nested-callbacks': ['error', 10], // allow to describe/it nesting
       },
     },
   ],
