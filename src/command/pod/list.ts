@@ -21,7 +21,7 @@ export class List extends PodCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    await this.fillFdpAccount(this.account, this.password)
+    await this.setFdpAccount(this.account, this.password)
     const pods = await this.fdpStorage.personalStorage.list()
     for (const pod of [...pods.getPods(), ...pods.getSharedPods()]) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -2,8 +2,7 @@ import { describeCommand, invokeTestCli } from '../utility'
 import { assertBatchId, beeUrl, getEncryptedSeed, getRandomString, topUpAccount } from '../utils'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { ZERO_BATCH_ID } from '../../src/utils/bee'
-import { decryptSeedString } from '../../src/utils/encryption'
-import { hdNodeFromSeed } from '../../src/utils/wallet'
+import { decryptSeedString, mainHDNodeFromSeed } from '../../src/utils/wallet'
 
 describeCommand(
   'Test Account command',
@@ -80,7 +79,7 @@ describeCommand(
       await fdp.account.login(portableUsername, portablePassword)
       const encryptedSeed = await getEncryptedSeed(configFilePath, account)
       const decryptedSeed = decryptSeedString(encryptedSeed, accountPassword)
-      const hdNode = hdNodeFromSeed(decryptedSeed)
+      const hdNode = mainHDNodeFromSeed(decryptedSeed)
       expect(fdp.account.wallet?.address).toEqual(hdNode.address)
     })
 

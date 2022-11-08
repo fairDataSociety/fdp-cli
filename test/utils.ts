@@ -4,8 +4,7 @@ import fs from 'fs/promises'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { utils } from 'ethers'
 import { isUsableBatchExists, ZERO_BATCH_ID } from '../src/utils/bee'
-import { decryptSeedString } from '../src/utils/encryption'
-import { hdNodeFromSeed } from '../src/utils/wallet'
+import { decryptSeedString, mainHDNodeFromSeed } from '../src/utils/wallet'
 
 /**
  * Asserts whether batch id passed
@@ -118,7 +117,7 @@ export async function topUpAddress(address: string, amountInEther = '1'): Promis
 export async function topUpAccount(path: string, name: string, password: string, amountInEther = '1'): Promise<void> {
   const encryptedSeed = await getEncryptedSeed(path, name)
   const decryptedSeed = decryptSeedString(encryptedSeed, password)
-  const hdNode = hdNodeFromSeed(decryptedSeed)
+  const hdNode = mainHDNodeFromSeed(decryptedSeed)
   const walletAddress = hdNode.address
 
   if (!walletAddress) {
