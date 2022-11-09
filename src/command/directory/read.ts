@@ -13,6 +13,13 @@ export class Read extends DirectoryCommand implements LeafCommand {
 
     await this.setFdpAccount(this.account, this.password)
     const directoryItems = await this.fdpStorage.directory.read(this.pod, this.path)
+
+    if (directoryItems.getDirectories().length === 0 && directoryItems.getFiles().length === 0) {
+      this.console.log(Message.emptyDirectory())
+
+      return
+    }
+
     for (const directory of directoryItems.getDirectories()) {
       this.console.log(createKeyValue('Name', directory.name))
       this.console.log(createKeyValue('Type', 'directory'))
@@ -28,10 +35,6 @@ export class Read extends DirectoryCommand implements LeafCommand {
       }
 
       this.console.divider()
-    }
-
-    if (directoryItems.getDirectories().length === 0 && directoryItems.getFiles().length === 0) {
-      this.console.log(Message.emptyDirectory())
     }
   }
 }
