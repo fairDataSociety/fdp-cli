@@ -35,8 +35,6 @@ export class DirectoryCommand extends RootCommand {
   })
   public pod!: string
 
-  public postageBatchRequired = true
-
   protected async init(): Promise<void> {
     await super.init()
 
