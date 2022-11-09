@@ -8,6 +8,8 @@ export class Create extends DirectoryCommand implements LeafCommand {
 
   public readonly description = 'Create a directory'
 
+  public postageBatchRequired = true
+
   public async run(): Promise<void> {
     await super.init()
 

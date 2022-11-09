@@ -7,6 +7,8 @@ export class Delete extends DirectoryCommand implements LeafCommand {
 
   public readonly description = 'Delete a directory'
 
+  public postageBatchRequired = true
+
   public async run(): Promise<void> {
     await super.init()
 
