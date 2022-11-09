@@ -1,12 +1,11 @@
 import { describeCommand, invokeTestCli } from '../utility'
 import { createFdp, getRandomString, topUpAddress } from '../utils'
+import { createFdpAndImport } from '../utility/fdp'
 
 describeCommand(
   'Test Directory command',
   ({ consoleMessages }) => {
     it('should read directories list', async () => {
-      const account = getRandomString()
-      const accountPassword = getRandomString()
       const podName1 = getRandomString()
       const directory1 = getRandomString()
       const directory1Full = `/${directory1}`
@@ -16,25 +15,14 @@ describeCommand(
       const subDirectory2 = getRandomString()
       const subDirectory1Full = `${directory1Full}/${subDirectory1}`
       const subDirectory2Full = `${directory1Full}/${subDirectory2}`
-      const fdp = createFdp()
+      const { fdp, account, accountPassword } = await createFdpAndImport()
+      consoleMessages.length = 0
 
-      const wallet = fdp.account.createWallet()
       await fdp.personalStorage.create(podName1)
       await fdp.directory.create(podName1, directory1Full)
       await fdp.directory.create(podName1, directory2Full)
       await fdp.directory.create(podName1, subDirectory1Full)
       await fdp.directory.create(podName1, subDirectory2Full)
-
-      await invokeTestCli([
-        'account',
-        'import',
-        wallet.mnemonic.phrase,
-        '--name',
-        account,
-        '--password',
-        accountPassword,
-      ])
-      consoleMessages.length = 0
 
       await invokeTestCli([
         'directory',
@@ -79,8 +67,6 @@ describeCommand(
     })
 
     it('should create directories', async () => {
-      const account = getRandomString()
-      const accountPassword = getRandomString()
       const podName1 = getRandomString()
       const directory1 = getRandomString()
       const directory1Full = `/${directory1}`
@@ -90,18 +76,7 @@ describeCommand(
       const subDirectory2 = getRandomString()
       const subDirectory1Full = `${directory1Full}/${subDirectory1}`
       const subDirectory2Full = `${directory1Full}/${subDirectory2}`
-      const fdp = createFdp()
-
-      const wallet = fdp.account.createWallet()
-      await invokeTestCli([
-        'account',
-        'import',
-        wallet.mnemonic.phrase,
-        '--name',
-        account,
-        '--password',
-        accountPassword,
-      ])
+      const { fdp, account, accountPassword } = await createFdpAndImport()
       consoleMessages.length = 0
 
       await fdp.personalStorage.create(podName1)
@@ -136,8 +111,6 @@ describeCommand(
     })
 
     it('should delete directories', async () => {
-      const account = getRandomString()
-      const accountPassword = getRandomString()
       const podName1 = getRandomString()
       const directory1 = getRandomString()
       const directory1Full = `/${directory1}`
@@ -147,25 +120,14 @@ describeCommand(
       const subDirectory2 = getRandomString()
       const subDirectory1Full = `${directory1Full}/${subDirectory1}`
       const subDirectory2Full = `${directory1Full}/${subDirectory2}`
-      const fdp = createFdp()
+      const { fdp, account, accountPassword } = await createFdpAndImport()
+      consoleMessages.length = 0
 
-      const wallet = fdp.account.createWallet()
       await fdp.personalStorage.create(podName1)
       await fdp.directory.create(podName1, directory1Full)
       await fdp.directory.create(podName1, directory2Full)
       await fdp.directory.create(podName1, subDirectory1Full)
       await fdp.directory.create(podName1, subDirectory2Full)
-
-      await invokeTestCli([
-        'account',
-        'import',
-        wallet.mnemonic.phrase,
-        '--name',
-        account,
-        '--password',
-        accountPassword,
-      ])
-      consoleMessages.length = 0
 
       for (const directoryToDelete of [subDirectory2Full, subDirectory1Full, directory1Full, directory2Full]) {
         await invokeTestCli([
