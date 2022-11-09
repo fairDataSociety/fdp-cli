@@ -18,14 +18,6 @@ function noSuchAccount(name: string): string {
   return `No account found with the name '${name}'`
 }
 
-function optionNotDefined(name: string, option?: string): string {
-  return `No ${name} specified with the '--${option || name}' option`
-}
-
-function optionNotDefinedWithTitle(title: string, name: string, option?: string): string {
-  return `No ${title} specified with the '--${option || name}' option`
-}
-
 function newAccountPassword(): string {
   return 'Enter a new password for the account'
 }
@@ -42,10 +34,6 @@ function portableAccountPasswordConfirmation(): string {
   return 'Enter a password again for the portable FDS account'
 }
 
-function requireOptionConfirmation(option: string, message: string): string {
-  return `${message}. Pass the --${option} option to allow it`
-}
-
 function invalidAccount(): string {
   return 'Received data is not a valid account'
 }
@@ -54,16 +42,32 @@ function newAccountRegistered(): string {
   return 'New account registered successfully!'
 }
 
+function unsupportedAccountType(): string {
+  return 'Unsupported account type'
+}
+
+function emptyAccountsList(): string {
+  return 'Account list is empty'
+}
+
+function optionNotDefined(name: string, option?: string): string {
+  return `No ${name} specified with the '--${option || name}' option`
+}
+
+function optionNotDefinedWithTitle(title: string, name: string, option?: string): string {
+  return `No ${title} specified with the '--${option || name}' option`
+}
+
+function requireOptionConfirmation(option: string, message: string): string {
+  return `${message}. Pass the --${option} option to allow it`
+}
+
 function passwordLengthError(minPasswordLength: number, maxPasswordLength: number): string {
   return `Password length must be between ${minPasswordLength} and ${maxPasswordLength} characters`
 }
 
 function topUpBalance(): string {
   return 'In order to register with the account in ENS you need to top up the balance before registration'
-}
-
-function unsupportedAccountType(): string {
-  return 'Unsupported account type'
 }
 
 function noUsableBatch(): string {
@@ -90,10 +94,6 @@ function directoryDeletedSuccessfully(name?: string): string {
   return `Directory ${name ? `"${name}"` : ''} deleted successfully!`
 }
 
-function emptyAccountsList(): string {
-  return 'Account list is empty'
-}
-
 function emptyDirectory(): string {
   return 'Directory is empty'
 }
@@ -104,24 +104,24 @@ export const Message = {
   accountNameConflictOption,
   noAccount,
   noSuchAccount,
-  optionNotDefined,
-  optionNotDefinedWithTitle,
-  requireOptionConfirmation,
   newAccountPassword,
   newAccountPasswordConfirmation,
   portableAccountPassword,
   portableAccountPasswordConfirmation,
   invalidAccount,
   newAccountRegistered,
+  unsupportedAccountType,
+  emptyAccountsList,
+  optionNotDefined,
+  optionNotDefinedWithTitle,
+  requireOptionConfirmation,
   passwordLengthError,
   topUpBalance,
-  unsupportedAccountType,
   noUsableBatch,
   loggedInSuccessfully,
   podCreatedSuccessfully,
   podDeletedSuccessfully,
   directoryCreatedSuccessfully,
   directoryDeletedSuccessfully,
-  emptyAccountsList,
   emptyDirectory,
 }
