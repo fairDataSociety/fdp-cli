@@ -6,7 +6,7 @@ import { Download } from './download'
 export class File implements GroupCommand {
   public readonly name = 'file'
 
-  public readonly description = 'FDS directories handling'
+  public readonly description = 'FDS files handling'
 
   public subCommandClasses = [Upload, Download, Delete]
 }
