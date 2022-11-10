@@ -1,5 +1,5 @@
 import PackageJson from '../../package.json'
-import { existsSync, statSync, writeFileSync } from 'fs'
+import { statSync, writeFileSync } from 'fs'
 import { CommandLineError } from './error'
 
 export function getPackageVersion(): string {
@@ -28,11 +28,33 @@ export function fileExists(path: string): boolean {
 }
 
 /**
- * Checks that path available for writing
+ * Checks that exists something except of file
+ */
+export function notFileExists(path: string): boolean {
+  try {
+    const stat = statSync(path)
+
+    return (
+      stat.isDirectory() ||
+      stat.isFIFO() ||
+      stat.isSocket() ||
+      stat.isSymbolicLink() ||
+      stat.isCharacterDevice() ||
+      stat.isBlockDevice()
+    )
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Checks that path available for writing.
+ *
+ * Path should be a file for rewriting or nothing
  */
 export function pathAvailable(path: string): boolean {
   try {
-    return !existsSync(path)
+    return !notFileExists(path)
   } catch (e) {
     return false
   }

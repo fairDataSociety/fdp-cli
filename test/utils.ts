@@ -5,6 +5,7 @@ import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { utils } from 'ethers'
 import { isUsableBatchExists, ZERO_BATCH_ID } from '../src/utils/bee'
 import { decryptSeedString, mainHDNodeFromSeed } from '../src/utils/wallet'
+import { join } from 'path'
 
 /**
  * Asserts whether batch id passed
@@ -146,4 +147,11 @@ export async function getEncryptedSeed(path: string, name: string): Promise<stri
  */
 export function createFdp(): FdpStorage {
   return new FdpStorage(beeUrl(), batchId())
+}
+
+/**
+ * Gets correct test file path
+ */
+export function getTestFilePath(fileName: string): string {
+  return join(__dirname, '..', 'test/test-data', fileName)
 }
