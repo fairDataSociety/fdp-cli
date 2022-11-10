@@ -1,5 +1,5 @@
 import PackageJson from '../../package.json'
-import { statSync, writeFileSync } from 'fs'
+import { existsSync, statSync, writeFileSync } from 'fs'
 import { CommandLineError } from './error'
 
 export function getPackageVersion(): string {
@@ -32,17 +32,7 @@ export function fileExists(path: string): boolean {
  */
 export function pathAvailable(path: string): boolean {
   try {
-    const stat = statSync(path)
-
-    return !(
-      stat.isFile() ||
-      stat.isDirectory() ||
-      stat.isBlockDevice() ||
-      stat.isFIFO() ||
-      stat.isSocket() ||
-      stat.isCharacterDevice() ||
-      stat.isSymbolicLink()
-    )
+    return !existsSync(path)
   } catch (e) {
     return false
   }

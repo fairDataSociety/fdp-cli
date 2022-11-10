@@ -65,7 +65,7 @@ describeCommand(
       expect(files2).toHaveLength(0)
     })
 
-    fit('should download a file', async () => {
+    it('should download a file', async () => {
       const fileSource1 = './test/test-data/file1.bin'
       const podName1 = getRandomString()
       const fileName1 = `${getRandomString()}.bin`

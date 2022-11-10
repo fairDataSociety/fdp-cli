@@ -17,7 +17,7 @@ export class Download extends FileCommand implements LeafCommand {
 
   @Argument({
     key: 'path-dest',
-    description: 'Full destination path of the file to be saved',
+    description: 'Full destination path for downloaded file',
     required: true,
   })
   public pathDestination!: string
