@@ -98,6 +98,30 @@ function emptyDirectory(): string {
   return 'Directory is empty'
 }
 
+function fileDeletedSuccessfully(name?: string): string {
+  return `File ${name ? `"${name}"` : ''} deleted successfully!`
+}
+
+function fileUploadedSuccessfully(source: string, destination: string): string {
+  return `File "${source}" uploaded successfully to "${destination}"!`
+}
+
+function fileUploadError(message: string): string {
+  return `File can't be uploaded: ${message}`
+}
+
+function fileDeleteError(message: string): string {
+  return `File can't be deleted: ${message}`
+}
+
+function fileDownloadedSuccessfully(source: string, destination: string): string {
+  return `File "${source}" downloaded successfully to "${destination}"`
+}
+
+function fileDownloadError(message: string): string {
+  return `File can't be downloaded: ${message}`
+}
+
 export const Message = {
   accountNameConflict,
   accountNameConflictArgument,
@@ -124,4 +148,10 @@ export const Message = {
   directoryCreatedSuccessfully,
   directoryDeletedSuccessfully,
   emptyDirectory,
+  fileDeletedSuccessfully,
+  fileUploadedSuccessfully,
+  fileUploadError,
+  fileDeleteError,
+  fileDownloadedSuccessfully,
+  fileDownloadError,
 }

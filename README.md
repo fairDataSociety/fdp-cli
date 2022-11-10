@@ -48,14 +48,16 @@ fdp-cli account login YOUR_USERNAME
 
 ### Pods management
 
+Create a pod.
+
 ```sh
-fdp-cli pod create POD_NAME
+fdp-cli pod create YOUR_POD_NAME
 ```
 
 Delete a pod.
 
 ```sh
-fdp-cli pod delete POD_NAME
+fdp-cli pod delete YOUR_POD_NAME
 ```
 
 Show list of pods.
@@ -69,25 +71,45 @@ fdp-cli pod list
 Create a directory.
 
 ```sh
-fdp-cli directory create "/YOUR_DIRECTORY" --pod POD_NAME
+fdp-cli directory create "/YOUR_DIRECTORY" --pod YOUR_POD_NAME
 ```
 
 Get list of files and directories in the root.
 
 ```sh
-fdp-cli directory read "/" --pod POD_NAME
+fdp-cli directory read "/" --pod YOUR_POD_NAME
 ```
 
-Get list of in subdirectory.
+Get list of files in subdirectory.
 
 ```sh
-fdp-cli directory read "/YOUR_SUBDIR" --pod POD_NAME
+fdp-cli directory read "/YOUR_SUBDIR" --pod YOUR_POD_NAME
 ```
 
 Delete a directory.
 
 ```sh
-fdp-cli directory delete "/YOUR_DIRECTORY" --pod POD_NAME
+fdp-cli directory delete "/YOUR_DIRECTORY" --pod YOUR_POD_NAME
+```
+
+### Files management
+
+Upload a file.
+
+```sh
+fdp-cli file upload "YOUR_SOURCE_PATH" "/DESTINATION_PATH" --pod YOUR_POD_NAME
+```
+
+Download a file.
+
+```sh
+fdp-cli file download "/YOUR_SOURCE_PATH" "DESTINATION_PATH" --pod YOUR_POD_NAME
+```
+
+Delete a file.
+
+```sh
+fdp-cli file delete "/YOUR_SOURCE_PATH" --pod YOUR_POD_NAME
 ```
 
 # Development
