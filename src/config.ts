@@ -3,6 +3,7 @@ import { getPackageVersion } from './utils'
 import { Account } from './command/account'
 import { Directory } from './command/directory'
 import { Pod } from './command/pod'
+import { File } from './command/file'
 
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',
@@ -73,7 +74,7 @@ export const yes: IOption<string[]> = {
   description: 'Agree to all prompts',
 }
 
-export const rootCommandClasses = [Account, Pod, Directory]
+export const rootCommandClasses = [Account, Pod, Directory, File]
 
 export const optionParameters: IOption[] = [
   beeApiUrl,
