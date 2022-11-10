@@ -1,5 +1,5 @@
 import { describeCommand, invokeTestCli } from '../utility'
-import { getRandomString } from '../utils'
+import { getRandomString, getTestFilePath } from '../utils'
 import { createFdpAndImport } from '../utility/fdp'
 import { readFileSync } from 'fs'
 import tmp from 'tmp'
@@ -8,7 +8,7 @@ describeCommand(
   'Test File command',
   ({ consoleMessages }) => {
     it('should upload a file', async () => {
-      const fileSource1 = './test/test-data/file1.bin'
+      const fileSource1 = getTestFilePath('file1.bin')
       const podName1 = getRandomString()
       const fileName1 = `${getRandomString()}.bin`
       const fullFilePath1 = `/${fileName1}`
@@ -39,7 +39,7 @@ describeCommand(
     })
 
     it('should delete a file', async () => {
-      const fileSource1 = './test/test-data/file1.bin'
+      const fileSource1 = getTestFilePath('file1.bin')
       const podName1 = getRandomString()
       const fileName1 = `${getRandomString()}.bin`
       const fullFilePath1 = `/${fileName1}`
@@ -66,7 +66,7 @@ describeCommand(
     })
 
     it('should download a file', async () => {
-      const fileSource1 = './test/test-data/file1.bin'
+      const fileSource1 = getTestFilePath('file1.bin')
       const podName1 = getRandomString()
       const fileName1 = `${getRandomString()}.bin`
       const fullFilePath1 = `/${fileName1}`
@@ -91,8 +91,12 @@ describeCommand(
         accountPassword,
       ])
 
+      expect(consoleMessages[0]).toContain('downloaded successfully to')
+      expect(consoleMessages[0]).toContain(fullFilePath1)
+      expect(consoleMessages[0]).toContain(tempFile1.name)
+
       const downloadedFile = readFileSync(tempFile1.name)
-      expect(downloadedFile).toEqual(fileData1)
+      expect(downloadedFile.length).toEqual(fileData1.length)
 
       tempFile1.removeCallback()
     })
