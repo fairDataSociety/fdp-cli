@@ -27,7 +27,6 @@ export class Download extends FileCommand implements LeafCommand {
 
     try {
       expectFilePathAvailable(this.pathDestination)
-      await this.setFdpAccount(this.account, this.password)
       const data = await this.fdpStorage.file.downloadData(this.pod, this.pathSource)
       saveData(this.pathDestination, data)
       this.console.log(Message.fileDownloadedSuccessfully(this.pathSource, this.pathDestination))
