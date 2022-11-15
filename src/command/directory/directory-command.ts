@@ -39,5 +39,6 @@ export class DirectoryCommand extends RootCommand {
     await super.init()
 
     this.throwIfNoAccounts()
+    await this.setFdpAccount(this.account, this.password)
   }
 }

@@ -31,7 +31,6 @@ export class Upload extends FileCommand implements LeafCommand {
     try {
       expectFile(this.pathSource)
       const data = readFileSync(this.pathSource)
-      await this.setFdpAccount(this.account, this.password)
       await this.fdpStorage.file.uploadData(this.pod, this.pathDestination, data)
       this.console.log(Message.fileUploadedSuccessfully(this.pathSource, this.pathDestination))
     } catch (error: unknown) {
