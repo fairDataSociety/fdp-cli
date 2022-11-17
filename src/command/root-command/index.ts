@@ -1,5 +1,5 @@
 import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
-import { ConfigOption } from '../../utils/types/config-option'
+import { ConfigOption } from '../../utils/types/config'
 import { CommandConfig, CONFIG_OPTIONS } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
@@ -9,8 +9,7 @@ import { BeeDebug } from '@ethersphere/bee-js'
 import { assertBatchId, beeDebugUrl } from '../../../test/utils'
 import { getUsableBatch, isUsableBatchExists, ZERO_BATCH_ID } from '../../utils/bee'
 import { CommandLineError } from '../../utils/error'
-import { Account } from '../../service/account/types'
-import { isAccount } from '../../service/account'
+import { Account, isAccount } from '../../utils/account'
 import { decryptAccount, uncompressedPublicKeyFromSeed } from '../../utils/wallet'
 
 interface NamedAccount {

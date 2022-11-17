@@ -6,9 +6,8 @@ import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { RootCommand } from '../root-command'
 import { encryptSeed, mainHDNodeFromSeed, mnemonicToSeed } from '../../utils/wallet'
-import { isAccount } from '../../service/account'
 import { Seed } from '../../utils/type'
-import { Account } from '../../service/account/types'
+import { Account, isAccount } from '../../utils/account'
 
 export class Import extends RootCommand implements LeafCommand {
   public readonly name = 'import'

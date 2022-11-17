@@ -3,8 +3,8 @@ import { exit } from 'process'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { AccountCommand } from './account-command'
-import { isAccount } from '../../service/account'
 import { decryptAccount } from '../../utils/wallet'
+import { isAccount } from '../../utils/account'
 
 export class Show extends AccountCommand implements LeafCommand {
   public readonly name = 'show'

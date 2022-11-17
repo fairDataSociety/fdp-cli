@@ -3,9 +3,11 @@ import { homedir, platform } from 'os'
 import { join } from 'path'
 import { exit } from 'process'
 import { beeApiUrl, beeDebugApiUrl } from '../../config'
-import { Account } from '../../service/account/types'
-import { ConfigOption } from '../../utils/types/config-option'
+import { Config, ConfigOption } from '../../utils/types/config'
 import { CommandLog } from './command-log'
+import { assertConfigContent } from '../../utils/config'
+import { isNotEmptyString } from '../../utils/type'
+import { Account } from '../../utils/account'
 
 /**
  * Options listed here will be read from the config file
@@ -19,21 +21,10 @@ export const CONFIG_OPTIONS: ConfigOption[] = [
   { optionKey: 'bee-debug-api-url', propertyKey: 'beeDebugApiUrl' },
 ]
 
-export interface Config {
-  beeApiUrl: string
-
-  beeDebugApiUrl: string
-
-  accounts: { [name: string]: Account }
-}
-
 export class CommandConfig {
   public config: Config
-
   public configFilePath: string
-
   public configFolderPath: string
-
   public console: CommandLog
 
   constructor(appName: string, console: CommandLog, configFile: string, configFolder?: string) {
@@ -49,10 +40,15 @@ export class CommandConfig {
   }
 
   public saveAccount(name: string, account: Account): boolean {
-    if (this.config.accounts?.[name]) return false
+    if (!isNotEmptyString(name)) {
+      throw new Error('Account name is empty')
+    }
+
+    if (this.config.accounts?.[name]) {
+      return false
+    }
 
     this.config.accounts[name] = account
-
     this.saveConfig()
 
     return true
@@ -63,23 +59,23 @@ export class CommandConfig {
     this.saveConfig()
   }
 
-  /** Save configuration object to the CLI's config file */
+  /**
+   * Save configuration object to the CLI's config file
+   */
   private saveConfig() {
     writeFileSync(this.configFilePath, JSON.stringify(this.config), { mode: 0o600 })
   }
 
-  /** Load configuration from config path or creates config folder */
+  /**
+   * Load configuration from config path or creates config folder
+   */
   private prepareConfig() {
-    if (!existsSync(this.configFilePath)) {
-      if (!existsSync(this.configFolderPath)) mkdirSync(this.configFolderPath, { mode: 0o700, recursive: true })
-
-      //save config initialized in constructor
-      this.saveConfig()
-    } else {
+    if (existsSync(this.configFilePath)) {
       //load config
       const configData = readFileSync(this.configFilePath)
       try {
         this.config = JSON.parse(configData.toString())
+        assertConfigContent(this.config)
       } catch (err) {
         this.console.error(
           `There has been an error parsing JSON configuration of CLI from path: '${this.configFilePath}'`,
@@ -87,11 +83,20 @@ export class CommandConfig {
 
         exit(1)
       }
+    } else {
+      if (!existsSync(this.configFolderPath)) {
+        mkdirSync(this.configFolderPath, { mode: 0o700, recursive: true })
+      }
+
+      //save config initialized in constructor
+      this.saveConfig()
     }
   }
 
   private static getConfigFolderPath(appName: string, configFolder?: string): string {
-    if (configFolder) return configFolder
+    if (configFolder) {
+      return configFolder
+    }
 
     const homePath = homedir()
 

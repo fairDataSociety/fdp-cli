@@ -1,13 +1,12 @@
 import { Option } from 'furious-commander'
 import { RootCommand } from '../root-command'
-import { Account } from '../../service/account/types'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { ASK_FOR_PORTABLE_PASSWORD_OPTIONS } from '../root-command/command-log'
 import { createKeyValue } from '../../utils/text'
 import { createAndRunSpinner } from '../../utils/spinner'
 import { isSeed, Seed } from '../../utils/type'
-import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../../utils/account'
+import { Account, MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../../utils/account'
 import { encryptSeed, getPrintDataFromSeed, mainHDNodeFromSeed } from '../../utils/wallet'
 
 export class AccountCommand extends RootCommand {

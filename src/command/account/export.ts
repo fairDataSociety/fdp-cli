@@ -2,9 +2,8 @@ import { writeFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { CommandLineError } from '../../utils/error'
 import { AccountCommand } from './account-command'
-import { Account } from '../../service/account/types'
 import { Message } from '../../utils/message'
-import { isAccount } from '../../service/account'
+import { Account, isAccount } from '../../utils/account'
 
 export class Export extends AccountCommand implements LeafCommand {
   public readonly name = 'export'
