@@ -11,7 +11,7 @@ import { getUsableBatch, isUsableBatchExists, ZERO_BATCH_ID } from '../../utils/
 import { CommandLineError } from '../../utils/error'
 import { Account } from '../../service/account/types'
 import { isAccount } from '../../service/account'
-import { decryptSeedString, uncompressedPublicKeyFromSeed } from '../../utils/wallet'
+import { decryptAccount, uncompressedPublicKeyFromSeed } from '../../utils/wallet'
 
 interface NamedAccount {
   name: string
@@ -185,7 +185,7 @@ export class RootCommand {
     }
 
     if (isAccount(account)) {
-      const seed = decryptSeedString(account.encryptedSeed, password)
+      const seed = decryptAccount(account, password)
       this.fdpStorage.account.setAccountFromSeed(seed)
       this.fdpStorage.account.publicKey = uncompressedPublicKeyFromSeed(seed)
     } else {

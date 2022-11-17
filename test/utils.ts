@@ -4,8 +4,10 @@ import fs from 'fs/promises'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { utils } from 'ethers'
 import { isUsableBatchExists, ZERO_BATCH_ID } from '../src/utils/bee'
-import { decryptSeedString, mainHDNodeFromSeed } from '../src/utils/wallet'
+import { decryptAccount, mainHDNodeFromSeed } from '../src/utils/wallet'
 import { join } from 'path'
+import { Account } from '../src/service/account/types'
+import { isAccount } from '../src/service/account'
 
 /**
  * Asserts whether batch id passed
@@ -116,8 +118,8 @@ export async function topUpAddress(address: string, amountInEther = '1'): Promis
  * Top up wallet of the account
  */
 export async function topUpAccount(path: string, name: string, password: string, amountInEther = '1'): Promise<void> {
-  const encryptedSeed = await getEncryptedSeed(path, name)
-  const decryptedSeed = decryptSeedString(encryptedSeed, password)
+  const account = await getAccount(path, name)
+  const decryptedSeed = decryptAccount(account, password)
   const hdNode = mainHDNodeFromSeed(decryptedSeed)
   const walletAddress = hdNode.address
 
@@ -129,17 +131,17 @@ export async function topUpAccount(path: string, name: string, password: string,
 }
 
 /**
- * Gets encrypted seed from the file
+ * Gets account from the file
  */
-export async function getEncryptedSeed(path: string, name: string): Promise<string> {
+export async function getAccount(path: string, name: string): Promise<Account> {
   const data = JSON.parse(await fs.readFile(path, 'utf8'))
-  const encryptedSeed = data.accounts[name]?.encryptedSeed
+  const account = data.accounts[name]
 
-  if (!encryptedSeed) {
-    throw new Error(`Seed for "${name}" not found`)
+  if (!isAccount(account)) {
+    throw new Error(`Incorrect account data for "${name}"`)
   }
 
-  return encryptedSeed
+  return account
 }
 
 /**
