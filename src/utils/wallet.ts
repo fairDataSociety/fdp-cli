@@ -4,6 +4,7 @@ import { Utils } from '@ethersphere/bee-js'
 import { HD_PATH } from './account'
 import CryptoJS from 'crypto-js'
 import { bytesToWordArray, decrypt, encryptBytes, hexToWordArray } from './encryption'
+import { Account } from '../service/account/types'
 
 /**
  * Prepared data extract from seed to print
@@ -70,8 +71,22 @@ export function encryptSeed(seed: Seed, password: string): string {
 }
 
 /**
- * Decrypt seed string with password
+ * Decrypt seed string with password with address validation
  */
-export function decryptSeedString(seed: string, password: string): Seed {
-  return Utils.hexToBytes(CryptoJS.enc.Hex.stringify(decrypt(password, hexToWordArray(seed))))
+export function decryptSeedString(seed: string, password: string, address: string): Seed {
+  const decryptedSeed = Utils.hexToBytes(CryptoJS.enc.Hex.stringify(decrypt(password, hexToWordArray(seed)))) as Seed
+  const hdNode = mainHDNodeFromSeed(decryptedSeed)
+
+  if (hdNode.address !== address) {
+    throw new Error('Seed decryption: incorrect password')
+  }
+
+  return decryptedSeed
+}
+
+/**
+ * Decrypts account data with address validation
+ */
+export function decryptAccount(account: Account, password: string): Seed {
+  return decryptSeedString(account.encryptedSeed, password, account.address)
 }

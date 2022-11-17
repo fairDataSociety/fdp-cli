@@ -1,8 +1,8 @@
 import { describeCommand, invokeTestCli } from '../utility'
-import { assertBatchId, beeUrl, getEncryptedSeed, getRandomString, topUpAccount } from '../utils'
+import { assertBatchId, beeUrl, getAccount, getRandomString, topUpAccount } from '../utils'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { ZERO_BATCH_ID } from '../../src/utils/bee'
-import { decryptSeedString, mainHDNodeFromSeed } from '../../src/utils/wallet'
+import { decryptAccount, mainHDNodeFromSeed } from '../../src/utils/wallet'
 
 describeCommand(
   'Test Account command',
@@ -21,6 +21,26 @@ describeCommand(
       await invokeTestCli(['account', 'create', account1, '-P', accountPassword])
       expect(consoleMessages[0]).toContain('Name:')
       expect(consoleMessages[0]).toContain(account1)
+      consoleMessages.length = 0
+    })
+
+    it('should show account', async () => {
+      const account = getRandomString()
+      const accountPassword = getRandomString()
+      const accountPasswordIncorrect = getRandomString()
+
+      await invokeTestCli(['account', 'create', account, '--password', accountPassword])
+      expect(consoleMessages[0]).toContain('Name:')
+      expect(consoleMessages[0]).toContain(account)
+      consoleMessages.length = 0
+
+      await invokeTestCli(['account', 'show', account, '--password', accountPassword, '-y'])
+      expect(consoleMessages[0]).toContain('Seed:')
+      consoleMessages.length = 0
+
+      await invokeTestCli(['account', 'show', account, '--password', accountPasswordIncorrect, '-y'])
+      expect(consoleMessages[0]).toContain('ERROR')
+      expect(consoleMessages[0]).toContain('Seed decryption: incorrect password')
       consoleMessages.length = 0
     })
 
@@ -77,8 +97,8 @@ describeCommand(
       assertBatchId(ZERO_BATCH_ID)
       const fdp = new FdpStorage(beeUrl(), ZERO_BATCH_ID)
       await fdp.account.login(portableUsername, portablePassword)
-      const encryptedSeed = await getEncryptedSeed(configFilePath, account)
-      const decryptedSeed = decryptSeedString(encryptedSeed, accountPassword)
+      const accountData = await getAccount(configFilePath, account)
+      const decryptedSeed = decryptAccount(accountData, accountPassword)
       const hdNode = mainHDNodeFromSeed(decryptedSeed)
       expect(fdp.account.wallet?.address).toEqual(hdNode.address)
     })

@@ -4,7 +4,7 @@ import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { AccountCommand } from './account-command'
 import { isAccount } from '../../service/account'
-import { decryptSeedString } from '../../utils/wallet'
+import { decryptAccount } from '../../utils/wallet'
 
 export class Show extends AccountCommand implements LeafCommand {
   public readonly name = 'show'
@@ -28,7 +28,7 @@ export class Show extends AccountCommand implements LeafCommand {
       this.password = await this.console.askForPassword(Message.portableAccountPassword())
     }
 
-    const seed = decryptSeedString(account.encryptedSeed, this.password)
+    const seed = decryptAccount(account, this.password)
     this.printSeed(seed)
     this.printSeedQuietly(seed)
   }
