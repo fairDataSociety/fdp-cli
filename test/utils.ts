@@ -6,8 +6,7 @@ import { utils } from 'ethers'
 import { isUsableBatchExists, ZERO_BATCH_ID } from '../src/utils/bee'
 import { decryptAccount, mainHDNodeFromSeed } from '../src/utils/wallet'
 import { join } from 'path'
-import { Account } from '../src/service/account/types'
-import { isAccount } from '../src/service/account'
+import { Account, isAccount } from '../src/utils/account'
 
 /**
  * Asserts whether batch id passed
