@@ -1,10 +1,9 @@
 import { utils } from 'ethers'
 import { Seed } from './type'
 import { Utils } from '@ethersphere/bee-js'
-import { HD_PATH } from './account'
+import { Account, HD_PATH } from './account'
 import CryptoJS from 'crypto-js'
 import { bytesToWordArray, decrypt, encryptBytes, hexToWordArray } from './encryption'
-import { Account } from '../service/account/types'
 
 /**
  * Prepared data extract from seed to print
