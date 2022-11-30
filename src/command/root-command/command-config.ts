@@ -1,11 +1,11 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, readFileSync } from 'fs'
 import { homedir, platform } from 'os'
 import { join } from 'path'
 import { exit } from 'process'
 import { beeApiUrl, beeDebugApiUrl } from '../../config'
 import { Config, ConfigOption } from '../../utils/types/config'
 import { CommandLog } from './command-log'
-import { assertConfigContent } from '../../utils/config'
+import { assertConfigContent, createConfig, saveConfig } from '../../utils/config'
 import { isNotEmptyString } from '../../utils/type'
 import { Account } from '../../utils/account'
 
@@ -29,11 +29,7 @@ export class CommandConfig {
 
   constructor(appName: string, console: CommandLog, configFile: string, configFolder?: string) {
     this.console = console
-    this.config = {
-      beeApiUrl: beeApiUrl.default || '',
-      beeDebugApiUrl: beeDebugApiUrl.default || '',
-      accounts: {},
-    }
+    this.config = createConfig(beeApiUrl.default, beeDebugApiUrl.default)
     this.configFolderPath = CommandConfig.getConfigFolderPath(appName, configFolder)
     this.configFilePath = join(this.configFolderPath, configFile)
     this.prepareConfig()
@@ -63,7 +59,7 @@ export class CommandConfig {
    * Save configuration object to the CLI's config file
    */
   private saveConfig() {
-    writeFileSync(this.configFilePath, JSON.stringify(this.config), { mode: 0o600 })
+    saveConfig(this.configFilePath, this.config)
   }
 
   /**

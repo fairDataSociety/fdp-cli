@@ -16,6 +16,7 @@ describeCommand('Config data', () => {
           encryptedSeed,
         },
       },
+      mainAccount: '',
     }
 
     const incorrectConfigs = [
@@ -38,12 +39,16 @@ describeCommand('Config data', () => {
         message: 'Config error: `accounts` is not an object',
       },
       {
-        data: { beeApiUrl, beeDebugApiUrl, accounts: { '': 'world' } },
+        data: { beeApiUrl, beeDebugApiUrl, accounts: { hello: 'world' } },
+        message: 'Config error: `mainAccount` is not defined',
+      },
+      {
+        data: { beeApiUrl, beeDebugApiUrl, accounts: { '': 'world' }, mainAccount: '' },
         message: 'Config error: account name is empty',
       },
       {
-        data: { beeApiUrl, beeDebugApiUrl, accounts: { hello: 'world' } },
-        message: 'Config error: one of the accounts it not correct',
+        data: { beeApiUrl, beeDebugApiUrl, accounts: { hello: 'world' }, mainAccount: '' },
+        message: 'Config error: one of the accounts is not correct',
       },
       {
         data: {
@@ -55,8 +60,9 @@ describeCommand('Config data', () => {
               encryptedSeed: '',
             },
           },
+          mainAccount: '',
         },
-        message: 'Config error: one of the accounts it not correct',
+        message: 'Config error: one of the accounts is not correct',
       },
       {
         data: {
@@ -68,8 +74,9 @@ describeCommand('Config data', () => {
               encryptedSeed: '',
             },
           },
+          mainAccount: '',
         },
-        message: 'Config error: one of the accounts it not correct',
+        message: 'Config error: one of the accounts is not correct',
       },
     ]
 

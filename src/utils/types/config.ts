@@ -12,5 +12,6 @@ export interface ConfigOption {
 export interface Config {
   beeApiUrl: string
   beeDebugApiUrl: string
+  mainAccount: string
   accounts: { [name: string]: Account }
 }
