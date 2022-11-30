@@ -122,6 +122,18 @@ function fileDownloadError(message: string): string {
   return `File can't be downloaded: ${message}`
 }
 
+function newMainAccount(message: string): string {
+  return `New main account: ${message}`
+}
+
+function mainAccount(message: string): string {
+  return `Current main account: ${message}`
+}
+
+function mainAccountEmpty(): string {
+  return `Main account is not defined`
+}
+
 export const Message = {
   accountNameConflict,
   accountNameConflictArgument,
@@ -154,4 +166,7 @@ export const Message = {
   fileDeleteError,
   fileDownloadedSuccessfully,
   fileDownloadError,
+  newMainAccount,
+  mainAccount,
+  mainAccountEmpty,
 }

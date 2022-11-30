@@ -8,11 +8,12 @@ import { Remove } from './remove'
 import { Rename } from './rename'
 import { Show } from './show'
 import { Login } from './login'
+import { Main } from './main'
 
 export class Account implements GroupCommand {
   public readonly name = 'account'
 
   public readonly description = 'FDS account handling'
 
-  public subCommandClasses = [Register, Create, Export, Import, List, Remove, Rename, Show, Login]
+  public subCommandClasses = [Register, Create, Export, Import, List, Remove, Rename, Show, Login, Main]
 }
