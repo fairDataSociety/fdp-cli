@@ -45,12 +45,12 @@ export class Register extends AccountCommand implements LeafCommand {
     let isRegistered = false
     try {
       this.portablePassword = await this.askPortableAccountPassword(this.portablePassword)
+      await this.setFdpAccount(this.account, this.password)
 
       if (this.verbosity !== VerbosityLevel.Quiet) {
         spinner.start()
       }
 
-      await this.setFdpAccount(this.account, this.password)
       isRegistered = Boolean(await this.fdpStorage.account.register(this.username, this.portablePassword))
     } catch (error: unknown) {
       const ensError = getFieldOrNull(error, 'error')
