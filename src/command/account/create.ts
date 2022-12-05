@@ -5,6 +5,7 @@ import { Message } from '../../utils/message'
 import { createKeyValue } from '../../utils/text'
 import { AccountCommand } from './account-command'
 import { mnemonicToSeed } from '../../utils/wallet'
+import { setMainAccount } from '../../utils/config'
 
 export class Create extends AccountCommand implements LeafCommand {
   public readonly name = 'create'
@@ -13,6 +14,17 @@ export class Create extends AccountCommand implements LeafCommand {
 
   @Argument({ key: 'name', default: 'main', description: 'Reference name of the generated account' })
   public accountName!: string
+
+  /**
+   * Saves first created account as main
+   */
+  private saveDefaultAccount(name: string): void {
+    if (Object.entries(this.commandConfig.config.accounts).length !== 1) {
+      return
+    }
+
+    setMainAccount(name, this.commandConfig.configFilePath, this.commandConfig.config)
+  }
 
   public async run(): Promise<void> {
     await super.init()
@@ -38,5 +50,6 @@ export class Create extends AccountCommand implements LeafCommand {
     this.printSeed(seed)
     this.printSeedQuietly(seed)
     this.console.info(Message.topUpBalance())
+    this.saveDefaultAccount(this.accountName)
   }
 }

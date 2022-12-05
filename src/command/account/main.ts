@@ -30,6 +30,10 @@ export class Main extends AccountCommand implements LeafCommand {
 
     const account = this.commandConfig.config.accounts[this.accountName]
 
+    if (!account) {
+      throw new CommandLineError(Message.noSuchAccount(this.accountName))
+    }
+
     if (!isAccount(account)) {
       throw new CommandLineError(Message.unsupportedAccountType())
     }
