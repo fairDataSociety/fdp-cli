@@ -44,24 +44,6 @@ describeCommand(
       consoleMessages.length = 0
     })
 
-    it('should set and get main account', async () => {
-      const account = getRandomString()
-      const accountPassword = getRandomString()
-      await invokeTestCli(['account', 'create', account, '--password', accountPassword])
-      consoleMessages.length = 0
-
-      await invokeTestCli(['account', 'main'])
-      expect(consoleMessages[0]).toContain('Main account is not defined')
-      consoleMessages.length = 0
-
-      await invokeTestCli(['account', 'main', account])
-      expect(consoleMessages[0]).toContain(`New main account: ${account}`)
-      consoleMessages.length = 0
-
-      await invokeTestCli(['account', 'main'])
-      expect(consoleMessages[0]).toContain(`Current main account: ${account}`)
-    })
-
     it('should register portable FDP account', async () => {
       const portableUsername = getRandomString()
       const account = getRandomString()
