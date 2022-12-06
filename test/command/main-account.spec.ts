@@ -33,6 +33,14 @@ describeCommand(
       // check that main account has not been changed
       await invokeTestCli(['account', 'main'])
       expect(consoleMessages[0]).toContain(`Current main account: ${account2}`)
+      consoleMessages.length = 0
+
+      await invokeTestCli(['account', 'remove', account1, '--yes'])
+      consoleMessages.length = 0
+
+      await invokeTestCli(['account', 'main'])
+      expect(consoleMessages[0]).toContain('Main account is not defined')
+      consoleMessages.length = 0
     })
   },
   { configFileName: 'main-account' },
