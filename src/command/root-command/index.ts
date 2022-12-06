@@ -11,6 +11,7 @@ import { getUsableBatch, isUsableBatchExists, ZERO_BATCH_ID } from '../../utils/
 import { CommandLineError } from '../../utils/error'
 import { Account, isAccount } from '../../utils/account'
 import { decryptAccount, uncompressedPublicKeyFromSeed } from '../../utils/wallet'
+import { setMainAccount } from '../../utils/config'
 
 interface NamedAccount {
   name: string
@@ -71,6 +72,17 @@ export class RootCommand {
         this.debugApiErrors.push('or correct the URL with the --bee-debug-api-url option.')
       }
     }
+  }
+
+  /**
+   * Saves first created account as main
+   */
+  protected saveDefaultAccount(name: string): void {
+    if (Object.entries(this.commandConfig.config.accounts).length !== 1) {
+      return
+    }
+
+    setMainAccount(name, this.commandConfig.configFilePath, this.commandConfig.config)
   }
 
   protected debugApiIsUsable(): boolean {

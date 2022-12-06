@@ -3,6 +3,7 @@ import { exit } from 'process'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { AccountCommand } from './account-command'
+import { setMainAccount } from '../../utils/config'
 
 export class Remove extends AccountCommand implements LeafCommand {
   public readonly name = 'remove'
@@ -34,5 +35,6 @@ export class Remove extends AccountCommand implements LeafCommand {
 
     this.commandConfig.removeAccount(name)
     this.console.log(`Account '${name}' has been successfully deleted`)
+    setMainAccount('', this.commandConfig.configFilePath, this.commandConfig.config)
   }
 }

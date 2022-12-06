@@ -47,6 +47,8 @@ export class Import extends RootCommand implements LeafCommand {
 
       this.runAccountImport(this.resource)
     }
+
+    this.saveDefaultAccount(this.accountName)
   }
 
   /**
