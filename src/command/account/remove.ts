@@ -35,6 +35,9 @@ export class Remove extends AccountCommand implements LeafCommand {
 
     this.commandConfig.removeAccount(name)
     this.console.log(`Account '${name}' has been successfully deleted`)
-    setMainAccount('', this.commandConfig.configFilePath, this.commandConfig.config)
+
+    if (this.commandConfig.config.mainAccount === name) {
+      setMainAccount('', this.commandConfig.configFilePath, this.commandConfig.config)
+    }
   }
 }
