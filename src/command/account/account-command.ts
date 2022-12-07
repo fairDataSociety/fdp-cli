@@ -1,4 +1,4 @@
-import { Option } from 'furious-commander'
+import { Option, Utils } from 'furious-commander'
 import { RootCommand } from '../root-command'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
@@ -8,6 +8,7 @@ import { createAndRunSpinner } from '../../utils/spinner'
 import { isSeed, Seed } from '../../utils/type'
 import { Account, MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../../utils/account'
 import { encryptSeed, getPrintDataFromSeed, mainHDNodeFromSeed } from '../../utils/wallet'
+import { setMainAccount } from '../../utils/config'
 
 export class AccountCommand extends RootCommand {
   @Option({
@@ -30,6 +31,19 @@ export class AccountCommand extends RootCommand {
 
   protected async init(): Promise<void> {
     await super.init()
+  }
+
+  /**
+   * Validates the account name and ability to create such an account
+   */
+  protected validateDefaultAccountName(accountName: string, errorTemplate = Message.accountNameConflictArgument): void {
+    if (Utils.getSourcemap().name === 'default') {
+      this.console.info(`No account name specified, defaulting to '${accountName}'`)
+    }
+
+    if (this.commandConfig.config.accounts[accountName]) {
+      throw new CommandLineError(errorTemplate(accountName))
+    }
   }
 
   /**
@@ -142,5 +156,16 @@ export class AccountCommand extends RootCommand {
       address: mainHDNodeFromSeed(seed).address,
       encryptedSeed,
     }
+  }
+
+  /**
+   * Saves first created account as main
+   */
+  protected saveDefaultAccount(name: string): void {
+    if (Object.entries(this.commandConfig.config.accounts).length !== 1) {
+      return
+    }
+
+    setMainAccount(name, this.commandConfig.configFilePath, this.commandConfig.config)
   }
 }

@@ -1,5 +1,5 @@
 import { Wallet } from 'ethers'
-import { Argument, LeafCommand, Utils } from 'furious-commander'
+import { Argument, LeafCommand } from 'furious-commander'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { createKeyValue } from '../../utils/text'
@@ -17,14 +17,7 @@ export class Create extends AccountCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    if (Utils.getSourcemap().name === 'default') {
-      this.console.info(`No account name specified, defaulting to '${this.accountName}'`)
-    }
-
-    if (this.commandConfig.config.accounts[this.accountName]) {
-      throw new CommandLineError(Message.accountNameConflictArgument(this.accountName))
-    }
-
+    this.validateDefaultAccountName(this.accountName)
     const wallet = Wallet.createRandom()
     const seed = mnemonicToSeed(wallet.mnemonic.phrase)
     const account = await this.createAccount(seed)

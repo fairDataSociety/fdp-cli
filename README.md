@@ -30,6 +30,24 @@ Create FDP account. The account will only be stored on your device.
 fdp-cli account create ACCOUNT_NAME
 ```
 
+Or import an account using mnemonic phrase.
+
+```sh
+fdp-cli account import "MNEMONIC_PHRASE"
+```
+
+Export your account in plain text.
+
+```sh
+fdp-cli account export
+```
+
+Export your account as a text file.
+
+```sh
+fdp-cli account export --out-file MY_FILENAME
+```
+
 Make your account portable between devices.
 
 This action will upload the encrypted account to Ethereum Swarm and you will be able to use your username and password to access your account. The username will be registered in ENS. To perform this action, your wallet must be topped up with at least 0.01 token of the current network.
