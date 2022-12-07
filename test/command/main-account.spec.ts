@@ -39,7 +39,7 @@ describeCommand(
       consoleMessages.length = 0
 
       await invokeTestCli(['account', 'main'])
-      expect(consoleMessages[0]).toContain('Main account is not defined')
+      expect(consoleMessages[0]).toContain(`Current main account: ${account2}`)
       consoleMessages.length = 0
     })
   },
