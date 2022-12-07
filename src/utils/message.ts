@@ -86,6 +86,10 @@ function podDeletedSuccessfully(): string {
   return 'Pod deleted successfully!'
 }
 
+function emptyPodsList(): string {
+  return 'Pods list is empty'
+}
+
 function directoryCreatedSuccessfully(): string {
   return 'Directory created successfully!'
 }
@@ -157,6 +161,7 @@ export const Message = {
   loggedInSuccessfully,
   podCreatedSuccessfully,
   podDeletedSuccessfully,
+  emptyPodsList,
   directoryCreatedSuccessfully,
   directoryDeletedSuccessfully,
   emptyDirectory,

@@ -177,7 +177,7 @@ export class RootCommand {
    * @protected
    */
   protected async setFdpAccount(name?: string | null, password?: string | null): Promise<void> {
-    const { account } = await this.getOrPickAccount(name)
+    const { account } = await this.getOrPickAccount(name ? name : this.commandConfig.config.mainAccount)
 
     if (!password) {
       password = await this.console.askForPassword(Message.portableAccountPassword())
