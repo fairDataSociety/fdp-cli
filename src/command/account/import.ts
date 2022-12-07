@@ -4,12 +4,12 @@ import { Argument, LeafCommand, Option } from 'furious-commander'
 import { expectFile } from '../../utils'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
-import { RootCommand } from '../root-command'
 import { encryptSeed, mainHDNodeFromSeed, mnemonicToSeed } from '../../utils/wallet'
 import { Seed } from '../../utils/type'
 import { Account, isAccount } from '../../utils/account'
+import { AccountCommand } from './account-command'
 
-export class Import extends RootCommand implements LeafCommand {
+export class Import extends AccountCommand implements LeafCommand {
   public readonly name = 'import'
 
   public readonly description = 'Import mnemonic or a file with encrypted seed as a new account'
@@ -22,21 +22,16 @@ export class Import extends RootCommand implements LeafCommand {
   })
   public resource!: string
 
-  @Option({ key: 'name', alias: 'a', description: 'Name of the account to be saved as', required: true })
+  @Option({ key: 'name', default: 'main', description: 'Reference name of the imported account' })
   public accountName!: string
-
-  @Option({ key: 'password', alias: 'P', description: 'Password for the account', required: true })
-  public password!: string
 
   public async run(): Promise<void> {
     await super.init()
 
-    if (this.commandConfig.config.accounts[this.accountName]) {
-      throw new CommandLineError(Message.accountNameConflict(this.accountName))
-    }
+    this.validateDefaultAccountName(this.accountName, Message.accountNameConflictOption)
 
     if (utils.isValidMnemonic(this.resource)) {
-      this.runSeedImport(mnemonicToSeed(this.resource))
+      await this.runSeedImport(mnemonicToSeed(this.resource))
     } else {
       expectFile(this.resource)
       this.resource = JSON.parse(readFileSync(this.resource, 'utf-8'))
@@ -63,7 +58,8 @@ export class Import extends RootCommand implements LeafCommand {
   /**
    * Runs import of seed as a new account
    */
-  private runSeedImport(seed: Seed): void {
+  private async runSeedImport(seed: Seed): Promise<void> {
+    await this.askPassword()
     const account = {
       address: mainHDNodeFromSeed(seed).address,
       encryptedSeed: encryptSeed(seed, this.password),

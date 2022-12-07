@@ -35,7 +35,7 @@ export class Export extends AccountCommand implements LeafCommand {
    * Writes the account to a file or to the console
    */
   private writeAccount(data: Account): void {
-    const account = JSON.stringify(data.encryptedSeed, null, 4)
+    const account = JSON.stringify(data, null, 4)
 
     if (this.outFile) {
       writeFileSync(this.outFile, account)
