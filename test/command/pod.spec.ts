@@ -4,7 +4,7 @@ import { createFdpAndImport } from '../utility/fdp'
 
 describeCommand(
   'Test Pod command',
-  ({ consoleMessages }) => {
+  ({ consoleMessages, getLastMessage }) => {
     it('should list pods', async () => {
       const podName1 = getRandomString()
       const podName2 = getRandomString()
@@ -59,6 +59,9 @@ describeCommand(
       const podName1 = getRandomString()
       const podName2 = getRandomString()
       const { fdp, account, accountPassword } = await createFdpAndImport()
+
+      await invokeTestCli(['pod', 'list', '--account', account, '--password', accountPassword])
+      expect(getLastMessage()).toContain('Pods list is empty')
 
       await invokeTestCli(['pod', 'create', podName1, '--account', account, '--password', accountPassword])
       await invokeTestCli(['pod', 'create', podName2, '--account', account, '--password', accountPassword])
