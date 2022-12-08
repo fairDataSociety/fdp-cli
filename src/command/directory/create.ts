@@ -13,7 +13,7 @@ export class Create extends DirectoryCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    await this.fdpStorage.directory.create(this.pod, this.path)
+    await this.fdpStorage.directory.create(this.getCurrentPodName(this.account, this.pod), this.path)
     this.console.log(Message.directoryCreatedSuccessfully())
     this.console.log(createKeyValue('Name', this.path))
   }

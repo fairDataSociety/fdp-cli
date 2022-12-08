@@ -3,13 +3,14 @@ import { Message } from '../../utils/message'
 import { createKeyValue } from '../../utils/text'
 import { PodCommand } from './pod-command'
 import { exit } from 'process'
+import { setMainPod } from '../../utils/config'
 
 export class Delete extends PodCommand implements LeafCommand {
   public readonly name = 'delete'
 
   public readonly description = 'Delete a pod'
 
-  @Argument({ key: 'name', default: 'main', description: 'Reference name of the pod' })
+  @Argument({ key: 'name', description: 'Reference name of the pod' })
   public podName!: string
 
   @Option({
@@ -24,9 +25,15 @@ export class Delete extends PodCommand implements LeafCommand {
     await super.init()
 
     await this.promptPodDeletion()
-    await this.fdpStorage.personalStorage.delete(this.podName)
+    const currentAccountName = this.getCurrentAccountName(this.account)
+    const currentPodName = this.getCurrentPodName(this.account, this.podName)
+    await this.fdpStorage.personalStorage.delete(currentPodName)
     this.console.log(Message.podDeletedSuccessfully())
-    this.console.log(createKeyValue('Name', this.podName))
+    this.console.log(createKeyValue('Name', currentPodName))
+
+    if (currentPodName === this.getMainPodName(currentAccountName)) {
+      setMainPod(currentAccountName, '', this.commandConfig.configFilePath, this.commandConfig.config)
+    }
   }
 
   /**

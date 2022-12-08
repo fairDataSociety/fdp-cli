@@ -31,7 +31,6 @@ export class DirectoryCommand extends RootCommand {
   @Option({
     key: 'pod',
     description: 'Pod where the directory located',
-    required: true,
   })
   public pod!: string
 

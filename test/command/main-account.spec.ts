@@ -17,12 +17,13 @@ describeCommand(
       await invokeTestCli(['account', 'main'])
       expect(getLastMessage()).toContain(`Current main account: ${account1}`)
 
+      // main account should be changeable
       await invokeTestCli(['account', 'main', account2])
       expect(getLastMessage()).toContain(`New main account: ${account2}`)
-
       await invokeTestCli(['account', 'main'])
       expect(getLastMessage()).toContain(`Current main account: ${account2}`)
 
+      // incorrect pod shouldn't be set
       await invokeTestCli(['account', 'main', account3NotCreated])
       expect(getLastMessage()).toContain(`No account found with the name '${account3NotCreated}'`)
 
@@ -30,10 +31,12 @@ describeCommand(
       await invokeTestCli(['account', 'main'])
       expect(getLastMessage()).toContain(`Current main account: ${account2}`)
 
+      // remove other accounts shouldn't change main account
       await invokeTestCli(['account', 'remove', account1, '--yes'])
       await invokeTestCli(['account', 'main'])
       expect(getLastMessage()).toContain(`Current main account: ${account2}`)
 
+      // removing of main account should remove info about main account
       await invokeTestCli(['account', 'remove', account2, '--yes'])
       await invokeTestCli(['account', 'main'])
       expect(getLastMessage()).toContain('Main account is not defined')

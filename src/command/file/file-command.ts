@@ -7,7 +7,6 @@ export class FileCommand extends RootCommand {
     key: 'account',
     alias: 'a',
     description: 'Name of the account',
-    required: { when: 'quiet' },
   })
   public account!: string
 
@@ -24,7 +23,6 @@ export class FileCommand extends RootCommand {
   @Option({
     key: 'pod',
     description: 'Pod where the file located',
-    required: true,
   })
   public pod!: string
 

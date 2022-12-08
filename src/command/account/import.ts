@@ -63,6 +63,7 @@ export class Import extends AccountCommand implements LeafCommand {
     const account = {
       address: mainHDNodeFromSeed(seed).address,
       encryptedSeed: encryptSeed(seed, this.password),
+      mainPod: '',
     }
 
     this.importAccount(account)

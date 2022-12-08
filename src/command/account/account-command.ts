@@ -155,6 +155,7 @@ export class AccountCommand extends RootCommand {
     return {
       address: mainHDNodeFromSeed(seed).address,
       encryptedSeed,
+      mainPod: '',
     }
   }
 
