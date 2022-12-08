@@ -28,7 +28,7 @@ export class Import extends AccountCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    this.validateDefaultAccountName(this.accountName, Message.accountNameConflictOption)
+    this.accountNameCreationCheck(this.accountName, Message.accountNameConflictOption)
 
     if (utils.isValidMnemonic(this.resource)) {
       await this.runSeedImport(mnemonicToSeed(this.resource))
@@ -43,7 +43,7 @@ export class Import extends AccountCommand implements LeafCommand {
       this.runAccountImport(this.resource)
     }
 
-    this.saveDefaultAccount(this.accountName)
+    this.initializeDefaultAccount(this.accountName)
   }
 
   /**

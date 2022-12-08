@@ -34,9 +34,9 @@ export class AccountCommand extends RootCommand {
   }
 
   /**
-   * Validates the account name and ability to create such an account
+   * Checks the account name and ability to create such an account
    */
-  protected validateDefaultAccountName(accountName: string, errorTemplate = Message.accountNameConflictArgument): void {
+  protected accountNameCreationCheck(accountName: string, errorTemplate = Message.accountNameConflictArgument): void {
     if (Utils.getSourcemap().name === 'default') {
       this.console.info(`No account name specified, defaulting to '${accountName}'`)
     }
@@ -159,9 +159,9 @@ export class AccountCommand extends RootCommand {
   }
 
   /**
-   * Saves first created account as main
+   * Initialize first created account as main
    */
-  protected saveDefaultAccount(name: string): void {
+  protected initializeDefaultAccount(name: string): void {
     if (Object.entries(this.commandConfig.config.accounts).length !== 1) {
       return
     }
