@@ -13,6 +13,7 @@ export const HD_PATH = `m/44'/60'/0'/0/0`
 export interface Account {
   address: string
   encryptedSeed: string
+  mainPod: string
 }
 
 /**

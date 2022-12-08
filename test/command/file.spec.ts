@@ -6,7 +6,7 @@ import tmp from 'tmp'
 
 describeCommand(
   'Test File command',
-  ({ consoleMessages }) => {
+  ({ getLastMessage, consoleMessages }) => {
     it('should upload a file', async () => {
       const fileSource1 = getTestFilePath('file1.bin')
       const podName1 = getRandomString()
@@ -60,6 +60,8 @@ describeCommand(
         '--password',
         accountPassword,
       ])
+      expect(getLastMessage()).toContain('deleted successfully!')
+      expect(getLastMessage()).toContain(fullFilePath1)
 
       const files2 = (await fdp.directory.read(podName1, '/', true)).getFiles()
       expect(files2).toHaveLength(0)

@@ -180,6 +180,10 @@ export class RootCommand {
     const { account } = await this.getOrPickAccount(name ? name : this.commandConfig.config.mainAccount)
 
     if (!password) {
+      if (this.quiet) {
+        throw new CommandLineError(`Password must be passed with the --password option in quiet mode`)
+      }
+
       password = await this.console.askForPassword(Message.portableAccountPassword())
     }
 
@@ -231,5 +235,32 @@ export class RootCommand {
     }
 
     return accounts[name]
+  }
+
+  /**
+   * Gets passed account name or main account name
+   */
+  protected getCurrentAccountName(accountName: string): string {
+    return accountName ? accountName : this.commandConfig.config.mainAccount
+  }
+
+  /**
+   * Gets main pod name by account name
+   */
+  protected getMainPodName(accountName: string): string {
+    return this.commandConfig.config.accounts[accountName].mainPod
+  }
+
+  /**
+   * Gets passed pod name or main user's pod name
+   */
+  protected getCurrentPodName(accountName: string, podName: string): string {
+    if (podName) {
+      return podName
+    }
+
+    const account = this.getCurrentAccountName(accountName)
+
+    return this.getMainPodName(account)
   }
 }

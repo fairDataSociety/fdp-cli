@@ -138,6 +138,22 @@ function mainAccountEmpty(): string {
   return `Main account is not defined`
 }
 
+function newMainPod(message: string): string {
+  return `New main pod: ${message}`
+}
+
+function mainPod(message: string): string {
+  return `Current main pod: ${message}`
+}
+
+function mainPodEmpty(): string {
+  return `Main pod is not defined`
+}
+
+function podNotFound(message: string): string {
+  return `Pod not found: ${message}`
+}
+
 export const Message = {
   accountNameConflict,
   accountNameConflictArgument,
@@ -174,4 +190,8 @@ export const Message = {
   newMainAccount,
   mainAccount,
   mainAccountEmpty,
+  newMainPod,
+  mainPod,
+  mainPodEmpty,
+  podNotFound,
 }

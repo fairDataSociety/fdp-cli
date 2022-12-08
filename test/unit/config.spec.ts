@@ -14,6 +14,7 @@ describeCommand('Config data', () => {
         hello: {
           address,
           encryptedSeed,
+          mainPod: '',
         },
       },
       mainAccount: '',

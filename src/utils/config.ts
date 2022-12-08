@@ -2,6 +2,8 @@ import { isNotEmptyString, isObject, isString } from './type'
 import { Config } from './types/config'
 import { isAccount } from './account'
 import { writeFileSync } from 'fs'
+import { CommandLineError } from './error'
+import { Message } from './message'
 
 /**
  * Creates config object
@@ -27,6 +29,33 @@ export function saveConfig(path: string, config: Config): void {
  */
 export function setMainAccount(mainAccount: string, path: string, config: Config): void {
   saveConfig(path, { ...config, mainAccount })
+}
+
+/**
+ * Gets main pod for the account
+ */
+export function getMainPod(accountName: string, config: Config): string {
+  const result = config.accounts[accountName]?.mainPod
+
+  if (!isString(result)) {
+    return ''
+  }
+
+  return result
+}
+
+/**
+ * Sets and save main user's pod
+ */
+export function setMainPod(accountName: string, mainPod: string, path: string, config: Config): void {
+  const accounts = { ...config.accounts }
+
+  if (!accounts[accountName]) {
+    throw new CommandLineError(Message.noSuchAccount(accountName))
+  }
+
+  accounts[accountName].mainPod = mainPod
+  saveConfig(path, { ...config, ...accounts })
 }
 
 /**
@@ -67,6 +96,10 @@ export function assertConfigContent(value: unknown): asserts value is Config {
 
     if (!isAccount(account)) {
       throwError('one of the accounts is not correct')
+    }
+
+    if (!isString(account.mainPod)) {
+      throwError(`\`mainPod\` is not defined for account \`${key}\``)
     }
   }
 }
