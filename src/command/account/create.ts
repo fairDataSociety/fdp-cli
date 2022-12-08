@@ -17,7 +17,7 @@ export class Create extends AccountCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    this.validateDefaultAccountName(this.accountName)
+    this.accountNameCreationCheck(this.accountName)
     const wallet = Wallet.createRandom()
     const seed = mnemonicToSeed(wallet.mnemonic.phrase)
     const account = await this.createAccount(seed)
@@ -31,6 +31,6 @@ export class Create extends AccountCommand implements LeafCommand {
     this.printSeed(seed)
     this.printSeedQuietly(seed)
     this.console.info(Message.topUpBalance())
-    this.saveDefaultAccount(this.accountName)
+    this.initializeDefaultAccount(this.accountName)
   }
 }

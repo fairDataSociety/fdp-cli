@@ -31,9 +31,12 @@ describeCommand(
       expect(getLastMessage()).toContain(`Current main account: ${account2}`)
 
       await invokeTestCli(['account', 'remove', account1, '--yes'])
-
       await invokeTestCli(['account', 'main'])
       expect(getLastMessage()).toContain(`Current main account: ${account2}`)
+
+      await invokeTestCli(['account', 'remove', account2, '--yes'])
+      await invokeTestCli(['account', 'main'])
+      expect(getLastMessage()).toContain('Main account is not defined')
     })
 
     it('should be used set main account for commands', async () => {
