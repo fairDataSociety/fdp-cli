@@ -65,6 +65,10 @@ describeCommand(
       expect(consoleMessages[0]).toContain('Directory created successfully!')
       consoleMessages.length = 0
 
+      await invokeTestCli(['directory', 'read', '/', '--password', accountPassword])
+      expect(consoleMessages[0]).toContain(directoryName1)
+      consoleMessages.length = 0
+
       const directories1 = await fdp.directory.read(podName1, '/')
       expect(directories1.getDirectories()).toHaveLength(2)
       expect(directories1.getDirectories().find(item => item.name === directoryName1)).toBeDefined()
