@@ -67,9 +67,10 @@ export class Login extends AccountCommand implements LeafCommand {
       }
     }
 
-    this.console.log(Message.loggedInSuccessfully())
-
-    if (!isSaved) {
+    if (isSaved) {
+      this.console.log(Message.loggedInSuccessfully())
+      this.initializeDefaultAccount(this.username)
+    } else {
       throw new CommandLineError(Message.accountNameConflictArgument(this.username))
     }
   }
