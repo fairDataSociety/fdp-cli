@@ -4,7 +4,6 @@ import fs from 'fs/promises'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { utils } from 'ethers'
 import { isUsableBatchExists, ZERO_BATCH_ID } from '../src/utils/bee'
-import { decryptAccount, mainHDNodeFromSeed } from '../src/utils/wallet'
 import { join } from 'path'
 import { Account, isAccount } from '../src/utils/account'
 
@@ -118,9 +117,7 @@ export async function topUpAddress(address: string, amountInEther = '1'): Promis
  */
 export async function topUpAccount(path: string, name: string, password: string, amountInEther = '1'): Promise<void> {
   const account = await getAccount(path, name)
-  const decryptedSeed = decryptAccount(account, password)
-  const hdNode = mainHDNodeFromSeed(decryptedSeed)
-  const walletAddress = hdNode.address
+  const walletAddress = account.address
 
   if (!walletAddress) {
     throw new Error(`Wallet for "${name}" not found`)
