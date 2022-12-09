@@ -1,10 +1,42 @@
 import { describeCommand, invokeTestCli } from '../utility'
-import { getRandomString } from '../utils'
+import { getRandomString, topUpAccount } from '../utils'
 import { createFdpAndImport } from '../utility/fdp'
 
 describeCommand(
-  'Test Main account command',
-  ({ consoleMessages, getLastMessage }) => {
+  'Test main account command',
+  ({ consoleMessages, getLastMessage, configFilePath, removeConfig }) => {
+    it('should be set main account after first login', async () => {
+      // register an account and remove configuration to "forget" it
+      const portableUsername = getRandomString()
+      const portablePassword = getRandomString()
+      const { account, accountPassword } = await createFdpAndImport()
+      await topUpAccount(configFilePath, account, accountPassword)
+      await invokeTestCli([
+        'account',
+        'register',
+        portableUsername,
+        '--account',
+        account,
+        '--password',
+        accountPassword,
+        '--portable-password',
+        portablePassword,
+      ])
+      removeConfig()
+
+      await invokeTestCli([
+        'account',
+        'login',
+        portableUsername,
+        '--portable-password',
+        portablePassword,
+        '--password',
+        accountPassword,
+      ])
+      await invokeTestCli(['account', 'main'])
+      expect(getLastMessage()).toContain(`Current main account: ${portableUsername}`)
+    })
+
     it('should set and get main account', async () => {
       const account1 = getRandomString()
       const account2 = getRandomString()

@@ -10,6 +10,7 @@ type describeFunctionArgs = {
   configFilePath: string
   getNthLastMessage: (n: number) => string
   getLastMessage: () => string
+  removeConfig: () => void
   hasMessageContaining: (substring: string) => boolean
 }
 
@@ -22,6 +23,15 @@ export async function invokeTestCli(argv: string[]): ReturnType<typeof cli> {
   })
 }
 
+/**
+ * Removes file if exists
+ */
+export function removeFile(filename: string): void {
+  if (existsSync(filename)) {
+    unlinkSync(filename)
+  }
+}
+
 export function describeCommand(
   description: string,
   func: (clauseFields: describeFunctionArgs) => void,
@@ -32,6 +42,7 @@ export function describeCommand(
     const configFileName = options?.configFileName
     const getNthLastMessage = (n: number) => consoleMessages[consoleMessages.length - n]
     const getLastMessage = () => consoleMessages[consoleMessages.length - 1]
+    const removeConfig = () => removeFile(configFilePath)
     const hasMessageContaining = (substring: string) =>
       Boolean(consoleMessages.find(consoleMessage => consoleMessage.includes(substring)))
     const configFolderPath = join(__dirname, '..', 'testconfig')
@@ -64,7 +75,7 @@ export function describeCommand(
 
     let configFilePath = ''
 
-    //if own config is needed
+    // if own config is needed
     if (configFileName) {
       const fileName = `${configFileName}.json`
       configFilePath = join(configFolderPath, fileName)
@@ -72,15 +83,24 @@ export function describeCommand(
       //set config environment variable
       process.env.FDP_CLI_CONFIG_FILE = fileName
       process.env.FDP_CLI_CONFIG_FILE_PATH = configFilePath
-
-      //remove config file if it exists
-      if (existsSync(configFilePath)) unlinkSync(configFilePath)
     }
 
     beforeEach(() => {
       consoleMessages.length = 0
+
+      // remove config file before each test because the previous test might change the configuration
+      // in an inappropriate way
+      removeFile(configFilePath)
     })
 
-    func({ consoleMessages, getNthLastMessage, getLastMessage, hasMessageContaining, configFolderPath, configFilePath })
+    func({
+      consoleMessages,
+      getNthLastMessage,
+      getLastMessage,
+      hasMessageContaining,
+      configFolderPath,
+      configFilePath,
+      removeConfig,
+    })
   })
 }
