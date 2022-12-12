@@ -26,7 +26,7 @@ export class Delete extends PodCommand implements LeafCommand {
 
     await this.promptPodDeletion()
     const currentAccountName = this.getCurrentAccountName(this.account)
-    const currentPodName = this.getCurrentPodName(this.account, this.podName)
+    const currentPodName = await this.getCurrentPodName(this.account, this.podName)
     await this.fdpStorage.personalStorage.delete(currentPodName)
     this.console.log(Message.podDeletedSuccessfully())
     this.console.log(createKeyValue('Name', currentPodName))

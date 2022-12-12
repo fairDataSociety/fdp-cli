@@ -12,7 +12,7 @@ export class Read extends DirectoryCommand implements LeafCommand {
     await super.init()
 
     const directoryItems = await this.fdpStorage.directory.read(
-      this.getCurrentPodName(this.account, this.pod),
+      await this.getCurrentPodName(this.account, this.pod),
       this.path,
     )
 
