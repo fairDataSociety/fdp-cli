@@ -2,6 +2,8 @@ import { invokeTestCli } from './index'
 import { createFdp, getRandomString } from '../utils'
 import { Wallet } from 'ethers'
 import { FdpStorage } from '@fairdatasociety/fdp-storage'
+import { List } from '@fairdatasociety/fdp-storage/dist/pod/list'
+import { Pod, SharedPod } from '@fairdatasociety/fdp-storage/dist/pod/types'
 
 /**
  * Imported information for fdp
@@ -42,4 +44,11 @@ export async function createFdpAndImport(params?: CreateFdpParams): Promise<Impo
     accountPassword,
     wallet,
   }
+}
+
+/**
+ * Gets the list of pods
+ */
+export function getAllPods(pods: List): (Pod | SharedPod)[] {
+  return [...pods.getPods(), ...pods.getSharedPods()]
 }

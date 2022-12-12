@@ -2,6 +2,7 @@ import { Argument, LeafCommand } from 'furious-commander'
 import { Message } from '../../utils/message'
 import { getMainPod, setMainPod } from '../../utils/config'
 import { PodCommand } from './pod-command'
+import { getAllPods } from '../../../test/utility/fdp'
 
 export class Main extends PodCommand implements LeafCommand {
   public readonly name = 'main'
@@ -29,7 +30,7 @@ export class Main extends PodCommand implements LeafCommand {
     }
 
     const pods = await this.fdpStorage.personalStorage.list()
-    const allPods = [...pods.getPods(), ...pods.getSharedPods()]
+    const allPods = getAllPods(pods)
 
     if (!allPods.find(item => item.name === this.podName)) {
       this.console.log(Message.podNotFound(this.podName))

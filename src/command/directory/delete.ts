@@ -12,7 +12,7 @@ export class Delete extends DirectoryCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    await this.fdpStorage.directory.delete(this.getCurrentPodName(this.account, this.pod), this.path)
+    await this.fdpStorage.directory.delete(await this.getCurrentPodName(this.account, this.pod), this.path)
     this.console.log(Message.directoryDeletedSuccessfully(this.path))
   }
 }

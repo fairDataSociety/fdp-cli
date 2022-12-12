@@ -11,6 +11,8 @@ import { getUsableBatch, isUsableBatchExists, ZERO_BATCH_ID } from '../../utils/
 import { CommandLineError } from '../../utils/error'
 import { Account, isAccount } from '../../utils/account'
 import { decryptAccount, uncompressedPublicKeyFromSeed } from '../../utils/wallet'
+import { getAllPods } from '../../../test/utility/fdp'
+import { getPodTypeName } from '../../utils/type'
 
 interface NamedAccount {
   name: string
@@ -254,13 +256,30 @@ export class RootCommand {
   /**
    * Gets passed pod name or main user's pod name
    */
-  protected getCurrentPodName(accountName: string, podName: string): string {
+  protected async getCurrentPodName(accountName: string, podName: string): Promise<string> {
     if (podName) {
       return podName
     }
 
     const account = this.getCurrentAccountName(accountName)
+    let result = this.getMainPodName(account)
 
-    return this.getMainPodName(account)
+    if (!result && this.verbosity === VerbosityLevel.Quiet) {
+      throw new CommandLineError('Pod name must be specified when running in --quiet mode')
+    } else if (!result) {
+      const pods = getAllPods(await this.fdpStorage.personalStorage.list())
+
+      if (pods.length === 0) {
+        throw new CommandLineError(Message.emptyPodsList())
+      }
+
+      const choices = pods.map(pod => ({
+        name: `${pod.name} (${getPodTypeName(pod)})`,
+        value: pod.name,
+      }))
+      result = await this.console.promptList(choices, 'Select a pod for this action')
+    }
+
+    return result
   }
 }

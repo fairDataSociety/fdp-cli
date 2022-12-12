@@ -2,6 +2,8 @@ import { LeafCommand } from 'furious-commander'
 import { createKeyValue } from '../../utils/text'
 import { PodCommand } from './pod-command'
 import { Message } from '../../utils/message'
+import { getAllPods } from '../../../test/utility/fdp'
+import { getPodTypeName } from '../../utils/type'
 
 export class List extends PodCommand implements LeafCommand {
   public readonly name = 'list'
@@ -23,12 +25,9 @@ export class List extends PodCommand implements LeafCommand {
     await super.init()
 
     const pods = await this.fdpStorage.personalStorage.list()
-    const allPods = [...pods.getPods(), ...pods.getSharedPods()]
+    const allPods = getAllPods(pods)
     for (const pod of allPods) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const isSharedPod = Boolean((pod as unknown).address)
-      this.showPodInfo(pod.name, isSharedPod ? 'shared pod' : 'pod')
+      this.showPodInfo(pod.name, getPodTypeName(pod))
     }
 
     if (allPods.length === 0) {

@@ -21,7 +21,7 @@ export class Delete extends FileCommand implements LeafCommand {
     await super.init()
 
     try {
-      await this.fdpStorage.file.delete(this.getCurrentPodName(this.account, this.pod), this.pathDestination)
+      await this.fdpStorage.file.delete(await this.getCurrentPodName(this.account, this.pod), this.pathDestination)
       this.console.log(Message.fileDeletedSuccessfully(this.pathDestination))
     } catch (error: unknown) {
       this.console.log(Message.fileDeleteError(getString(error, 'message')))
