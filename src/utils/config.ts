@@ -4,14 +4,29 @@ import { isAccount } from './account'
 import { writeFileSync } from 'fs'
 import { CommandLineError } from './error'
 import { Message } from './message'
+import { FdpContracts } from '@fairdatasociety/fdp-storage'
+import { ensNetwork } from '../config'
+import { Options } from '@fairdatasociety/fdp-storage/dist/types'
+
+export const FDP_PLAY_OPTION_NAME = 'fdp-play'
+export const GOERLI_OPTION_NAME = 'goerli'
+/**
+ * Allowed keys that received from `ens-network` option
+ */
+export const ALLOWED_ENS_OPTIONS = [GOERLI_OPTION_NAME, FDP_PLAY_OPTION_NAME]
 
 /**
  * Creates config object
  */
-export function createConfig(beeApiUrl: string | undefined, beeDebugApiUrl: string | undefined): Config {
+export function createConfig(
+  beeApiUrl: string | undefined,
+  beeDebugApiUrl: string | undefined,
+  ensNetwork: string | undefined,
+): Config {
   return {
     beeApiUrl: beeApiUrl || '',
     beeDebugApiUrl: beeDebugApiUrl || '',
+    ensNetwork: ensNetwork || '',
     mainAccount: '',
     accounts: {},
   }
@@ -81,6 +96,10 @@ export function assertConfigContent(value: unknown): asserts value is Config {
     throwError('`beeDebugApiUrl` is not defined or empty')
   }
 
+  if (!isNotEmptyString(data.ensNetwork)) {
+    throwError('`ensNetwork` is not defined or empty')
+  }
+
   if (!isObject(data.accounts)) {
     throwError('`accounts` is not an object')
   }
@@ -101,5 +120,29 @@ export function assertConfigContent(value: unknown): asserts value is Config {
     if (!isString(account.mainPod)) {
       throwError(`\`mainPod\` is not defined for account \`${key}\``)
     }
+  }
+}
+
+/**
+ * Gets ENS options for initialing `FdpStorage`
+ */
+export function getEnsConfig(
+  optionEnsName: string,
+  ensDomain: string | undefined,
+  rpcUrl: string | undefined,
+): Options {
+  if (!ALLOWED_ENS_OPTIONS.includes(optionEnsName)) {
+    throw new CommandLineError(Message.optionValueIsNotAllowed(ensNetwork.key, optionEnsName))
+  }
+
+  const fdpContractsEnv = FdpContracts.Environments
+  const ensOptions = FdpContracts.getEnvironmentConfig(
+    optionEnsName === FDP_PLAY_OPTION_NAME ? fdpContractsEnv.LOCALHOST : fdpContractsEnv.GOERLI,
+  )
+  ensOptions.rpcUrl = rpcUrl || ensOptions.rpcUrl
+
+  return {
+    ensOptions,
+    ensDomain,
   }
 }

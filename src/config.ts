@@ -5,6 +5,40 @@ import { Directory } from './command/directory'
 import { Pod } from './command/pod'
 import { File } from './command/file'
 
+/**
+ * ENS network name
+ *
+ * Using the value will be received RPC url and smart contract addresses for initializing `FdpStorage`
+ */
+export const ensNetwork: IOption<string> = {
+  key: 'ens-network',
+  default: 'goerli',
+  description:
+    'Name of the configuration with blockchain RPC and smart contract addresses. Allowed values: `goerli` and `fdp-play`',
+  envKey: 'ENS_NETWORK',
+}
+
+/**
+ * Domain name of the ENS
+ *
+ * It is not necessary to define for built-in networks, but it can be helpful for custom networks.
+ * Use during initializing `FdpStorage`
+ */
+export const ensDomain: IOption<string> = {
+  key: 'ens-domain',
+  description: 'Domain name of the ENS',
+  envKey: 'ENS_DOMAIN',
+}
+
+/**
+ * RPC url for interacting with ENS
+ */
+export const ensRpcUrl: IOption<string> = {
+  key: 'ens-rpc-url',
+  description: 'RPC url for interacting with ENS',
+  envKey: 'ENS_RPC_URL',
+}
+
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',
   default: 'http://localhost:1633',
@@ -77,6 +111,9 @@ export const yes: IOption<string[]> = {
 export const rootCommandClasses = [Account, Pod, Directory, File]
 
 export const optionParameters: IOption[] = [
+  ensNetwork,
+  ensDomain,
+  ensRpcUrl,
   beeApiUrl,
   beeDebugApiUrl,
   configFolder,

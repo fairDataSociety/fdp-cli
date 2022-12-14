@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync } from 'fs'
 import { homedir, platform } from 'os'
 import { join } from 'path'
 import { exit } from 'process'
-import { beeApiUrl, beeDebugApiUrl } from '../../config'
+import { beeApiUrl, beeDebugApiUrl, ensNetwork } from '../../config'
 import { Config, ConfigOption } from '../../utils/types/config'
 import { CommandLog } from './command-log'
 import { assertConfigContent, createConfig, saveConfig } from '../../utils/config'
@@ -19,6 +19,7 @@ import { Account } from '../../utils/account'
 export const CONFIG_OPTIONS: ConfigOption[] = [
   { optionKey: 'bee-api-url', propertyKey: 'beeApiUrl' },
   { optionKey: 'bee-debug-api-url', propertyKey: 'beeDebugApiUrl' },
+  { optionKey: 'ens-network', propertyKey: 'ensNetwork' },
 ]
 
 export class CommandConfig {
@@ -29,7 +30,7 @@ export class CommandConfig {
 
   constructor(appName: string, console: CommandLog, configFile: string, configFolder?: string) {
     this.console = console
-    this.config = createConfig(beeApiUrl.default, beeDebugApiUrl.default)
+    this.config = createConfig(beeApiUrl.default, beeDebugApiUrl.default, ensNetwork.default)
     this.configFolderPath = CommandConfig.getConfigFolderPath(appName, configFolder)
     this.configFilePath = join(this.configFolderPath, configFile)
     this.prepareConfig()
