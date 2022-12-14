@@ -13,6 +13,7 @@ import { Account, isAccount } from '../../utils/account'
 import { decryptAccount, uncompressedPublicKeyFromSeed } from '../../utils/wallet'
 import { getAllPods } from '../../../test/utility/fdp'
 import { getPodTypeName } from '../../utils/type'
+import { getEnsConfig } from '../../utils/config'
 
 interface NamedAccount {
   name: string
@@ -20,6 +21,15 @@ interface NamedAccount {
 }
 
 export class RootCommand {
+  @ExternalOption('ens-network')
+  public ensNetwork!: string
+
+  @ExternalOption('ens-domain')
+  public ensDomain!: string
+
+  @ExternalOption('ens-rpc-url')
+  public ensRpcUrl!: string
+
   @ExternalOption('bee-api-url')
   public beeApiUrl!: string
 
@@ -115,7 +125,11 @@ export class RootCommand {
     }
 
     assertBatchId(batchId)
-    this.fdpStorage = new FdpStorage(this.beeApiUrl, batchId)
+    this.fdpStorage = new FdpStorage(
+      this.beeApiUrl,
+      batchId,
+      getEnsConfig(this.ensNetwork, this.ensDomain, this.ensRpcUrl),
+    )
     this.verbosity = VerbosityLevel.Normal
 
     if (this.quiet) {

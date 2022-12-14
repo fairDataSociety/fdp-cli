@@ -62,6 +62,10 @@ function requireOptionConfirmation(option: string, message: string): string {
   return `${message}. Pass the --${option} option to allow it`
 }
 
+function optionValueIsNotAllowed(optionName: string, optionValue: string): string {
+  return `Value '${optionValue}' is not allowed in --${optionName} option`
+}
+
 function passwordLengthError(minPasswordLength: number, maxPasswordLength: number): string {
   return `Password length must be between ${minPasswordLength} and ${maxPasswordLength} characters`
 }
@@ -171,6 +175,7 @@ export const Message = {
   optionNotDefined,
   optionNotDefinedWithTitle,
   requireOptionConfirmation,
+  optionValueIsNotAllowed,
   passwordLengthError,
   topUpBalance,
   noUsableBatch,
