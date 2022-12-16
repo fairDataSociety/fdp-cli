@@ -140,6 +140,7 @@ export function getEnsConfig(
     optionEnsName === FDP_PLAY_OPTION_NAME ? fdpContractsEnv.LOCALHOST : fdpContractsEnv.GOERLI,
   )
   ensOptions.rpcUrl = rpcUrl || ensOptions.rpcUrl
+  ensOptions.performChecks = true
 
   return {
     ensOptions,
