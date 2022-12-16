@@ -122,7 +122,7 @@ describeCommand(
         '--portable-password',
         portablePassword,
       ])
-      expect(consoleMessages[0]).toContain('Failed to register account: insufficient funds for gas * price + value')
+      expect(consoleMessages[0]).toContain('Failed to register account: Not enough funds')
     })
 
     it('should fail on incorrect username length', async () => {
