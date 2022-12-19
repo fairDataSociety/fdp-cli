@@ -6,7 +6,7 @@ import { FdpStorage } from '@fairdatasociety/fdp-storage'
 import { exit } from 'process'
 import { Message } from '../../utils/message'
 import { BeeDebug } from '@ethersphere/bee-js'
-import { assertBatchId, beeDebugUrl } from '../../../test/utils'
+import { assertBatchId } from '../../../test/utils'
 import { getUsableBatch, isUsableBatchExists, ZERO_BATCH_ID } from '../../utils/bee'
 import { CommandLineError } from '../../utils/error'
 import { Account, isAccount } from '../../utils/account'
@@ -103,7 +103,7 @@ export class RootCommand {
    * Checks availability of the usable batch
    */
   public async validateUsableBatchExists(): Promise<void> {
-    if (!(await isUsableBatchExists())) {
+    if (!(await isUsableBatchExists(this.beeDebugApiUrl))) {
       this.console.error(Message.noUsableBatch())
 
       exit(1)
@@ -121,7 +121,7 @@ export class RootCommand {
     let batchId = ZERO_BATCH_ID
 
     if (this.postageBatchRequired) {
-      batchId = await getUsableBatch()
+      batchId = await getUsableBatch(this.beeDebugApiUrl)
     }
 
     assertBatchId(batchId)
@@ -166,7 +166,7 @@ export class RootCommand {
   }
 
   private async checkDebugApiHealth(): Promise<boolean> {
-    const beeDebug = new BeeDebug(beeDebugUrl())
+    const beeDebug = new BeeDebug(this.beeDebugApiUrl)
     try {
       const health = await beeDebug.getHealth()
 
