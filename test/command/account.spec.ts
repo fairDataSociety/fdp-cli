@@ -53,20 +53,34 @@ describeCommand(
       await invokeTestCli(['account', 'create', account, '--password', accountPassword])
       consoleMessages.length = 0
       await topUpAccount(configFilePath, account, accountPassword)
-      await invokeTestCli([
-        'account',
-        'register',
-        portableUsername,
-        '--account',
-        account,
-        '--password',
-        accountPassword,
-        '--portable-password',
-        portablePassword,
-      ])
+      const register = async (params?: string[]) => {
+        return invokeTestCli([
+          'account',
+          'register',
+          portableUsername,
+          '--account',
+          account,
+          '--password',
+          accountPassword,
+          '--portable-password',
+          portablePassword,
+          ...(params ? params : []),
+        ])
+      }
+      await register()
       expect(consoleMessages[0]).toContain('New account registered successfully!')
       expect(consoleMessages[1]).toContain('Username:')
       expect(consoleMessages[1]).toContain(`${portableUsername}`)
+      consoleMessages.length = 0
+
+      const beeUrlIncorrect = 'http://bee-incorrect:8888/'
+      const beeDebugUrlIncorrect = 'http://bee-debug-incorrect:7777'
+
+      await register(['--bee-api-url', beeUrlIncorrect, '--bee-debug-api-url', beeDebugUrlIncorrect])
+      expect(consoleMessages[0]).toContain(
+        `request to ${beeDebugUrlIncorrect}/stamps failed, reason: getaddrinfo ENOTFOUND`,
+      )
+      consoleMessages.length = 0
     })
 
     it('should register portable FDP account with aliases', async () => {

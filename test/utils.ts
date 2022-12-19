@@ -76,15 +76,16 @@ export async function getUsableBatch(beeDebug?: BeeDebug): Promise<BatchId> {
  * Creates and awaits for a usable batch
  */
 export async function createUsableBatch(): Promise<BatchId> {
-  const beeDebug = new BeeDebug(beeDebugUrl())
+  const debugUrl = beeDebugUrl()
+  const beeDebug = new BeeDebug(debugUrl)
 
-  if (await isUsableBatchExists()) {
+  if (await isUsableBatchExists(debugUrl)) {
     return getUsableBatch(beeDebug)
   }
 
   await beeDebug.createPostageBatch('10000000', 24)
   for (let i = 0; i < 100; i++) {
-    if (await isUsableBatchExists()) {
+    if (await isUsableBatchExists(debugUrl)) {
       break
     }
 
