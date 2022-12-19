@@ -8,8 +8,8 @@ import { FdpContracts } from '@fairdatasociety/fdp-storage'
 import { ensNetwork } from '../config'
 import { Options } from '@fairdatasociety/fdp-storage/dist/types'
 
-export const FDP_PLAY_OPTION_NAME = 'fdp-play'
-export const GOERLI_OPTION_NAME = 'goerli'
+export const ENS_OPTION_FDP_PLAY = 'fdp-play'
+export const ENS_OPTION_GOERLI = 'goerli'
 /**
  * Allowed keys that received from `ens-network` option
  */
