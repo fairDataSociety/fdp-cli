@@ -161,7 +161,7 @@ directory.
 
 With specific system environment variables you can alter the behaviour of the CLI
 
-* `ENS_NETWORK` - name of the configuration with blockchain RPC and smart contract addresses. Allowed values: `goerli` and `fdp-play`. Default is `goerli`
+* `ENS_NETWORK` - name of the configuration that defines blockchain RPC and smart contract addresses. Allowed values: `goerli` and `fdp-play`. Default is `goerli`
 * `ENS_DOMAIN` - domain name of the ENS. It is not necessary to define for built-in networks, but it can be helpful for custom networks
 * `ENS_RPC_URL` - RPC url for interacting with ENS
 * `BEE_API_URL` - API URL of Bee client
