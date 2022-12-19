@@ -20,7 +20,6 @@ export class PodCommand extends RootCommand {
     maximumLength: MAX_PASSWORD_LENGTH,
   })
   public password!: string
-  public postageBatchRequired = true
 
   protected async init(): Promise<void> {
     await super.init()

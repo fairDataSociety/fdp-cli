@@ -9,6 +9,8 @@ export class Create extends PodCommand implements LeafCommand {
 
   public readonly description = 'Create a pod'
 
+  public postageBatchRequired = true
+
   @Argument({ key: 'name', description: 'Reference name of the pod' })
   public podName!: string
 
