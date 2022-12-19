@@ -1,11 +1,11 @@
 import { describeCommand } from '../utility'
-import { assertConfigContent, GOERLI_OPTION_NAME } from '../../src/utils/config'
+import { assertConfigContent, ENS_OPTION_GOERLI } from '../../src/utils/config'
 
 describeCommand('Config data', () => {
   it('should validate config', () => {
     const beeApiUrl = 'http://localhost:1633'
     const beeDebugApiUrl = 'http://localhost:1635'
-    const ensNetwork = GOERLI_OPTION_NAME
+    const ensNetwork = ENS_OPTION_GOERLI
     const address = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
     const encryptedSeed = 'aefaefaef'
     const correctConfig = {

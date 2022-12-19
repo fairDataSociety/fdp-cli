@@ -13,7 +13,7 @@ export const ENS_OPTION_GOERLI = 'goerli'
 /**
  * Allowed keys that received from `ens-network` option
  */
-export const ALLOWED_ENS_OPTIONS = [GOERLI_OPTION_NAME, FDP_PLAY_OPTION_NAME]
+export const ALLOWED_ENS_OPTIONS = [ENS_OPTION_GOERLI, ENS_OPTION_FDP_PLAY]
 
 /**
  * Creates config object
@@ -137,7 +137,7 @@ export function getEnsConfig(
 
   const fdpContractsEnv = FdpContracts.Environments
   const ensOptions = FdpContracts.getEnvironmentConfig(
-    optionEnsName === FDP_PLAY_OPTION_NAME ? fdpContractsEnv.LOCALHOST : fdpContractsEnv.GOERLI,
+    optionEnsName === ENS_OPTION_FDP_PLAY ? fdpContractsEnv.LOCALHOST : fdpContractsEnv.GOERLI,
   )
   ensOptions.rpcUrl = rpcUrl || ensOptions.rpcUrl
   ensOptions.performChecks = true
