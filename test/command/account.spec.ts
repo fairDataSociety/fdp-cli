@@ -77,9 +77,7 @@ describeCommand(
       const beeDebugUrlIncorrect = 'http://bee-debug-incorrect:7777'
 
       await register(['--bee-api-url', beeUrlIncorrect, '--bee-debug-api-url', beeDebugUrlIncorrect])
-      expect(consoleMessages[0]).toContain(
-        `request to ${beeDebugUrlIncorrect}/stamps failed, reason: getaddrinfo`,
-      )
+      expect(consoleMessages[0]).toContain(`request to ${beeDebugUrlIncorrect}/stamps failed, reason: getaddrinfo`)
       consoleMessages.length = 0
     })
 
