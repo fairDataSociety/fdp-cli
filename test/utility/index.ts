@@ -3,7 +3,7 @@ import { existsSync, unlinkSync } from 'fs'
 import { cli } from 'furious-commander'
 import { optionParameters, rootCommandClasses } from '../../src/config'
 import { errorHandler } from '../../src/utils/error'
-import { FDP_PLAY_OPTION_NAME } from '../../src/utils/config'
+import { ENS_OPTION_FDP_PLAY } from '../../src/utils/config'
 
 type describeFunctionArgs = {
   consoleMessages: string[]
@@ -84,7 +84,7 @@ export function describeCommand(
       //set config environment variable
       process.env.FDP_CLI_CONFIG_FILE = fileName
       process.env.FDP_CLI_CONFIG_FILE_PATH = configFilePath
-      process.env.ENS_NETWORK = FDP_PLAY_OPTION_NAME
+      process.env.ENS_NETWORK = ENS_OPTION_FDP_PLAY
     }
 
     beforeEach(() => {
