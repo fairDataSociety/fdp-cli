@@ -9,6 +9,8 @@ export class Main extends PodCommand implements LeafCommand {
 
   public readonly description = 'Set or show main pod'
 
+  public beeRequired = false
+
   @Argument({ key: 'name', description: 'The name of the main pod to be set' })
   public podName!: string
 
