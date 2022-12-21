@@ -7,6 +7,24 @@ import { decryptAccount, mainHDNodeFromSeed } from '../../src/utils/wallet'
 describeCommand(
   'Test Account command',
   ({ consoleMessages, configFilePath }) => {
+    it('should create account with incorrect bee node', async () => {
+      const account = getRandomString()
+      const accountPassword = getRandomString()
+      const incorrectBeeUrl = 'http://localhost:9876'
+
+      await invokeTestCli([
+        'account',
+        'create',
+        account,
+        '--password',
+        accountPassword,
+        '--bee-api-url',
+        incorrectBeeUrl,
+      ])
+      expect(consoleMessages[0]).toContain('Name:')
+      expect(consoleMessages[0]).toContain(account)
+    })
+
     it('should create account', async () => {
       const account = getRandomString()
       const account1 = getRandomString()

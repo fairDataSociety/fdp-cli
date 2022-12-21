@@ -158,6 +158,10 @@ function podNotFound(message: string): string {
   return `Pod not found: ${message}`
 }
 
+function beeIsNotAvailable(url: string): string {
+  return `Bee node is not available by url: ${url}`
+}
+
 export const Message = {
   accountNameConflict,
   accountNameConflictArgument,
@@ -199,4 +203,5 @@ export const Message = {
   mainPod,
   mainPodEmpty,
   podNotFound,
+  beeIsNotAvailable,
 }

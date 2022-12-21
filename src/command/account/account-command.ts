@@ -28,6 +28,7 @@ export class AccountCommand extends RootCommand {
     maximumLength: MAX_PASSWORD_LENGTH,
   })
   public password!: string
+  public beeRequired = false
 
   protected async init(): Promise<void> {
     await super.init()

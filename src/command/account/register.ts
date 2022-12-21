@@ -13,6 +13,8 @@ export class Register extends AccountCommand implements LeafCommand {
 
   public readonly description = 'Register a portable FDS account'
 
+  public beeRequired = true
+
   @Argument({
     key: 'username',
     alias: 'u',

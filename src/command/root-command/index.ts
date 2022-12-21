@@ -7,7 +7,7 @@ import { exit } from 'process'
 import { Message } from '../../utils/message'
 import { BeeDebug } from '@ethersphere/bee-js'
 import { assertBatchId } from '../../../test/utils'
-import { getUsableBatch, isUsableBatchExists, ZERO_BATCH_ID } from '../../utils/bee'
+import { getUsableBatch, isBeeAvailable, isUsableBatchExists, ZERO_BATCH_ID } from '../../utils/bee'
 import { CommandLineError } from '../../utils/error'
 import { Account, isAccount } from '../../utils/account'
 import { decryptAccount, uncompressedPublicKeyFromSeed } from '../../utils/wallet'
@@ -62,6 +62,7 @@ export class RootCommand {
   public readonly appName = 'fdp-cli'
   public commandConfig!: CommandConfig
   public postageBatchRequired!: boolean
+  public beeRequired = true
   private sourcemap!: Sourcemap
   /**
    * Store Debug API errors here. It cannot be determined beforehand if Debug API is going to be used,
@@ -127,6 +128,10 @@ export class RootCommand {
     }
     this.console = new CommandLog(this.verbosity)
     let batchId = ZERO_BATCH_ID
+
+    if (this.beeRequired && !(await isBeeAvailable(this.beeApiUrl))) {
+      throw new CommandLineError(Message.beeIsNotAvailable(this.beeApiUrl))
+    }
 
     if (this.postageBatchRequired) {
       batchId = await getUsableBatch(this.beeDebugApiUrl)
