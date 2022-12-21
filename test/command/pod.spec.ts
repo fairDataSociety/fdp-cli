@@ -8,10 +8,24 @@ describeCommand(
     it('should list pods', async () => {
       const podName1 = getRandomString()
       const podName2 = getRandomString()
+      const incorrectBeeUrl = 'http://localhost:9876'
       const { fdp, account, accountPassword } = await createFdpAndImport()
+      consoleMessages.length = 0
 
       await fdp.personalStorage.create(podName1)
       await fdp.personalStorage.create(podName2)
+
+      await invokeTestCli([
+        'pod',
+        'list',
+        '--account',
+        account,
+        '--password',
+        accountPassword,
+        '--bee-api-url',
+        incorrectBeeUrl,
+      ])
+      expect(consoleMessages[0]).toContain(`Bee node is not available by url: ${incorrectBeeUrl}`)
       consoleMessages.length = 0
 
       await invokeTestCli(['pod', 'list', '--account', account, '--password', accountPassword])

@@ -1,6 +1,20 @@
-import { BatchId, BeeDebug } from '@ethersphere/bee-js'
+import { BatchId, Bee, BeeDebug } from '@ethersphere/bee-js'
 
 export const ZERO_BATCH_ID = '0000000000000000000000000000000000000000000000000000000000000000'
+
+/**
+ * Checks that Bee node is available
+ */
+export async function isBeeAvailable(beeUrl: string): Promise<boolean> {
+  try {
+    const bee = new Bee(beeUrl)
+    await bee.checkConnection()
+
+    return true
+  } catch (e) {
+    return false
+  }
+}
 
 /**
  * Gets usable batch id

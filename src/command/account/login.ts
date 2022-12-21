@@ -14,6 +14,8 @@ export class Login extends AccountCommand implements LeafCommand {
 
   public readonly description = 'Login to a portable FDS account'
 
+  public beeRequired = true
+
   @Argument({
     key: 'username',
     alias: 'u',
