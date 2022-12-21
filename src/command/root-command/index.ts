@@ -118,6 +118,14 @@ export class RootCommand {
       this.maybeSetFromConfig(option)
     })
 
+    this.verbosity = VerbosityLevel.Normal
+
+    if (this.quiet) {
+      this.verbosity = VerbosityLevel.Quiet
+    } else if (this.verbose) {
+      this.verbosity = VerbosityLevel.Verbose
+    }
+    this.console = new CommandLog(this.verbosity)
     let batchId = ZERO_BATCH_ID
 
     if (this.postageBatchRequired) {
@@ -130,14 +138,6 @@ export class RootCommand {
       batchId,
       getEnsConfig(this.ensNetwork, this.ensDomain, this.ensRpcUrl),
     )
-    this.verbosity = VerbosityLevel.Normal
-
-    if (this.quiet) {
-      this.verbosity = VerbosityLevel.Quiet
-    } else if (this.verbose) {
-      this.verbosity = VerbosityLevel.Verbose
-    }
-    this.console = new CommandLog(this.verbosity)
 
     await this.setupBeeDebug()
   }
