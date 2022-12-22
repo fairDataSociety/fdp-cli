@@ -1,5 +1,15 @@
 # Changelog
 
+### [0.1.1](https://www.github.com/fairDataSociety/fdp-cli/compare/v0.1.0...v0.1.1) (2022-12-22)
+
+
+### Bug Fixes
+
+* do not required bee for main pod ([ee1e120](https://www.github.com/fairDataSociety/fdp-cli/commit/ee1e120b2521942b14f7e9e0b13d3fc8c0c24582))
+* move code that can cause an error below console init ([4dbe604](https://www.github.com/fairDataSociety/fdp-cli/commit/4dbe6049919a2da9035168c6273e35e07f7e51d1))
+* validate availability bee node before operations ([7ba0f2c](https://www.github.com/fairDataSociety/fdp-cli/commit/7ba0f2c885b2450c6da918059d281f7372c5bdb8))
+* validate availability bee node before operations ([9f5a904](https://www.github.com/fairDataSociety/fdp-cli/commit/9f5a9040dbfee33458dee78784617889e72c4c1a))
+
 ## 0.1.0 (2022-12-20)
 
 
