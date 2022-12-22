@@ -159,7 +159,7 @@ function podNotFound(message: string): string {
 }
 
 function beeIsNotAvailable(url: string): string {
-  return `Bee node is not available by url: ${url}`
+  return `Bee node is not available on URL: ${url}`
 }
 
 export const Message = {
