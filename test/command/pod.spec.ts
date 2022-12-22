@@ -25,7 +25,7 @@ describeCommand(
         '--bee-api-url',
         incorrectBeeUrl,
       ])
-      expect(consoleMessages[0]).toContain(`Bee node is not available by url: ${incorrectBeeUrl}`)
+      expect(consoleMessages[0]).toContain(`Bee node is not available on URL: ${incorrectBeeUrl}`)
       consoleMessages.length = 0
 
       await invokeTestCli(['pod', 'list', '--account', account, '--password', accountPassword])

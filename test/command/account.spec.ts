@@ -95,7 +95,7 @@ describeCommand(
       const beeDebugUrlIncorrect = 'http://bee-debug-incorrect:7777'
 
       await register(['--bee-api-url', beeUrlIncorrect, '--bee-debug-api-url', beeDebugUrlIncorrect])
-      expect(consoleMessages[0]).toContain(`Bee node is not available by url: ${beeUrlIncorrect}`)
+      expect(consoleMessages[0]).toContain(`Bee node is not available on URL: ${beeUrlIncorrect}`)
       consoleMessages.length = 0
     })
 
