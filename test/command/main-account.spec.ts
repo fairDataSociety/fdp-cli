@@ -94,18 +94,18 @@ describeCommand(
       // actions should not be made with first account
       fdpData1.fdp.account.setAccountFromMnemonic(fdpData1.wallet.mnemonic.phrase)
       const podsList0 = await fdpData1.fdp.personalStorage.list()
-      expect(podsList0.getPods()).toHaveLength(0)
-      expect(podsList0.getSharedPods()).toHaveLength(0)
+      expect(podsList0.pods).toHaveLength(0)
+      expect(podsList0.sharedPods).toHaveLength(0)
 
       // actions should be made with second account
       fdpData2.fdp.account.setAccountFromMnemonic(fdpData2.wallet.mnemonic.phrase)
       const podsList1 = await fdpData2.fdp.personalStorage.list()
-      expect(podsList1.getPods()).toHaveLength(1)
-      expect(podsList1.getSharedPods()).toHaveLength(0)
+      expect(podsList1.pods).toHaveLength(1)
+      expect(podsList1.sharedPods).toHaveLength(0)
 
       const directories1 = await fdpData2.fdp.directory.read(podName1, '/')
-      expect(directories1.getDirectories()).toHaveLength(1)
-      expect(directories1.getDirectories()[0].name).toEqual(directoryName1)
+      expect(directories1.directories).toHaveLength(1)
+      expect(directories1.directories[0].name).toEqual(directoryName1)
     })
   },
   { configFileName: 'main-account' },

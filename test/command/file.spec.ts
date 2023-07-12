@@ -33,7 +33,7 @@ describeCommand(
       expect(consoleMessages[0]).toContain(fullFilePath1)
       consoleMessages.length = 0
 
-      const files1 = (await fdp.directory.read(podName1, '/', true)).getFiles()
+      const files1 = (await fdp.directory.read(podName1, '/', true)).files
       expect(files1).toHaveLength(1)
       expect(files1[0].name).toEqual(fileName1)
     })
@@ -63,7 +63,7 @@ describeCommand(
       expect(getLastMessage()).toContain('deleted successfully!')
       expect(getLastMessage()).toContain(fullFilePath1)
 
-      const files2 = (await fdp.directory.read(podName1, '/', true)).getFiles()
+      const files2 = (await fdp.directory.read(podName1, '/', true)).files
       expect(files2).toHaveLength(0)
     })
 

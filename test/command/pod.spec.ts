@@ -63,7 +63,7 @@ describeCommand(
       expect(consoleMessages[4]).toContain('Type:')
       expect(consoleMessages[4]).toContain('pod')
 
-      const pods1 = (await fdp.personalStorage.list()).getPods()
+      const pods1 = (await fdp.personalStorage.list()).pods
       expect(pods1).toHaveLength(2)
       expect(pods1.find(item => item.name === podName1)).toBeDefined()
       expect(pods1.find(item => item.name === podName2)).toBeDefined()
@@ -91,7 +91,7 @@ describeCommand(
       expect(consoleMessages[1]).toContain('Type:')
       expect(consoleMessages[1]).toContain('pod')
 
-      const pods1 = (await fdp.personalStorage.list()).getPods()
+      const pods1 = (await fdp.personalStorage.list()).pods
       expect(pods1).toHaveLength(1)
       expect(pods1.find(item => item.name === podName1)).toBeUndefined()
       expect(pods1.find(item => item.name === podName2)).toBeDefined()

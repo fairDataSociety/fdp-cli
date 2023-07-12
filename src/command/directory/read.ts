@@ -16,19 +16,19 @@ export class Read extends DirectoryCommand implements LeafCommand {
       this.path,
     )
 
-    if (directoryItems.getDirectories().length === 0 && directoryItems.getFiles().length === 0) {
+    if (directoryItems.directories.length === 0 && directoryItems.files.length === 0) {
       this.console.log(Message.emptyDirectory())
 
       return
     }
 
-    for (const directory of directoryItems.getDirectories()) {
+    for (const directory of directoryItems.directories) {
       this.console.log(createKeyValue('Name', directory.name))
       this.console.log(createKeyValue('Type', 'directory'))
       this.console.divider()
     }
 
-    for (const file of directoryItems.getFiles()) {
+    for (const file of directoryItems.files) {
       this.console.log(createKeyValue('Name', file.name))
       this.console.log(createKeyValue('Type', 'file'))
 

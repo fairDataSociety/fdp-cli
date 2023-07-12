@@ -100,11 +100,11 @@ describeCommand(
         consoleMessages.length = 0
       }
 
-      const directories1 = (await fdp.directory.read(podName1, '/', true)).getDirectories()
+      const directories1 = (await fdp.directory.read(podName1, '/', true)).directories
       expect(directories1).toHaveLength(2)
       expect(directories1[0].name).toEqual(directory1)
       expect(directories1[1].name).toEqual(directory2)
-      const subDirectories1 = directories1[0].getDirectories()
+      const subDirectories1 = directories1[0].directories
       expect(subDirectories1).toHaveLength(2)
       expect(subDirectories1[0].name).toEqual(subDirectory1)
       expect(subDirectories1[1].name).toEqual(subDirectory2)
@@ -146,7 +146,7 @@ describeCommand(
         consoleMessages.length = 0
       }
 
-      expect((await fdp.directory.read(podName1, '/')).getDirectories()).toHaveLength(0)
+      expect((await fdp.directory.read(podName1, '/')).directories).toHaveLength(0)
     })
 
     it('should read directories with portable account', async () => {

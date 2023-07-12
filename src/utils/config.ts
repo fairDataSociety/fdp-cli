@@ -136,7 +136,7 @@ export function getEnsConfig(
   }
 
   const fdpContractsEnv = FdpContracts.Environments
-  const ensOptions = FdpContracts.getEnvironmentConfig(
+  const ensOptions = FdpContracts.getEnsEnvironmentConfig(
     optionEnsName === ENS_OPTION_FDP_PLAY ? fdpContractsEnv.LOCALHOST : fdpContractsEnv.GOERLI,
   )
   ensOptions.rpcUrl = rpcUrl || ensOptions.rpcUrl
