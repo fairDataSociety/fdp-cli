@@ -70,14 +70,14 @@ describeCommand(
       consoleMessages.length = 0
 
       const directories1 = await fdp.directory.read(podName1, '/')
-      expect(directories1.getDirectories()).toHaveLength(2)
-      expect(directories1.getDirectories().find(item => item.name === directoryName1)).toBeDefined()
-      expect(directories1.getDirectories().find(item => item.name === directoryName2)).toBeDefined()
+      expect(directories1.directories).toHaveLength(2)
+      expect(directories1.directories.find(item => item.name === directoryName1)).toBeDefined()
+      expect(directories1.directories.find(item => item.name === directoryName2)).toBeDefined()
 
       await invokeTestCli(['directory', 'delete', fullDirectoryName1, '--password', accountPassword])
       const directories2 = await fdp.directory.read(podName1, '/')
-      expect(directories2.getDirectories()).toHaveLength(1)
-      expect(directories2.getDirectories().find(item => item.name === directoryName2)).toBeDefined()
+      expect(directories2.directories).toHaveLength(1)
+      expect(directories2.directories.find(item => item.name === directoryName2)).toBeDefined()
     })
 
     it('should be used set main account and main pod for files', async () => {
@@ -102,15 +102,15 @@ describeCommand(
       expect(getLastMessage()).toContain('uploaded successfully to')
       expect(getLastMessage()).toContain(fullFilePath1)
       const result1 = await fdp.directory.read(podName1, '/')
-      expect(result1.getFiles()).toHaveLength(1)
-      expect(result1.getFiles()[0].name).toEqual(fileName1)
+      expect(result1.files).toHaveLength(1)
+      expect(result1.files[0].name).toEqual(fileName1)
 
       // file should be deleted without passing account name and pod name
       await invokeTestCli(['file', 'delete', fullFilePath1, '--password', accountPassword])
       expect(getLastMessage()).toContain(`deleted successfully!`)
       expect(getLastMessage()).toContain(fullFilePath1)
       const result2 = await fdp.directory.read(podName1, '/')
-      expect(result2.getFiles()).toHaveLength(0)
+      expect(result2.files).toHaveLength(0)
     })
   },
   { configFileName: 'main-pod' },
